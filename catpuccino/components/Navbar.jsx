@@ -1,33 +1,29 @@
 
+import Link from 'next/link';
+import Searchbar from './Searchbar';
+
 export default function Navbar(){
     return(
-        <nav className="w-full border-b border-white/10 py-4">
+        <nav className="w-full bg-[#5C3727] border-b border-white/10 py-4">
             <div className="container mx-auto px-10 grid grid-cols-12 items-center">
-                
-                 {/* Logo */}
+            
                 <div className="col-span-4 flex justify-start">
                     <div className="w-32 h-10 bg-gray-400/50 rounded flex items-center justify-center text-xs uppercase">
                         Logo
                     </div>
                 </div>
 
-                {/* Nav Links */}
-                <div className="col-span-4 flex gap-8 text-[11px] font-regular uppercase tracking-widest text-white/80">
-                    <a href="#" className="hover:text-white">Home</a>
-                    <a href="#" className="hover:text-white">Discover</a>
-                    <a href="#" className="hover:text-white">About</a>
-                    <a href="#" className="hover:text-white">Contact</a>
+                <div className="col-span-4 flex justify-start ml-10 gap-8 text-[12px] font-regular uppercase tracking-widest text-white/80">
+                    <Link href="/" className="hover:text-[#D26500] hover:font-bold uppercase">Home</Link>
+                    <Link href="/discover" className="hover:text-[#D26500] hover:font-bold uppercase">Discover</Link>
+                    <Link href="/about" className="hover:text-[#D26500] hover:font-bold uppercase">About</Link>
+                    <Link href="/contact" className="hover:text-[#D26500] hover:font-bold uppercase">Contact</Link>
                 </div>
 
-                {/* Search & Profile Icons */}
                 <div className="col-span-4 flex items-center justify-end gap-4">
-                    {/* Make a post Icon */}
                     <div className="w-8 h-8 bg-gray-400/50 rounded sm"></div> 
-                    
-                    {/* //Search Bar */}
-                    <div className="w-40 h-8 bg-gray-400/50 rounded sm"></div>
-                    
-                    {/*Profile*/} 
+                    <Searchbar/>
+
                     <div className="w-10 h-10 bg-gray-400/50 rounded-full"></div>
                 </div>
             </div>
