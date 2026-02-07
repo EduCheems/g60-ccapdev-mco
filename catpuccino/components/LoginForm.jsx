@@ -1,7 +1,7 @@
 export default function loginForm() {
   return (
 
-    <main className="min-h-screen flex items-center bg-[#5C3727]">
+    <main className="flex items-center">
 
       <form className="w-full max-w-sm p-6 bg-white shadow-md rounded-mb">
         <h2 className="text-2x1 font-semibold mb-4 text-left"> Login </h2>
