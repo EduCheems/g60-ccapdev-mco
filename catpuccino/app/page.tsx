@@ -1,4 +1,4 @@
-// app/page.jsx or pages/index.jsx
+
 import LoginForm from '../components/LoginForm';
 
 export default function Home() {

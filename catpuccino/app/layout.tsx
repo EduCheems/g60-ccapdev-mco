@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-
+import Navbar from "../components/Navbar";
 import { Montserrat, Fredoka } from "next/font/google";
 import "./globals.css";
-
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -31,12 +28,10 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} ${fredoka.variable} antialiased`}>
           <Navbar/>
-
           <main>
             {children}
           </main>
 
-          <Footer />
       </body>
     </html>
   );

@@ -1,3 +1,5 @@
+
+import Link from 'next/link';
 export default function loginForm() {
   return (
 
@@ -32,12 +34,14 @@ export default function loginForm() {
           </label>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-[#EEB56E] text-white py-2 px-4 rounded-md hover:bg-[#D26500] transition"
-        >
-          Login
-        </button>
+        <Link href="/discover">
+          <button
+            type="submit"
+            className="w-full bg-[#EEB56E] text-white py-2 px-4 rounded-md hover:bg-[#D26500] transition"
+          >
+            Login
+          </button>
+        </Link>
 
       </form>
 
