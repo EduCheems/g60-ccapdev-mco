@@ -1,49 +1,51 @@
 import BestCafes from "@/components/BestCafes";
-
-const PawPattern = (
-  <svg viewBox="0 0 100 100" className="fill-white opacity-40">
-    <circle cx="50" cy="50" r="10" />
-    <circle cx="30" cy="40" r="8" />
-    <circle cx="70" cy="40" r="8" />
-    <circle cx="40" cy="20" r="8" />
-    <circle cx="60" cy="20" r="8" />
-  </svg>
-);
-
-const BeanPattern = (
-  <svg viewBox="0 0 100 100" className="fill-white opacity-40">
-    <ellipse cx="50" cy="50" rx="20" ry="10" transform="rotate(45 50 50)" />
-  </svg>
-);
-
-const WorkFriendlyPattern = (
-  <img 
-    src="/work-friendly-card.svg" 
-    alt="" 
-    className="absolute inset-0 w-full h-full object-cover" 
-  />
-);
+import MarqueeBand from "@/components/MarqueeBand.tsx";
 
 export default function DiscoverPage() {
   return (
-    <div className="min-h-screen bg-[#D5AE85] flex flex-col"> {/* That off-white we talked about */}
+    <div className="min-h-screen bg-[#D5AE85] flex flex-col"> 
       
-      {/* Section 1: Warm Coffee Tones */}
+      <MarqueeBand text="General Munchkin's social spots" bgColor="bg-[#EE7D6C]" />
       <BestCafes 
-      title="General Munchkin's social spots" 
-      cardColor="bg-[#E8DCC4]" 
-      sectionSvg={PawPattern}
+        cardColor="bg-[#ED7364]" 
+        badgeText="People Friendly"
+        badgeColor="bg-[#ED7364]"
       />
 
-      <BestCafes title="Oppie goofy's aesthetic picks" cardColor="bg-orange-100" />
+      <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
+      <BestCafes 
+        cardColor="bg-[#87AE73]" 
+        badgeText="Aesthetic"
+        badgeColor="bg-[#87AE73]" 
+      />
 
-      <BestCafes title="Chonky's flavor favorites" cardColor="bg-[#D9C5B2]" />
+      <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
+      <BestCafes 
+        cardColor="bg-[#FF7300]" 
+        badgeText="Best Foods"
+        badgeColor="bg-[#FF7300]" 
+      />
+     
+      <MarqueeBand text="LIL’JIMBOB’S FOCUS ZONES" bgColor="bg-[#57928F]" />
+      <BestCafes 
+        cardColor="bg-[#699795]" 
+        badgeText="Work-Friendly"
+        badgeColor="bg-[#699795]" 
+      />
 
-      <BestCafes title="Lil'jimbob's focus zones" cardColor="bg-[#E8DCC4]" />
+      <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FF5995]" />
+      <BestCafes 
+        cardColor="bg-[#FF5995]" 
+        badgeText="Best Service"
+        badgeColor="bg-[#FF5995]"  
+      />
 
-      <BestCafes title="Larry's staff approved cafes" cardColor="bg-orange-100" sectionSvg={WorkFriendlyPattern} />
-
-      <BestCafes title="Burger's gatekept gems" cardColor="bg-[#D9C5B2]" />
+      <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#623D9B]" />
+      <BestCafes 
+        cardColor="bg-[#7454A4]" 
+        badgeText="Underrated"
+        badgeColor="bg-[#7454A4]" 
+      />
       
     </div>
   );

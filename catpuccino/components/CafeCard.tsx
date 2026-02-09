@@ -1,65 +1,106 @@
 // components/CafeCard.tsx
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { IoLocationSharp, IoPricetag } from "react-icons/io5";
 
 interface CafeCardProps {
   name: string;
   slug: string;
-  imageSrc?: string; 
-  rating?: number; 
-  ratingLabel?: string;
-  price?: string; 
-  schedule?: string; 
-  hours?: string; 
-  openDays?: string; 
-  index: number;
-  cardColor?: string;
-  bgSvg?: ReactNode; 
+  index: number; 
+  cardColor: string; 
+  badgeText: string; 
+  badgeColor: string; 
 }
 
-export default function CafeCard({ name, slug, imageSrc, rating = 0.0, ratingLabel = "Very Good", price= "200-500", schedule= "8am-8pm", hours= "9:00 AM - 11:00 AM", openDays="Monday to Friday", index, cardColor, bgSvg }: CafeCardProps) {
+const getRankStyle = (index: number) => {
+  switch (index) {
+    case 0: // Rank 1
+      return "from-yellow-300 to-yellow-600 border-yellow-100 shadow-[0_0_10px_rgba(253,224,71,0.5)]";
+    case 1: // Rank 2
+      return "from-slate-200 to-slate-400 border-slate-100 shadow-[0_0_10px_rgba(226,232,240,0.5)]";
+    case 2: // Rank 3
+      return "from-orange-300 to-orange-600 border-orange-100 shadow-[0_0_10px_rgba(234,88,12,0.3)]";
+    default: // Rank 4-10
+      return "bg-[#D1D1D1] border-white/30 text-white shadow-none backdrop-blur-[2px]";
+  }
+};
 
+export default function CafeCard({ name, slug, index, cardColor, badgeText, badgeColor }: any) {
+  
   return (
     <Link href={`/discover/${slug}`} className="flex-shrink-0 snap-center">
-        <div className={`w-[280px] h-[415px] rounded-2xl p-6 relative overflow-hidden ${cardColor ?? ""}`}>
-
-          <div className="absolute inset-0 z-0 pointer-events-none">
-          {bgSvg}
+      <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-xl flex flex-col`}>
+      
+        {/* Image Area */}
+        <div className="relative z-10 w-full h-[220px] bg-white rounded-[16px] overflow-hidden mb-4 shadow-inner">
+           {/* Dynamic Status Badge */}
+           <div className={`absolute top-3 right-3 ${badgeColor} px-4 py-1.5 rounded-2xl text-[11px] text-white font-bold shadow-sm`}>
+             {badgeText}
+           </div>
+           
+           {/* ... ranking and image ... */}
+            <div className={`absolute top-3 left-3 w-10 h-10 rounded-full flex items-center justify-center font-black text-lg border-2 z-20 bg-gradient-to-br transition-all duration-300 ${getRankStyle(index)}`}>
+             {index + 1}
+           </div>
         </div>
 
-        {/* Image section */}
-        <div className="relative -ml-1 mt-10 z-10 w-[247px] h-[186px] bg-white rounded-[16px] overflow-hidden mb-4 border-4 border-[#331608]">
-
-            {/* Ranking badge */}
-            <div className="absolute w-[40px] h-[40px] -ml-1 -mt-1 top-4 left-4 w-12 h-12 bg-gray-600/80 backdrop-blue-sm rounded-full flex items-center border-2 border-[#331608] justify-center text-white font-fredoka text-xl">
-              {index + 1}
-            </div>
-
-            {/* Ranking label */}
-            <div className="absolute w-[70px] h-[18px] top-4 right-4 bg-gray-600/80 backdrop-blue-sm mt-2 pt-0.5 px-1.0 pl-1 border-[#331608] border-2 rounded-[6px] text-[8px] text-white font-bold">
-              People friendly
-            </div>
-          
-            {/* Image placeholder */}
-            {imageSrc ? (
-            <img src={imageSrc} alt={name} className="h-36 w-full object-cover rounded-2xl" /> ) : (
-              <div className="h-36 w-full bg-white/20 rounded-2xl" />
-            )}
-
-        </div>
-
-        {/* INFO SECTION */}
-        <div className="relative z-10  flex flex-col gap-1">
-          <h3 className="font-montserat text-[22px] font-extrabold text-sticker -mt-2 ml-1">
+        {/* 2. TEXT CONTENT */}
+        <div className="relative z-10 px-1 flex flex-col flex-1">
+          {/* Cafe Name - Now using clean bold style */}
+          <h3 className="font-poppins text-3xl font-black text-white mb-2 leading-tight">
             {name}
           </h3>
 
+          {/* Rating Row */}
+          <div className="flex items-center gap-1 mb-3">
+            <div className="flex text-yellow-400 text-xl">★★★★★</div>
+            <span className="text-xl font-bold text-white ml-2">5.0</span>
+            {/* The "Very Good" arrow badge */}
+            <div className="ml-3 bg-gradient-to-r from-[#FDF68C] to-[#F4CD2A] text-[9px] px-3 py-1 font-bold text-gray-800 relative">
+               Very Good!
+               <div
+                className="absolute -left-[5px] top-0 h-[12px] w-[12px] bg-[#FFF0A0] mt-1 -ml-1.5"
+                style={{ clipPath: 'polygon(100% 0, 0 50%, 100% 100%)' }}
+               />
+            </div>
+          </div>
 
+          {/* Details Grid */}
+          <div className="flex items-center gap-4 text-white/90 mb-4">
+             {/* Location Item */}
+             <div className="flex items-center gap-1">
+                <div className="h-[25px] w-[25px] bg-white rounded-[3px] flex items-center justify-center">
+                  <IoLocationSharp className="h-[18px] w-[18px] text-lg text-[#E11F25]" />
+                </div>
+                <span className="font-montserrat text-xs font-bold tracking-tight">Manila City</span>
+             </div>
 
+             {/* Vertical Divider (Optional) */}
+             <div className="w-[1px] h-3 bg-white/30"></div>
+
+             {/* Price Item */}
+             <div className="flex items-center gap-1">
+                <div className="h-[25px] w-[25px] bg-white rounded-[3px] flex items-center justify-center">
+                  <IoPricetag className="h-[18px] w-[18px] text-lg text-[#FBBA00]" />
+                </div>
+                <span className="font-montserrat text-xs font-bold tracking-tight">₱ 100 - ₱ 500</span>
+             </div>
+          </div>
+
+          {/* Footer Info */}
+          <div className="mt-auto flex justify-between items-end">
+            <div className="text-[13px] text-white/90 font-medium">
+                <p><span className="font-bold">Hours:</span> 9 AM to 9 PM</p>
+                <p><span className="font-bold">Open:</span> Everyday</p>
+            </div>
+            
+            {/* Heart FAB */}
+            <div className="w-12 h-12 bg-[#E11F25] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer">
+               <svg className="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
+                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+               </svg>
+            </div>
+          </div>
         </div>
-
-
-
       </div>
     </Link>
   );

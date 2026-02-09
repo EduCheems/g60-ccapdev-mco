@@ -3,9 +3,11 @@ import { useRef, useEffect } from "react";
 import CafeCard from "./CafeCard";
 
 interface BestCafesProps {
-  title: string;
+  title?: string;
   cardColor: string;
-  sectionSvg?: React.ReactNode; 
+  badgeText: string; 
+  badgeColor: string; 
+
 }
 
 const cafeData = [
@@ -21,8 +23,7 @@ const cafeData = [
   { id: 10, name: "Meowsie Wonderland", slug: "meowsie-cafe"}
 ];
 
-// Use the interface here so TypeScript sees sectionSvg!
-export default function BestCafes({ title, sectionSvg }: BestCafesProps) {
+export default function BestCafes({ title, cardColor, badgeColor, badgeText }: BestCafesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = (direction: "left" | "right") => {
@@ -61,12 +62,10 @@ export default function BestCafes({ title, sectionSvg }: BestCafesProps) {
     const el = scrollRef.current;
     const { scrollLeft, clientWidth, scrollWidth } = el;
 
-    // If we're at (or near) the end
     if (scrollLeft + clientWidth >= scrollWidth - 5) {
-      // Instantly jump back
+
       el.scrollTo({ left: 0, behavior: "auto" });
 
-      // Then smoothly move forward (next frame)
       requestAnimationFrame(() => {
         el.scrollBy({ left: clientWidth, behavior: "smooth" });
       });
@@ -75,35 +74,58 @@ export default function BestCafes({ title, sectionSvg }: BestCafesProps) {
     }
   }, 5000);
 
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
 
   return (
-    <section className="w-full py-10">
+    <section className="w-full pt-2 pb-8">
       <div className="flex justify-between items-center px-10 mb-6">
-        <h2 className="font-fredoka text-2xl text-white">{title}</h2>
+        {title && <h2 className="font-poppins text-2xl text-white">{title}</h2>}
         
-        <div className="flex bg-white/10 rounded-full p-1 border border-white/20 backdrop-blur-sm">
-          <button onClick={() => handleScroll("left")} className="p-2 hover:bg-white/20 rounded-full text-white cursor-pointer">←</button>
-          <div className="w-[1px] bg-white/20 mx-1"></div>
-          <button onClick={() => handleScroll("right")} className="p-2 hover:bg-white/20 rounded-full text-white cursor-pointer">→</button>
-        </div>
       </div>
 
-      <div 
-        ref={scrollRef}
-        className="flex overflow-x-auto gap-6 px-10 pb-6 snap-x snap-mandatory no-scrollbar"
+      <div className="relative flex items-center group px-10">
+
+        <button
+          onClick={() => handleScroll("left")}
+          className="absolute left-4 z-40 w-12 h-12 bg-white/30 hover:bg-white/50 
+          backdrop-blur-lg rounded-full text-white shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/40
+          opacity-0 group-hover:opacity-100
+          pointer-events-none group-hover:pointer-events-auto"
+        >
+          <span className="text-2xl font-bold">←</span>
+        </button>
+
+        <div 
+
+          ref={scrollRef}
+          className="flex overflow-x-auto gap-6 px-10 pb-6 snap-x snap-mandatory no-scrollbar "
+        >
+
+          {cafeData.map((cafe, i) => (
+            <CafeCard 
+              key={cafe.id}
+              index={i}
+              name={cafe.name}
+              slug={cafe.slug} 
+              cardColor={cardColor}
+              badgeText={badgeText}
+              badgeColor={badgeColor}
+            />
+          ))}
+        </div>
+
+        <button
+        onClick={() => handleScroll("right")}
+        className="absolute right-4 z-50 w-12 h-12 bg-white/30 hover:bg-white/50 
+        backdrop-blur-lg rounded-full text-white shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/40
+        opacity-0 group-hover:opacity-100
+        pointer-events-none group-hover:pointer-events-auto"
       >
-        {cafeData.map((cafe, i) => (
-          <CafeCard 
-            key={cafe.id}
-            index={i}
-            name={cafe.name}
-            slug={cafe.slug} 
-            bgSvg={sectionSvg} // Pass the SVG down!
-          />
-        ))}
+        <span className="text-2xl font-bold">→</span>
+      </button>
+
       </div>
     </section>
   );

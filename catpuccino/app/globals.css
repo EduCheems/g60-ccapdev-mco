@@ -1,16 +1,13 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-poppins: var(--font-poppins);
+  --font-montserrat: var(--font-montserrat);
 }
 
 
@@ -19,6 +16,21 @@
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 40s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 body {
@@ -45,6 +57,22 @@ body {
 }
 
 @layer utilities {
+
+  .text-header-clean {
+    font-family: var(--font-poppins);
+    font-weight: 900;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-info-bold {
+    font-family: var(--font-montserrat);
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
   .no-scrollbar::-webkit-scrollbar{
     display: none; 
   }
@@ -55,13 +83,12 @@ body {
 
   .text-sticker {
   color: white;
-  /* Thick black borders that don't overlap inside the letters */
   text-shadow:
     -2px -2px 0 #000,
      2px -2px 0 #000,
     -2px  2px 0 #000,
      2px  2px 0 #000,
-     0px  4px 0px rgba(0,0,0,0.2); /* Adds that slight 'pop' off the card */
-}
+     0px  4px 0px rgba(0,0,0,0.2);
+  }
 
 }
