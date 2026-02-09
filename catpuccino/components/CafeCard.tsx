@@ -28,7 +28,7 @@ export default function CafeCard({ name, slug, index, cardColor, badgeText, badg
   
   return (
     <Link href={`/discover/${slug}`} className="flex-shrink-0 snap-center">
-      <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-xl flex flex-col`}>
+      <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col`}>
       
         {/* Image Area */}
         <div className="relative z-10 w-full h-[220px] bg-white rounded-[16px] overflow-hidden mb-4 shadow-inner">
