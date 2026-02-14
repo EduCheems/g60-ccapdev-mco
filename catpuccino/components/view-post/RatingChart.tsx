@@ -1,6 +1,11 @@
 // components/view-post/RatingSidebar.tsx
 import RadarChart from '../RadarChart';
 
+interface RatingSidebarProps {
+  ratings: any; // Or your specific ratings interface
+  cafeName: string; // Add this
+}
+
 export default function RatingChart({ ratings }: { ratings: any }) {
   // Sum of all ratings for the "Total Power Level"
   const totalPower = Object.values(ratings).reduce((a: any, b: any) => a + b, 0) as number;
