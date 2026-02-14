@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Comments from "@/components/CommentCard";
 
-export default function ProfilePage() {
+const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("reviews");
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -152,3 +152,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+export default ProfilePage;
