@@ -1,4 +1,4 @@
-// components/view-post/PostContent.tsx
+
 import { IoPricetag, IoLocation, IoTime, IoStar } from "react-icons/io5";
 
 interface ContentProps {
@@ -6,17 +6,16 @@ interface ContentProps {
   city: string;
   time: string;
   rating: number;
-  reviewCount: number; // Added to match function props
-  body: string;        // Changed from 'description' to 'body' to match function props
+  reviewCount: number; 
+  body: string;        
 }
 
 export default function PostContent({ price, city, time, rating, reviewCount, body }: ContentProps) {
   return (
     <div className="max-w-[850px]">
-      {/* Metadata Row */}
+     
       <div className="flex flex-wrap items-center gap-8 mb-8">
         
-        {/* Price */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#855225] rounded-lg text-white flex items-center justify-center text-xl">
             <IoPricetag />
@@ -27,7 +26,6 @@ export default function PostContent({ price, city, time, rating, reviewCount, bo
           </div>
         </div>
 
-        {/* City */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#855225] rounded-lg text-white flex items-center justify-center text-xl">
             <IoLocation />
@@ -38,7 +36,6 @@ export default function PostContent({ price, city, time, rating, reviewCount, bo
           </div>
         </div>
 
-        {/* Time */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#855225] rounded-lg text-white flex items-center justify-center text-xl">
             <IoTime />
@@ -49,7 +46,6 @@ export default function PostContent({ price, city, time, rating, reviewCount, bo
           </div>
         </div>
         
-        {/* Stars - Styled like your reference image */}
         <div className="ml-auto flex items-center gap-2">
           <div className="flex text-[#FCD24C] text-2xl drop-shadow-[0_1.5px_0_rgba(0,0,0,1)]">
             {[...Array(5)].map((_, i) => (
@@ -61,7 +57,6 @@ export default function PostContent({ price, city, time, rating, reviewCount, bo
         </div>
       </div>
 
-      {/* Review Text */}
       <p className="text-lg font-medium leading-relaxed text-black/80 whitespace-pre-line">
         {body}
       </p>

@@ -34,7 +34,8 @@ export default function Navbar(){
             
             <Searchbar />
 
-            <div className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0"></div>
+            <Link href="/profile" className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0 block hover:ring-2 hover:ring-white/50 transition-all"/>
+
         </div>
     </div>
 </nav>

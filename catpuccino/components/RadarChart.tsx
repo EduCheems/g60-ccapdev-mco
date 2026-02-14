@@ -29,8 +29,6 @@ export default function RadarChart({ ratings }: { ratings: Record<string, number
   return (
     <div className="relative w-full flex justify-center items-center">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {/* ... rest of your SVG code ... */}
-        {/* Black Outline Background */}
 
     {/* Main Yellow Polygon */}
     <polygon

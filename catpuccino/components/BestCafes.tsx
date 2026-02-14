@@ -1,31 +1,41 @@
 "use client"; 
 import { useRef, useEffect } from "react";
 import CafeCard from "./CafeCard";
+import { Cafe } from "@/app/data/cafes";
 
 interface BestCafesProps {
   title?: string;
   cardColor: string;
   badgeText: string; 
   badgeColor: string; 
-
+  cafes: Cafe[];           
+  filterKey?: string;      
+  reverse?: boolean;
 }
 
-const cafeData = [
-  { id: 1, name: "MewMew Cafe", slug: "mewmew-cafe" },
-  { id: 2, name: "CatPaws Bistro", slug: "catpaws-bistro" },
-  { id: 3, name: "Meowsie Wonderland", slug: "meowsie-cafe"},
-  { id: 4, name: "MewMew Cafe", slug: "mewmew-cafe" },
-  { id: 5, name: "CatPaws Bistro", slug: "catpaws-bistro" },
-  { id: 6, name: "Meowsie Wonderland", slug: "meowsie-cafe"},
-  { id: 7, name: "Meowsie Wonderland", slug: "meowsie-cafe"},
-  { id: 8, name: "CatPaws Bistro", slug: "catpaws-bistro" },
-  { id: 9, name: "Meowsie Wonderland", slug: "meowsie-cafe"},
-  { id: 10, name: "Meowsie Wonderland", slug: "meowsie-cafe"}
-];
+export default function BestCafes({ 
+  title, 
+  cardColor, 
+  badgeColor, 
+  badgeText, 
+  cafes,          
+  filterKey,      
+  reverse = false 
+}: BestCafesProps) { 
 
-export default function BestCafes({ title, cardColor, badgeColor, badgeText }: BestCafesProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // 1. Process the cafes list based on props
+  const filteredCafes = cafes
+    .filter(c => filterKey ? c.ratings[filterKey] !== undefined : true)
+    .sort((a, b) => {
+      if (!filterKey) return 0;
+      const valA = a.ratings[filterKey] || 0;
+      const valB = b.ratings[filterKey] || 0;
+      return reverse ? valA - valB : valB - valA;
+    });
+
+  // 2. Scroll Handlers
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current; 
@@ -55,60 +65,55 @@ export default function BestCafes({ title, cardColor, badgeColor, badgeText }: B
     }
   }; 
 
+  // 3. Auto-scroll Effect
   useEffect(() => {
-  const interval = setInterval(() => {
-    if (!scrollRef.current) return;
+    const interval = setInterval(() => {
+      if (!scrollRef.current) return;
 
-    const el = scrollRef.current;
-    const { scrollLeft, clientWidth, scrollWidth } = el;
+      const el = scrollRef.current;
+      const { scrollLeft, clientWidth, scrollWidth } = el;
 
-    if (scrollLeft + clientWidth >= scrollWidth - 5) {
-
-      el.scrollTo({ left: 0, behavior: "auto" });
-
-      requestAnimationFrame(() => {
+      if (scrollLeft + clientWidth >= scrollWidth - 5) {
+        el.scrollTo({ left: 0, behavior: "auto" });
+        requestAnimationFrame(() => {
+          el.scrollBy({ left: clientWidth, behavior: "smooth" });
+        });
+      } else {
         el.scrollBy({ left: clientWidth, behavior: "smooth" });
-      });
-    } else {
-      el.scrollBy({ left: clientWidth, behavior: "smooth" });
-    }
-  }, 5000);
+      }
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
-
 
   return (
     <section className="w-full pt-2 pb-8">
       <div className="flex justify-between items-center px-10 mb-6">
         {title && <h2 className="font-poppins text-2xl text-white">{title}</h2>}
-        
       </div>
 
       <div className="relative flex items-center group px-10">
-
+        {/* LEFT BUTTON */}
         <button
           onClick={() => handleScroll("left")}
           className="absolute left-4 z-40 w-12 h-12 bg-white/30 hover:bg-white/50 
           backdrop-blur-lg rounded-full text-white shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/40
-          opacity-0 group-hover:opacity-100
-          pointer-events-none group-hover:pointer-events-auto"
+          opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
         >
           <span className="text-2xl font-bold">←</span>
         </button>
 
+        {/* CARDS CONTAINER */}
         <div 
-
           ref={scrollRef}
-          className="flex overflow-x-auto gap-6 px-10 pb-6 snap-x snap-mandatory no-scrollbar "
+          className="flex overflow-x-auto gap-6 px-10 pb-6 snap-x snap-mandatory no-scrollbar"
         >
-
-          {cafeData.map((cafe, i) => (
+          {filteredCafes.map((cafe, i) => (
             <CafeCard 
               key={cafe.id}
-              id={cafe.slug}
+              id={cafe.slug} 
               index={i}
-              name={cafe.name}
+              name={cafe.title}
               slug={cafe.slug} 
               cardColor={cardColor}
               badgeText={badgeText}
@@ -117,16 +122,15 @@ export default function BestCafes({ title, cardColor, badgeColor, badgeText }: B
           ))}
         </div>
 
+        {/* RIGHT BUTTON */}
         <button
-        onClick={() => handleScroll("right")}
-        className="absolute right-4 z-50 w-12 h-12 bg-white/30 hover:bg-white/50 
-        backdrop-blur-lg rounded-full text-white shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/40
-        opacity-0 group-hover:opacity-100
-        pointer-events-none group-hover:pointer-events-auto"
-      >
-        <span className="text-2xl font-bold">→</span>
-      </button>
-
+          onClick={() => handleScroll("right")}
+          className="absolute right-4 z-50 w-12 h-12 bg-white/30 hover:bg-white/50 
+          backdrop-blur-lg rounded-full text-white shadow-2xl flex items-center justify-center transition-all active:scale-90 border border-white/40
+          opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+        >
+          <span className="text-2xl font-bold">→</span>
+        </button>
       </div>
     </section>
   );

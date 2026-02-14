@@ -2,9 +2,9 @@ import { IoLocationSharp } from "react-icons/io5";
 
 export default function LocationCard() {
   return (
-    <div className="flex items-center gap-6 bg-[#FDF3E7] border-2 border-black rounded-3xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)] max-w-2xl">
-        
-      <div className="w-32 h-32 bg-[#333333] rounded-2xl flex-shrink-0" />
+    <div className="flex items-center gap-6 bg-[#FEF6EA] border-2 border-black rounded-3xl p-6 shadow-[5px_5px_0_0_rgba(0,0,0,1)] max-w-2xl">
+
+      <div className="w-32 h-32 bg-[#FEF6EA] rounded-2xl flex-shrink-0" />
       
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-black text-black">
