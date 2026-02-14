@@ -106,6 +106,7 @@ export default function BestCafes({ title, cardColor, badgeColor, badgeText }: B
           {cafeData.map((cafe, i) => (
             <CafeCard 
               key={cafe.id}
+              id={cafe.slug}
               index={i}
               name={cafe.name}
               slug={cafe.slug} 

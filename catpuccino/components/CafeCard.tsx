@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { IoLocationSharp, IoPricetag } from "react-icons/io5";
 
 interface CafeCardProps {
+  id: string; 
   name: string;
   slug: string;
   index: number; 
@@ -24,10 +25,10 @@ const getRankStyle = (index: number) => {
   }
 };
 
-export default function CafeCard({ name, slug, index, cardColor, badgeText, badgeColor }: any) {
+export default function CafeCard({ id, name, slug, index, cardColor, badgeText, badgeColor }: CafeCardProps) {
   
   return (
-    <Link href={`/discover/${slug}`} className="flex-shrink-0 snap-center">
+    <Link href={`/cafe/${id}`} className="flex-shrink-0 snap-center block">
       <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col`}>
       
         {/* Image Area */}

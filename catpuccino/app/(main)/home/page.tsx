@@ -9,7 +9,7 @@ export default function DiscoverPage() {
 
       <HeroSection /> 
 
-      <div id ="catpuccino-definition" className="bg-[#FAFAFA] h-[320px] w-full flex flex-col justify-center px-[140px]">
+      <div id ="catpuccino-definition" className="bg-[#FEF6EA] h-[320px] w-full flex flex-col justify-center px-[140px]">
         <h2 className="text-[#855225] font-poppins font-black text-[20px] leading-tight uppercase tracking-tight">
             What's the deal with 
         </h2>
@@ -68,7 +68,7 @@ export default function DiscoverPage() {
           </div>
       </section>
 
-      <section className="bg-[#FAFAFA]">
+      <section className="bg-[#FEF6EA]">
         <MarqueeBand text="General Munchkin's social spots" bgColor="bg-[#EE7D6C]" />
         <BestCafes 
           cardColor="bg-[#ED7364]" 

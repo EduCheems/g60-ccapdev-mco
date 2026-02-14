@@ -56,15 +56,17 @@ const CommentCard = ({ username, timeAgo, text, likes }: CommentProps) => {
   );
 };
 
-export default function Comments() {
+export default function Comments({reviews}: {reviews: CommentProps[]}) {
   return (
     <div className="p-8 flex flex-col items-center">
-      <CommentCard 
+      {reviews.map((rev, index) => (
+<CommentCard 
         username="Customer #1" 
         timeAgo="10m ago" 
         text="amazing cats, 100% coming back" 
         likes={67} 
       /> // will change this so that we can integrate data
+      ))}
     </div>
   );
 }
