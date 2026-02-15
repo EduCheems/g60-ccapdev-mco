@@ -26,7 +26,7 @@ export default async function ViewCafePage({
   }
 
   const mockReviews = [
-    { username: "Customer #1", timeAgo: "10m ago", text: "amazing cats, 100% coming back", likes: 67 },
+    { username: "Customer #1", timeAgo: "10m ago", text: "amazing cats, 100% coming back", likes: 67, imageUrl: "/comsec-imgs/skeleton.png", avatarUrl: "/comsec-imgs/skeleton.png" },
     { username: "JoJoFan", timeAgo: "1h ago", text: "The vibes here are truly menacing (in a good way).", likes: 12 },
     { username: "CatLover_PH", timeAgo: "3h ago", text: "Super friendly staff and even friendlier kittens!", likes: 24 },
   ];

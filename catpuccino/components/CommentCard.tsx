@@ -1,53 +1,72 @@
 import React from "react";
+import { GoDotFill } from "react-icons/go";
 
-interface CommentProps {
+interface Review {
   username: string;
   timeAgo: string;
   text: string;
   likes: number;
+  avatarUrl?: string;
+  imageUrl?: string;
 }
 
-const CommentCard = ({ username, timeAgo, text, likes }: CommentProps) => {
+interface CommentsProps {
+  reviews: Review[];
+}
+
+const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Review) => {
   return (
-    <div className="bg-[#D9D9D9] rounded-[40px] p-8 mb-4 w-full max-w-4xl shadow-sm">
+    <div className="bg-[#F9F5E7] border border-black rounded-[40px] p-6 mb-6 w-full max-w-5xl shadow-sm">
       <div className="flex items-start gap-4">
-        {/* Profile Circle */}
-        <div className="w-12 h-12 bg-[#6B6B6B] rounded-full flex-shrink-0" />
+        
+        {/* Profile Section */}
+        <div className="flex-shrink-0">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={username} className="w-12 h-12 rounded-full object-cover border border-gray-300" />
+          ) : (
+            <div className="w-12 h-12 bg-[#6B6B6B] rounded-full" />
+          )}
+        </div>
 
         <div className="flex-1">
           {/* Header */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-black text-lg">{username}</span>
-            <span className="text-gray-600 text-lg">· {timeAgo}</span>
+            <span className="text-gray-500 text-lg">· {timeAgo}</span>
           </div>
 
+          {/* Image */}
+          {imageUrl && (
+            <div className="my-4">
+              <img 
+                src={imageUrl} 
+                alt="Comment attachment" 
+                className="rounded-[10px] max-h-[150px] w-auto object-cover border border-black/10"
+              />
+            </div>
+          )}
+
           {/* Comment Text */}
-          <p className="text-black text-2xl mb-6 font-medium leading-tight">
+          <p className="text-black text-xl font-medium mb-4">
             {text}
           </p>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-6 text-gray-700">
-              <button className="flex items-center gap-2 hover:opacity-70 transition-opacity">
-                <div className="w-4 h-4 bg-gray-600 rounded-full" />
-                <span className="font-medium">{likes}</span>
+          <div className="flex items-center justify-between mt-6 text-gray-600 font-medium text-sm">
+            <div className="flex items-center gap-6">
+              <button className="flex items-center gap-2 hover:text-black transition-colors">
+                <GoDotFill className="text-gray-500" /> {likes}
               </button>
-              
-              <button className="flex items-center gap-2 hover:opacity-70 transition-opacity">
-                <div className="w-4 h-4 bg-gray-600 rounded-full" />
-                <span>Reply</span>
+              <button className="flex items-center gap-2 hover:text-black transition-colors">
+                <GoDotFill className="text-gray-500" /> Reply
               </button>
-
-              <button className="flex items-center gap-2 hover:opacity-70 transition-opacity">
-                <div className="w-4 h-4 bg-gray-600 rounded-full" />
-                <span>Share</span>
+              <button className="flex items-center gap-2 hover:text-black transition-colors">
+                <GoDotFill className="text-gray-500" /> Share
               </button>
             </div>
 
-            <button className="flex items-center gap-2 text-gray-700 hover:opacity-70 transition-opacity">
-              <div className="w-4 h-4 bg-gray-600 rounded-full" />
-              <span>Report</span>
+            <button className="flex items-center gap-2 hover:text-red-600 transition-colors">
+              <GoDotFill className="text-gray-500" /> Report
             </button>
           </div>
         </div>
@@ -56,16 +75,11 @@ const CommentCard = ({ username, timeAgo, text, likes }: CommentProps) => {
   );
 };
 
-export default function Comments({reviews}: {reviews: CommentProps[]}) {
+export default function Comments({ reviews }: CommentsProps) {
   return (
-    <div className="p-8 flex flex-col items-center">
-      {reviews.map((rev, index) => (
-<CommentCard 
-        username="Customer #1" 
-        timeAgo="10m ago" 
-        text="amazing cats, 100% coming back" 
-        likes={67} 
-      /> // will change this so that we can integrate data
+    <div className="w-full">
+      {reviews.map((review, index) => (
+        <CommentCard key={index} {...review} />
       ))}
     </div>
   );
