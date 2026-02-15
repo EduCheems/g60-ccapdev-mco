@@ -110,15 +110,6 @@ const ProfilePage = () => {
       {/*  CONTENT SECTION  */}
       <section className="flex-1 bg-[#FEF6EA] px-[140px] py-6 flex flex-col gap-4">
 
-        {/*  REVIEWS  */}
-        {activeTab === "reviews" && (
-          <Comments
-            reviews={[
-              { username: "Customer #1", timeAgo: "10m ago", text: "Goated cafe in sight?!", likes: 67 },
-            ]}
-          />
-        )}
-
         {activeTab === "reviews" && (
         <div className="flex flex-col gap-6">
           <PostPreview 
@@ -144,15 +135,6 @@ const ProfilePage = () => {
           />
         </div>
       )}
-
-        {/*  RECOMMENDATIONS  */}
-        {activeTab === "recommendations" && (
-          <Comments
-            reviews={[
-              { username: "Customer #2", timeAgo: "1h ago", text: "Highly recommend this cozy cat cafe!", likes: 67 },
-            ]}
-          />
-        )}
 
         {/*  FAVORITES  */}
         {activeTab === "favorites" && (
