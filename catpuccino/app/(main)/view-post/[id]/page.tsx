@@ -17,12 +17,14 @@ import Ratings from "@/components/view-post/Ratings";
 
 const sampleComments = [
   {
+    cafeId: 1,
     username: "CoffeeBean_24",
     timeAgo: "2 hours ago",
     text: "This place is actually amazing for studying! The cats are super chill and don't jump on your laptop while you're working.",
     likes: 12,
   },
   {
+    cafeId: 1,
     username: "MeowMaster",
     timeAgo: "5 hours ago",
     text: "Did you try the Mango Frappe? It's a game changer.",
