@@ -8,7 +8,7 @@ const AboutPage = () => {
 
       {/*  HERO TITLE  */}
       <section className="bg-[#FBF3DE] px-[140px] pt-16 pb-8 text-center">
-        <h1 className="text-5xl font-poppins font-black text-[#262626]">
+        <h1 className="text-5xl font-poppins font-black text-[#743d0d]">
           🐾About Catpuccino🐾
         </h1>
       </section>
@@ -19,7 +19,7 @@ const AboutPage = () => {
         <div className="flex gap-16 items-start">
 
           <div className="flex-1">
-            <h2 className="text-3xl font-bold mb-4 text-[#262626]">
+            <h2 className="text-3xl font-bold mb-4 text-[#743d0d]">
               Caffeine and Cats: A Purrfect Blend
             </h2>
 
@@ -39,7 +39,7 @@ const AboutPage = () => {
       {/*  WHAT’S OUR DEAL  */}
       <section className="bg-[#FEF6EA] px-[140px] py-20 text-center">
 
-        <h2 className="text-4xl font-bold text-[#262626] mb-16">
+        <h2 className="text-4xl font-bold text-[#743d0d] mb-16">
           What’s our deal
         </h2>
 
@@ -72,25 +72,25 @@ const AboutPage = () => {
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#262626]">6,767 users</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 users</h3>
             <p className="text-[#262626]">A growing community of cat lovers sharing their experiences.</p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#262626]">6,767 reviews</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 reviews</h3>
             <p className="text-[#262626]">Honest feedback on cafés, cats, coffee, and comfort.</p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#262626]">6,767 Cafe's Listed</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 Cafe's Listed</h3>
             <p className="text-[#262626]">From small local spots to international favorites.</p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#262626]">5⭐ Average Rating</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">5⭐ Average Rating</h3>
             <p className="text-[#262626]">Because great coffee and purring companions never disappoint.</p>
           </div>
 
@@ -103,7 +103,7 @@ const AboutPage = () => {
 
         <div className="w-[300px] h-[120px] bg-gray-300 rounded-xl mx-auto mb-10"></div>
 
-        <h2 className="text-4xl font-poppins font-black text-[#262626]">
+        <h2 className="text-4xl font-poppins font-black text-[#703603]">
           And we’re still expanding!
         </h2>
 

@@ -2,6 +2,8 @@ import { cafes } from "@/app/data/cafes";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import Comments from "@/components/CommentCard";
 import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
+import { IoLocationSharp, IoPricetag, IoTime } from "react-icons/io5";
+import Ratings from "@/components/view-post/Ratings";
 
 export default async function ViewCafePage({
   params,
@@ -46,15 +48,15 @@ export default async function ViewCafePage({
 
           <div className="relative flex-1 bg-[#FEF6EA] border-2 border-[#855225] rounded-[10px] px-6 py-6 flex-col shadow-[5px_5px_0_0_#85522533]">
             {/* TITLE */}
-            <h1 className="text-[42px] font-black mb-4 tracking-tighter leading-none text-[#855225] ">
+            <h1 className="text-[47px] font-black mb-4 tracking-tighter leading-none text-[#855225] ">
               {cafe.title}
             </h1>
 
             {/* METADATA */}
-            <div className="flex gap-5 mb-8 items-center font-black text-sm uppercase">
+            <div className="flex gap-5 mb-5 items-center font-black text-sm uppercase">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#4A90E2] rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text- text-xl shadow-[5px_5px_0_0_#85522533]">
-                  ₱
+                <div className="w-8 h-8 bg-[#FFFFFF] rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text- text-xl shadow-[5px_5px_0_0_#85522533]">
+                  <IoPricetag className=" text-xl text-[#FBBA00]" />
                 </div>
                 <div className="flex flex-col mt-1">
                   <span className="text-[12px] font-montserrat font-black text-[#262626] leading-none">Price:</span>
@@ -63,8 +65,8 @@ export default async function ViewCafePage({
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#FFD700] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
-                  📍
+                <div className="w-8 h-8 bg-[#FFFFFF] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
+                  <IoLocationSharp className="text-xl text-[#E11F25]" />
                 </div>
                 <div className="flex flex-col mt-1">
                   <span className="text-[12px] font-black text-[#262626] leading-none">City:</span>
@@ -73,15 +75,21 @@ export default async function ViewCafePage({
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#FF6B6B] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
-                  🕒
+                <div className="w-8 h-8 bg-[#FFFFFF] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
+                  <IoTime className="text-xl text-[#FF7300]" />
                 </div>
                 <div className="flex flex-col mt-1">
                   <span className="text-[12px] font-black text-[#262626] leading-none">Time:</span>
                   <span className="text-[10px] font-bold text-black">{cafe.time}</span>
                 </div>
               </div>
+
+              <div className="ml-auto flex items-center border-[#855225]/20 h-10">
+                <Ratings ratings={cafe.ratings} />
+              </div>
             </div>
+
+            <div className="border-b-2 border-[#855225] mb-5 w-full" />
 
             {/* DESCRIPTION PARAGRAPH */}
             <div className="-mb-6">
