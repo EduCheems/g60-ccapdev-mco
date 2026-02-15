@@ -9,7 +9,7 @@ const AboutPage = () => {
       {/*  HERO TITLE  */}
       <section className="bg-[#FBF3DE] px-[140px] pt-16 pb-8 text-center">
         <h1 className="text-5xl font-poppins font-black text-[#262626]">
-          About Catpuccino
+          🐾About Catpuccino🐾
         </h1>
       </section>
 
@@ -65,7 +65,7 @@ const AboutPage = () => {
       <section className="bg-[#FBF3DE] px-[140px] py-20 text-center">
 
         <h2 className="text-4xl font-bold text-[#262626] mb-16">
-          Stats
+          Statistics
         </h2>
 
         <div className="grid grid-cols-2 gap-16">
