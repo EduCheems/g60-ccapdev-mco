@@ -15,7 +15,7 @@ export const cafes: Cafe[] = [
     id: 1,
     slug: "cozy-cat-cafe",
     title: "Cozy Cat Cafe",
-    imageUrl: "/images/cafe1.jpg",
+    imageUrl: "/images/BestService/GoldenWhisker.jpg",
     tags: ["Work-friendly", "Aesthetic"],
     price: "₱200-₱500",
     city: "Manila",
@@ -26,7 +26,7 @@ export const cafes: Cafe[] = [
     id: 2,
     slug: "mew-mew-lounge",
     title: "Mew Mew Lounge",
-    imageUrl: "/images/cafe2.jpg",
+    imageUrl: "/images/BestService/AlleyPawCafe.jpg",
     tags: ["Refreshing", "Aesthetic"],
     price: "₱150-₱400",
     city: "Quezon City",
@@ -68,7 +68,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 6,
-    slug: "catnip-&-cocoa",
+    slug: "catnip-cocoa",
     title: "Catnip & Cocoa",
     imageUrl: "/images/Friendly/Catnip&Cocoa.jpeg",
     tags: ["Free Wi-Fi", "Minimalist"],
@@ -90,7 +90,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 8,
-    slug: "brew-&-meow",
+    slug: "brew-meow",
     title: "Brew & Meow",
     imageUrl: "/images/Friendly/Brew&Meow.jpg",
     tags: ["Aesthetic", "Work-friendly"],
@@ -101,7 +101,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 9,
-    slug: "nuzzle-&-nap",
+    slug: "nuzzle-nap",
     title: "Nuzzle & Nap",
     imageUrl: "/images/Friendly/Nuzzle&Nap.jpg",
     tags: ["Date-friendly", "Free Wi-Fi"],
@@ -112,7 +112,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 10,
-    slug: "cat’s-cradle-café",
+    slug: "cats-cradle-cafe",
     title: "Cat’s Cradle Café",
     imageUrl: "/images/Friendly/Cat'sCradleCafe.jpg",
     tags: ["Quiet", "Minimalist"],
@@ -134,7 +134,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 12,
-    slug: "catfé-society",
+    slug: "catfe-society",
     title: "Catfé Society",
     imageUrl: "/images/Friendly/CatfeSociety.jpeg",
     tags: ["Work-friendly", "Minimalist"],
@@ -145,7 +145,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 13,
-    slug: "purrk-&-beans",
+    slug: "purrk-beans",
     title: "Purrk & Beans",
     imageUrl: "/images/Underrated/Purrk&Beans.jpg",
     tags: ["Chill", "Work-friendly"],
@@ -156,7 +156,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 14,
-    slug: "catté-latte",
+    slug: "catte-latte",
     title: "Catté Latte",
     imageUrl: "/images/Underrated/CatteLatte.jpeg",
     tags: ["Study-friendly", "Quiet"],
@@ -255,7 +255,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 23,
-    slug: "clawffee-&-company",
+    slug: "clawffee-company",
     title: "Clawffee & Company",
     imageUrl: "/images/Sociable/Clawffee&Company.jpg",
     tags: ["Chill", "Date-friendly"],
@@ -277,7 +277,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 25,
-    slug: "midnight-whiskers-café",
+    slug: "midnight-whiskers-cafe",
     title: "Midnight Whiskers Café",
     imageUrl: "/images/Sociable/MidnightWhiskersCafe.jpg",
     tags: ["Study-friendly", "Cozy"],
@@ -343,7 +343,7 @@ export const cafes: Cafe[] = [
   },
   {
     id: 31,
-    slug: "whiskers-&-words",
+    slug: "whiskers-words",
     title: "Whiskers & Words",
     imageUrl: "/images/Sociable/Whisker&Words.jpg",
     tags: ["Cozy", "Quiet"],
