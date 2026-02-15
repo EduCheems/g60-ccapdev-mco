@@ -4,6 +4,7 @@ import Comments from "@/components/CommentCard";
 import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
 import { IoLocationSharp, IoPricetag, IoTime } from "react-icons/io5";
 import Ratings from "@/components/view-post/Ratings";
+import { Review, reviews } from "@/app/data/reviews";
 
 export default async function ViewCafePage({
   params,
@@ -24,11 +25,12 @@ export default async function ViewCafePage({
     );
   }
 
-  const mockReviews = [
+  const cafeReviews = reviews.filter(r => r.cafeId === cafe.id);
+  /*const mockReviews = [
     { username: "Customer #1", timeAgo: "10m ago", text: "amazing cats, 100% coming back", likes: 67, imageUrl: "/comsec-imgs/skeleton.png", avatarUrl: "/comsec-imgs/skeleton.png" },
     { username: "JoJoFan", timeAgo: "1h ago", text: "The vibes here are truly menacing (in a good way).", likes: 12 },
     { username: "CatLover_PH", timeAgo: "3h ago", text: "Super friendly staff and even friendlier kittens!", likes: 24 },
-  ];
+  ];*/
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16">
@@ -113,7 +115,7 @@ export default async function ViewCafePage({
           
             <div className="flex items-center gap-30 mt-10 mb-2">
               <h2 className="font-montserrat font-bold text-[30px] text-[#855225] uppercase tracking-tighter whitespace-nowrap">
-                Reviews ({mockReviews.length})
+                Reviews ({cafeReviews.length})
               </h2>
 
             <div className="ml-auto flex gap-3">
@@ -132,7 +134,7 @@ export default async function ViewCafePage({
             </div>
           </div>
 
-            <Comments reviews={mockReviews} />
+            <Comments reviews={cafeReviews} />
 
             <div className="mt-2 flex justify-start">
               <button className="bg-[#E5781E] rounded-[10px] text-white px-8 py-3 font-black uppercase border-2 border-black shadow-[5px_5px_0_0_#85522533] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
