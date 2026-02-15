@@ -112,11 +112,17 @@ const ProfilePage = () => {
 
         {/*  REVIEWS  */}
         {activeTab === "reviews" && (
-          <Comments
-            reviews={[
-              { username: "Customer #1", timeAgo: "10m ago", text: "Goated cafe in sight?!", likes: 67 },
-            ]}
-          />
+            <Comments
+              reviews={[
+                { 
+                  cafeId: 1, 
+                  username: "Customer #1", 
+                  timeAgo: "10m ago", 
+                  text: "Goated cafe in sight?!", 
+                  likes: 67 
+                }
+              ]}
+            />
         )}
 
         {activeTab === "reviews" && (
@@ -150,7 +156,13 @@ const ProfilePage = () => {
         {activeTab === "recommendations" && (
           <Comments
             reviews={[
-              { username: "Customer #2", timeAgo: "1h ago", text: "Highly recommend this cozy cat cafe!", likes: 67 },
+              { 
+                cafeId: 2, // Changed to a number
+                username: "Customer #2", 
+                timeAgo: "1h ago", 
+                text: "Highly recommend this cozy cat cafe!", 
+                likes: 67 
+              },
             ]}
           />
         )}

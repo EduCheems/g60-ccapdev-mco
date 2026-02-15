@@ -1,4 +1,4 @@
-"use client"; // <--- Add this at the very top!
+"use client";
 
 export default function Footer() {
     const scrollToTop = () => {

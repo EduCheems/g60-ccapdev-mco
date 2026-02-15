@@ -16,7 +16,6 @@ export default function PostHeader({ title, tags, price, city, time, imageUrl }:
 
   return (
     <div className="mb-8 border-4 border-black overflow-hidden bg-white shadow-[8px_8px_0_0_rgba(0,0,0,1)]">
-  {/* Image Container */}
   <div className="h-64 w-full overflow-hidden border-b-4 border-black">
     <img 
       src={imageUrl} 
@@ -26,7 +25,6 @@ export default function PostHeader({ title, tags, price, city, time, imageUrl }:
   </div>
 
   <div className="p-6">
-    {/* Tags */}
     <div className="flex gap-3 mb-4">
       {tags.map((tag) => (
         <span 

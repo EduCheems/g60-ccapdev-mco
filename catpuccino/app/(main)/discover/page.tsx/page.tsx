@@ -1,5 +1,3 @@
-// app/(main)/discover/page.tsx
-
 import HeroSection from "@/components/HeroSection";
 import BestCafes from "@/components/BestCafes";
 import MarqueeBand from "@/components/MarqueeBand";

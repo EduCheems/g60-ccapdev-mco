@@ -1,5 +1,3 @@
-// components/CategoryIcon.tsx
-
 export default function CategoryIcon({ title }: { title: string }) {
   const getIconPath = () => {
     switch (title) {

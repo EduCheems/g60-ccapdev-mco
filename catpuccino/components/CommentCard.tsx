@@ -16,7 +16,6 @@ const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Re
     <div className="bg-[#F9F5E7] border border-black rounded-[20px] p-6 mb-6 w-full max-w-5xl shadow-sm">
       <div className="flex items-start gap-4">
         
-        {/* Profile Section */}
         <div className="flex-shrink-0">
           {avatarUrl ? (
             <img src={avatarUrl} alt={username} className="w-12 h-12 rounded-full object-cover border border-gray-300" />
@@ -26,13 +25,12 @@ const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Re
         </div>
 
         <div className="flex-1">
-          {/* Header */}
+     
           <div className="flex items-center gap-2 mb-1">
             <span className="font-bold text-black text-lg">{username}</span>
             <span className="text-gray-500 text-lg">· {timeAgo}</span>
           </div>
 
-          {/* Image */}
           {imageUrl && (
             <div className="my-4">
               <img 
@@ -43,12 +41,10 @@ const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Re
             </div>
           )}
 
-          {/* Comment Text */}
           <p className="text-black text-xl font-medium mb-4">
             {text}
           </p>
 
-          {/* Footer Actions */}
           <div className="flex items-center justify-between mt-8 text-gray-700 font-black text-sm uppercase tracking-tight">
             <div className="flex items-center gap-8">
               <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors group">

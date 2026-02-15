@@ -5,7 +5,6 @@ import StarSlider from '@/components/StarScale';
 import CafeSearch from '@/components/CafeSearcher';
 
 //Upload box (Should be migrated to components folder)
-
 const UploadBox = ({ label }: { label: string }) => (
   <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
     <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
@@ -79,7 +78,6 @@ export default function CreatePostPage() {
                       focus:outline-none focus:border-[#855225] transition-all
                       shadow-[5px_5px_0_0_#85522533] shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]" 
           />
-
 
           {/* 3. Star Scaler */}
           <div 
