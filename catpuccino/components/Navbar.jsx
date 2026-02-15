@@ -16,10 +16,9 @@ export default function Navbar(){
 
         <div className="flex-[2] flex justify-center gap-8 text-[12px] font-medium uppercase tracking-widest text-white/80">
             <Link href="/home" className="hover:text-[#D26500] hover:font-bold transition-all">Home</Link>
-            <Link href="/discover" className="hover:text-[#D26500] hover:font-bold transition-all">Discover</Link>
+            {/*<Link href="/discover" className="hover:text-[#D26500] hover:font-bold transition-all">Discover</Link>*/}
             <Link href="/about" className="hover:text-[#D26500] hover:font-bold transition-all">About</Link>
             <Link href="/contact" className="hover:text-[#D26500] hover:font-bold transition-all">Contact</Link>
-            <Link href="/review" className="hover:text-[#D26500] hover:font-bold transition-all">Review</Link>
         </div>
 
         <div className="flex-1 flex items-center justify-end gap-4">

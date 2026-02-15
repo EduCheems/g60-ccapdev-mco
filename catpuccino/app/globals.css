@@ -1,5 +1,7 @@
 @import "tailwindcss";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
@@ -9,6 +11,14 @@
 @theme inline {
   --font-poppins: var(--font-poppins);
   --font-montserrat: var(--font-montserrat);
+
+  --text-32: 32px;
+  --text-42: 42px;
+  --text-28: 28px;
+  --text-20: 20px;
+  --text-16: 16px;
+
+  --font-weight-black: 900
 }
 
 
