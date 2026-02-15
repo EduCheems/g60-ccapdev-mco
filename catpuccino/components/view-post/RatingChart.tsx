@@ -15,7 +15,7 @@ interface RatingSidebarProps {
 export default function RatingSidebar({ ratings }: RatingSidebarProps) {
   return (
     <div className="w-[380px]">
-      <div className="bg-[#FCD24C] rounded-[20px] p-6 border-2 border-black shadow-[5px_5px_0_0_#85522533]">
+      <div className="bg-[#FCD24C] rounded-[20px] p-6 border-2 border-[#855225] shadow-[5px_5px_0_0_#85522533]">
     
         <div className="flex items-center justify-center gap-4 mb-6">
           <div className="h-[2px] w-12 bg-black/20 rounded-full" />
@@ -25,7 +25,7 @@ export default function RatingSidebar({ ratings }: RatingSidebarProps) {
           <div className="h-[2px] w-12 bg-black/20 rounded-full" />
         </div>
 
-        <div className="bg-[#FEF6EA] aspect-square rounded-[20px] mb-8 border-2 border-black flex items-center justify-center overflow-hidden shadow-[inset_4px_4px_1px_rgba(133,82,37,0.4)]">
+        <div className="bg-[#FEF6EA] aspect-square rounded-[20px] mb-8 border-2 border-[#855225] flex items-center justify-center overflow-hidden shadow-[inset_4px_4px_1px_rgba(133,82,37,0.4)]">
           <div className="w-[85%] h-[85%]">
             <RadarChart ratings={ratings} />
           </div>
@@ -47,9 +47,9 @@ export default function RatingSidebar({ ratings }: RatingSidebarProps) {
                   </span>
                 </div>
 
-                <div className="h-[12px] bg-[#FEF6EA] rounded-full w-full border border-black shadow-[inset_0px_2px_4px_rgba(0,0,0,0.3)] overflow-hidden">
+                <div className="h-[12px] bg-[#FEF6EA] rounded-full w-full border border-[#855225] shadow-[inset_0px_2px_4px_rgba(0,0,0,0.3)] overflow-hidden">
                   <div 
-                    className="h-full transition-all duration-1000 ease-out border-r border-black/20 rounded-lg shadow-[inset_2px_4px_0px_rgba(133,82,37,0.4)]" 
+                    className="h-full transition-all duration-1000 ease-out border-r border-[#855225]/20 rounded-lg shadow-[inset_2px_4px_0px_rgba(133,82,37,0.4)]" 
                     style={{ 
                       width: `${(value / 5) * 100}%`, 
                       backgroundColor: barColor,

@@ -1,56 +1,65 @@
-// components/view-post/SpotlightSection.tsx
+import React from 'react';
 
-const OrangeTag = ({ value }: { value: number }) => (
-  <div className="absolute -right-3 top-1/2 -translate-y-1/2 bg-[#FF4500] text-white font-black px-2 py-1 rounded shadow-[4px_4px_0_0_rgba(0,0,0,1)] border-2 border-black z-10 text-sm">
-    {value}
+export const CatSpotlight = ({ name, tags }: { name: string, tags: string[] }) => (
+  <div className="group relative border-2 border-[#855225] rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[320px] overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none rounded-[10px] shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)] z-10" />
+    <h3 className="font-black text-20 mb-6 uppercase tracking-tighter text-[#855225] z-20">Cat Spotlight</h3>
+    <div className="relative w-36 h-36 rounded-full bg-[#FEF6EA] border-2 border-[#855225] mb-4 overflow-hidden z-20">
+       <div className="absolute inset-0 rounded-full shadow-[inset_4px_4px_8px_rgba(0,0,0,0.3)]" />
+    </div>
+    <span className="font-black text-16 mb-4 text-[#855225] uppercase z-20">{name}</span>
+    <div className="flex gap-2 z-20">
+      {tags.map(tag => (
+        <span key={tag} className="bg-[#FF7300] text-white text-[10px] px-4 py-1.5 rounded-md font-black uppercase border-2 border-[#855225]">
+          {tag}
+        </span>
+      ))}
+    </div>
   </div>
 );
 
-export default function Spotlights() {
+export const BestBuyer = ({ name, tags }: { name: string, tags: string[] }) => (
+  <div className="relative border-2 border-[#855225] rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[320px] overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none rounded-[10px] shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)] z-10" />
+    <h3 className="font-black text-20 mb-6 uppercase tracking-tighter text-[#855225] z-20">Best buyer</h3>
+    <div className="relative w-full h-36 rounded-2xl bg-[#FEF6EA] border-2 border-[#855225] mb-4 overflow-hidden z-20">
+       <div className="absolute inset-0 shadow-[inset_4px_4px_8px_rgba(0,0,0,0.2)]" />
+    </div>
+    <span className="font-black text-16 mb-4 text-[#855225] uppercase z-20">{name}</span>
+    <div className="flex gap-2 z-20">
+      {tags.map(tag => (
+        <span key={tag} className="bg-[#FF7300] text-white text-[10px] px-4 py-1.5 rounded-lg font-black uppercase border-2 border-[#855225]">
+          {tag}
+        </span>
+      ))}
+    </div>
+  </div>
+);
+
+export const CafeMenu = () => (
+  <div className="w-[380px] relative border-2 border-black rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[350px] overflow-hidden shadow-[5px_5px_0_0_#85522533]">
+    <div className="absolute inset-0 pointer-events-none rounded-[10px] shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)] z-10" />
+    <h3 className="font-black text-2xl mb-4 uppercase tracking-tighter text-[#855225] z-20">Cafe Menu</h3>
+    
+    <div className="relative w-full flex-1 border-2 border-[#855225] rounded-[10px] overflow-hidden z-20">
+       <div className="absolute inset-0 flex items-center justify-center text-black/20 font-black text-sm uppercase p-4 text-center">
+         Click to expand menu
+       </div>
+    </div>
+  </div>
+);
+
+export const SpotlightSection = () => {
   return (
-    <div className="pt-12">
-      <div className="flex items-center gap-4 mb-8">
-        <h2 className="font-montserrat font-black uppercase text-2xl text-black">More about the cafe</h2>
-        <div className="h-[2px] flex-1 bg-black/20"></div>
+    <div className="flex flex-col md:flex-row gap-6 w-full mt-12 items-stretch">
+      <div className="flex-1 flex">
+        <CatSpotlight name="Pochacco" tags={["Friendly", "Calm"]} />
       </div>
-
-      <div className="flex justify-between items-stretch gap-6">
-        {/* Cat Spotlight */}
-        <div className="relative flex-1 bg-[#FEF6EA] border-2 border-black rounded-[20px] p-6 flex flex-col items-center shadow-[6px_6px_0_0_#85522533]">
-          <h3 className="text-3xl font-black mb-6 text-black uppercase tracking-tighter">Cat Spotlight</h3>
-          <div className="w-40 h-40 rounded-full bg-[#D9D9D9] border-2 border-black mb-4 overflow-hidden shadow-inner" />
-          <span className="font-black text-2xl mb-4 text-black">Pochacco</span>
-          <div className="flex gap-2">
-            {["Friendly", "Sleepy"].map(tag => (
-              <span key={tag} className="bg-[#A3B18A] text-black px-4 py-1 rounded-full text-xs font-black uppercase border-2 border-black">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Best Buyer */}
-        <div className="relative flex-1 bg-[#FEF6EA] border-2 border-black rounded-[20px] p-6 flex flex-col items-center shadow-[6px_6px_0_0_#85522533]">
-          <h3 className="text-3xl font-black mb-6 text-black uppercase tracking-tighter">Best buyer</h3>
-          <div className="w-full h-40 rounded-2xl bg-[#D9D9D9] border-2 border-black mb-4 overflow-hidden shadow-inner" />
-          <span className="font-black text-2xl mb-4 text-black">Mango Frappe</span>
-          <div className="flex gap-2">
-            {["Best Seller", "Sweet"].map(tag => (
-              <span key={tag} className="bg-[#A3B18A] text-black px-4 py-1 rounded-full text-xs font-black uppercase border-2 border-black">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* Cafe Menu */}
-        <div className="relative flex-1 bg-[#FEF6EA] border-2 border-black rounded-[20px] p-6 flex flex-col items-center shadow-[6px_6px_0_0_#85522533]">
-          <h3 className="text-3xl font-black mb-6 text-black uppercase tracking-tighter">Cafe Menu</h3>
-          <div className="w-full flex-1 min-h-[160px] rounded-2xl bg-[#D9D9D9] border-2 border-black shadow-inner flex items-center justify-center">
-             <span className="font-black text-black/40 uppercase">View Menu</span>
-          </div>
-        </div>
+      <div className="flex-1 flex">
+        <BestBuyer name="Mango Frappe" tags={["Top Pick", "Cold"]} />
       </div>
     </div>
   );
-}
+};
+
+export default SpotlightSection;
