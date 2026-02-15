@@ -48,7 +48,7 @@ const ContactPage = () => {
 
             <button
               type="submit"
-              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
+              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-[10px] font-semibold hover:opacity-90 transition"
             >
               Send Message
             </button>
