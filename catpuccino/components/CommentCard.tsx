@@ -1,19 +1,11 @@
 import React from "react";
+import { Review } from "@/app/data/reviews";
 import { 
   IoHeartOutline, 
   IoChatbubbleOutline, 
   IoArrowRedoOutline, 
   IoAlertCircleOutline 
 } from "react-icons/io5";
-
-interface Review {
-  username: string;
-  timeAgo: string;
-  text: string;
-  likes: number;
-  avatarUrl?: string;
-  imageUrl?: string;
-}
 
 interface CommentsProps {
   reviews: Review[];
