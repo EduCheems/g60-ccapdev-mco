@@ -6,10 +6,10 @@ const ContactPage = () => {
 
       {/*  HERO TITLE  */}
       <section className="bg-[#FBF3DE] px-[140px] pt-16 pb-8 text-center border border-black">
-        <h1 className="text-5xl font-poppins font-black text-[#262626]">
+        <h1 className="text-5xl font-poppins font-black text-[#743d0d]">
           🐾Contact Us🐾
         </h1>
-        <p className="mt-4 text-[#262626] max-w-[600px] mx-auto">
+        <p className="mt-4 text-[#743d0d] max-w-[600px] mx-auto">
           Have questions, suggestions, or partnership ideas? 
           We'd love to hear from you!
         </p>
@@ -22,7 +22,7 @@ const ContactPage = () => {
         {/*  Contact Form  */}
         <div className="flex-1 bg-[#F8F2E2] p-10 rounded-[24px] border-2 border-[#7C4F2B] shadow-[inset_0_2px_0_0_rgba(0,0,0,0.08),6px_6px_0_0_rgba(124,79,43,0.25)]">
 
-          <h2 className="text-3xl font-bold text-[#262626] mb-8">
+          <h2 className="text-3xl font-bold text-[#743d0d] mb-8">
             Send us a message
           </h2>
 
@@ -48,7 +48,7 @@ const ContactPage = () => {
 
             <button
               type="submit"
-              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition"
+              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-[10px] font-semibold hover:opacity-90 transition"
             >
               Send Message
             </button>
