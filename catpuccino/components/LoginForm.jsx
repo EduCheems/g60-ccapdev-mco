@@ -34,7 +34,7 @@ export default function loginForm() {
           </label>
         </div>
 
-        <Link href="/discover">
+        <Link href="/home">
           <button
             type="submit"
             className="w-full bg-[#EEB56E] text-white py-2 px-4 rounded-md hover:bg-[#D26500] transition"
