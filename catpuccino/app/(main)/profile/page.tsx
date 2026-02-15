@@ -11,26 +11,26 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
       {/*  HEADER SECTION  */}
-      <section className="bg-[#FBF3DE] w-full px-[140px] py-12">
-        <div className="flex items-center gap-12">
+      <section className="bg-[#fff2d1] w-full px-[140px] py-8">
+        <div className="flex items-center gap-8">
 
           {/* Profile Picture */}
           <div className="w-[180px] h-[180px] bg-gray-300 rounded-full"></div>
 
           {/* Profile Info */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
 
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <h1 className="text-3xl font-poppins font-bold text-[#262626]">
                 CarLover67
               </h1>
 
               <button
                 onClick={() => setIsFollowing(!isFollowing)}
-                className={`px-6 py-2 rounded-full text-sm transition ${
+                className={`px-6 py-2 rounded-[10px] text-sm font-bold transition ${
                   isFollowing
-                    ? "bg-[#a85011] text-white"
-                    : "bg-[#855225] text-white"
+                    ? "bg-[#d55c06] text-white"
+                    : "bg-[#d55c06] text-white"
                 }`}
               >
                 {isFollowing ? "Unfollow" : "Follow"}
@@ -40,7 +40,7 @@ const ProfilePage = () => {
 
             <p className="text-gray-600">@nickname</p>
 
-            <div className="flex gap-6 text-[#262626] font-medium">
+            <div className="flex gap-4 text-[#262626] font-medium">
               <span><strong>67</strong> Followers</span>
               <span><strong>67</strong> Following</span>
               <span><strong>67</strong> Posts</span>
@@ -55,15 +55,15 @@ const ProfilePage = () => {
       </section>
 
       {/*  TABS SECTION  */}
-      <section className="bg-[#FBF3DE] border-t border-[#855225]/20 px-[140px] py-6">
-        <div className="flex gap-6">
+      <section className="bg-[#FBF3DE] border-t border-[#855225]/20 px-[140px] py-4">
+        <div className="flex gap-3">
 
           <button
             onClick={() => setActiveTab("reviews")}
-            className={`px-5 py-2 rounded-full text-sm transition ${
+            className={`px-5 py-2 rounded-[10px] text-sm font-bold text-white border-2 border-black transition ${
               activeTab === "reviews"
-                ? "bg-[#855225] text-white"
-                : "bg-[#EADBC8] text-[#855225]"
+                ? "bg-[#AA4B1B]"
+                : "bg-[#D1B291]"
             }`}
           >
             Reviews
@@ -71,10 +71,10 @@ const ProfilePage = () => {
 
           <button
             onClick={() => setActiveTab("recommendations")}
-            className={`px-5 py-2 rounded-full text-sm transition ${
+            className={`px-5 py-2 rounded-[10px] text-sm font-bold text-white border-2 border-black transition ${
               activeTab === "recommendations"
-                ? "bg-[#855225] text-white"
-                : "bg-[#EADBC8] text-[#855225]"
+                ? "bg-[#AA4B1B]"
+                : "bg-[#D1B291]"
             }`}
           >
             Recommendations
@@ -82,10 +82,10 @@ const ProfilePage = () => {
 
           <button
             onClick={() => setActiveTab("favorites")}
-            className={`px-5 py-2 rounded-full text-sm transition ${
+            className={`px-5 py-2 rounded-[10px] text-sm font-bold text-white border-2 border-black transition ${
               activeTab === "favorites"
-                ? "bg-[#855225] text-white"
-                : "bg-[#EADBC8] text-[#855225]"
+                ? "bg-[#AA4B1B]"
+                : "bg-[#D1B291]"
             }`}
           >
             Favorites
@@ -93,10 +93,10 @@ const ProfilePage = () => {
 
           <button
             onClick={() => setActiveTab("media")}
-            className={`px-5 py-2 rounded-full text-sm transition ${
+            className={`px-5 py-2 rounded-[10px] text-sm font-bold text-white border-2 border-black transition ${
               activeTab === "media"
-                ? "bg-[#855225] text-white"
-                : "bg-[#EADBC8] text-[#855225]"
+                ? "bg-[#AA4B1B]"
+                : "bg-[#D1B291]"
             }`}
           >
             Media
@@ -106,7 +106,7 @@ const ProfilePage = () => {
       </section>
 
       {/*  CONTENT SECTION  */}
-      <section className="flex-1 bg-[#FEF6EA] px-[140px] py-10 flex flex-col gap-8">
+      <section className="flex-1 bg-[#FEF6EA] px-[140px] py-6 flex flex-col gap-4">
 
         {/*  REVIEWS  */}
         {activeTab === "reviews" && (
@@ -128,14 +128,14 @@ const ProfilePage = () => {
 
         {/*  FAVORITES  */}
         {activeTab === "favorites" && (
-          <div className="text-center text-[#855225] text-lg font-semibold py-20">
+          <div className="text-center text-[#855225] text-lg font-semibold py-12">
             No favorites yet 🐾
           </div>
         )}
 
         {/*  MEDIA  */}
         {activeTab === "media" && (
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-4">
 
             <div className="h-[200px] bg-gray-300 rounded-lg"></div>
             <div className="h-[200px] bg-gray-300 rounded-lg"></div>
