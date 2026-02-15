@@ -1,5 +1,10 @@
 import React from "react";
-import { GoDotFill } from "react-icons/go";
+import { 
+  IoHeartOutline, 
+  IoChatbubbleOutline, 
+  IoArrowRedoOutline, 
+  IoAlertCircleOutline 
+} from "react-icons/io5";
 
 interface Review {
   username: string;
@@ -16,7 +21,7 @@ interface CommentsProps {
 
 const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Review) => {
   return (
-    <div className="bg-[#F9F5E7] border border-black rounded-[40px] p-6 mb-6 w-full max-w-5xl shadow-sm">
+    <div className="bg-[#F9F5E7] border border-black rounded-[20px] p-6 mb-6 w-full max-w-5xl shadow-sm">
       <div className="flex items-start gap-4">
         
         {/* Profile Section */}
@@ -52,21 +57,27 @@ const CommentCard = ({ username, timeAgo, text, likes, avatarUrl, imageUrl }: Re
           </p>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-between mt-6 text-gray-600 font-medium text-sm">
-            <div className="flex items-center gap-6">
-              <button className="flex items-center gap-2 hover:text-black transition-colors">
-                <GoDotFill className="text-gray-500" /> {likes}
+          <div className="flex items-center justify-between mt-8 text-gray-700 font-black text-sm uppercase tracking-tight">
+            <div className="flex items-center gap-8">
+              <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors group">
+                <IoHeartOutline size={22} className="group-hover:fill-red-500 transition-all" /> 
+                <span>{likes}</span>
               </button>
-              <button className="flex items-center gap-2 hover:text-black transition-colors">
-                <GoDotFill className="text-gray-500" /> Reply
+
+              <button className="flex items-center gap-1.5 hover:text-blue-500 transition-colors">
+                <IoChatbubbleOutline size={20} /> 
+                <span>Reply</span>
               </button>
-              <button className="flex items-center gap-2 hover:text-black transition-colors">
-                <GoDotFill className="text-gray-500" /> Share
+
+              <button className="flex items-center gap-1.5 hover:text-green-600 transition-colors">
+                <IoArrowRedoOutline size={22} /> 
+                <span>Share</span>
               </button>
             </div>
 
-            <button className="flex items-center gap-2 hover:text-red-600 transition-colors">
-              <GoDotFill className="text-gray-500" /> Report
+            <button className="flex items-center gap-1.5 hover:text-orange-600 transition-colors">
+              <IoAlertCircleOutline size={22} /> 
+              <span>Report</span>
             </button>
           </div>
         </div>
