@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Comments from "@/components/CommentCard";
+import Link from "next/link";
+import PostPreview from "@/components/profile/PostPreview";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("reviews");
@@ -116,6 +118,32 @@ const ProfilePage = () => {
             ]}
           />
         )}
+
+        {activeTab === "reviews" && (
+        <div className="flex flex-col gap-6">
+          <PostPreview 
+            id="post-1"
+            cafeName="Cat Cafe Manila"
+            username="CatLover67"
+            price="₱₱"
+            city="Manila"
+            time="10:00 AM - 8:00 PM"
+            content="I have been struggling to lock in these past few days. This place actually helped me think!"
+            image="/cafe-imgs/hero.png"
+          />
+          <PostPreview 
+            id="post-2"
+            cafeName="Neko Coffee"
+            rating={4}
+            username="CatLover67"
+            price="₱₱₱"
+            city="Quezon City"
+            time="9:00 AM - 10:00 PM"
+            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
+            image="/cafe-imgs/cafe2.png"
+          />
+        </div>
+      )}
 
         {/*  RECOMMENDATIONS  */}
         {activeTab === "recommendations" && (

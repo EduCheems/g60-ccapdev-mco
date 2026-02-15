@@ -41,7 +41,7 @@ const ContactPage = () => {
             />
 
             <textarea
-              rows="5"
+              rows={5}
               placeholder="Your Message"
               className="border-2 border-dashed border-[#D5A073] rounded-2xl px-4 py-3 bg-[#F8F2E2] resize-none text-[#262626] placeholder:text-[#A09489] shadow-[inset_0_2px_0_0_rgba(0,0,0,0.1)] focus:outline-none focus:ring-2 focus:ring-[#D5A073]/50"
             ></textarea>
