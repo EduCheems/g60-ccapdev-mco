@@ -9,9 +9,9 @@ export default function Navbar(){
     <div className="container mx-auto px-10 flex items-center justify-between">
     
         <div className="flex-1 flex justify-start">
-            <div className="w-32 h-10 bg-gray-400/50 rounded flex items-center justify-center text-xs uppercase text-white">
-                Logo
-            </div>
+            <Link href="/home" className="block">
+                <img src="/catpuccino-footer.svg" alt="Catpuccino" className="h-10 w-auto" />
+            </Link>
         </div>
 
         <div className="flex-[2] flex justify-center gap-8 text-[12px] font-medium uppercase tracking-widest text-white/80">
