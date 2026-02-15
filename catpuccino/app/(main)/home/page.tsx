@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import BestCafes from "@/components/BestCafes";
 import MarqueeBand from "@/components/MarqueeBand";
 import { cafes } from "@/app/data/cafes";
+import CategoryIcon from "@/components/CategoryIcon";
 
 export default function DiscoverPage() {
   return (
@@ -55,7 +56,9 @@ export default function DiscoverPage() {
             { title: "GATEKEPT GEMS", desc: "Check out the Top 5 underrated cafes" },
           ].map((item, index) => (
             <div key={index} className="flex flex-col items-center group cursor-pointer">
-              <div className="w-full aspect-[3/4] bg-[#D9D9D9] mb-4 transition-transform group-hover:-translate-y-2 duration-300 shadow-sm group-hover:shadow-xl"></div>
+              <div className="w-full aspect-[3/4] mb-4">
+                <CategoryIcon title={item.title} />
+              </div>
 
               <h3 className="text-[#D26500] font-poppins font-black text-sm uppercase tracking-wider mb-1">
                 {item.title}

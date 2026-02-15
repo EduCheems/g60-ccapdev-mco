@@ -8,6 +8,15 @@ export default function HeroSection() {
 
   return (
     <div className="h-[642px] w-full pt-[40px] bg-[#FBF3DE] relative flex flex-col px-[140px]">
+      
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <img 
+          src="/landing-page-bg.svg" 
+          alt="Background Decor" 
+          className="w-full h-full object-cover opacity-100 scale-85 origin-bottom" 
+        />
+      </div>
+      
       <h2 className="text-[#D26500] font-poppins text-2xl font-black mb-1">Bobcat says</h2>
       
       <div className="relative">
