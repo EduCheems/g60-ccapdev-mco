@@ -36,20 +36,20 @@ const AboutPage = () => {
       <section className="bg-[#FEF6EA] px-[140px] py-20 text-center">
 
         <h2 className="text-4xl font-bold text-[#743d0d] mb-16">
-          What’s our deal
+          WHAT'S OUR DEAL?
         </h2>
 
         <div className="grid grid-cols-2 gap-16">
 
           <div className="flex flex-col items-center text-center">
             <div className="w-full h-[220px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold mb-2 text-[#262626]">Meow</h3>
+            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Meow</h3>
             <p className="text-[#262626]">🐾 Help you find cat cafés near you ⭐ Share honest, community-driven reviews 📸 Show real photos of café vibes and resident cats 💬 Let cat lovers connect over shared experiences</p>
           </div>
 
           <div className="flex flex-col items-center text-center">
             <div className="w-full h-[220px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold mb-2 text-[#262626]">Maw</h3>
+            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Maw</h3>
             <p className="text-[#262626]">It all began with a simple problem: we wanted to find the best cat cafés — but reviews were scattered, outdated, or focused more on coffee than cats.</p>
           </div>
 
@@ -59,8 +59,8 @@ const AboutPage = () => {
       {/*  STATS  */}
       <section className="bg-[#FBF3DE] px-[140px] py-20 text-center">
 
-        <h2 className="text-4xl font-bold text-[#262626] mb-16">
-          Statistics
+        <h2 className="text-4xl font-bold text-[#743d0d] mb-16">
+          STATISTICS
         </h2>
 
         <div className="grid grid-cols-2 gap-16">

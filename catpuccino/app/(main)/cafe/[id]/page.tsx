@@ -20,7 +20,7 @@ export default async function ViewCafePage({
       <div className="min-h-screen flex flex-col items-center justify-center font-black bg-[#FBF3DE]">
         <h1 className="text-4xl uppercase">Cafe Not Found</h1>
         <p className="text-gray-500 mt-2">We couldn't find a cafe with the slug: "{id}"</p>
-        <a href="/discover" className="mt-4 underline text-[#4A90E2]">Return to Discover</a>
+        <a href="/home" className="mt-4 underline text-[#4A90E2]">Return to Home</a>
       </div>
     );
   }
