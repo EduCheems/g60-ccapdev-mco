@@ -1,20 +1,17 @@
 import { cafes } from "@/app/data/cafes";
-import SpotlightSection from "@/components/view-post/Spotlights";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import Comments from "@/components/CommentCard";
+import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
 
 export default async function ViewCafePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  // 1. Await the params to get the actual ID (the slug) from the URL
   const { id } = await params;
 
-  // 2. Find by slug (using the resolved 'id' from params)
   const cafe = cafes.find((c) => c.slug === id);
 
-  // 3. Handle Case where cafe is not found
   if (!cafe) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center font-black bg-[#FBF3DE]">
@@ -39,56 +36,56 @@ export default async function ViewCafePage({
         <div className="flex-1">
 
           {/* HERO IMAGE */}
-          <div className="w-full aspect-[21/9] bg-[#D9D9D9] rounded-lg border-[2px] border-black mb-12 border-black overflow-hidden rounded-none shadow-[5px_5px_0_0_#85522533]">
+          <div className="w-full aspect-[21/9] bg-[#D9D9D9] border-2 border-black mb-10 overflow-hidden rounded-[10px] shadow-[5px_5px_0_0_#85522533]">
             <img
               src={cafe.imageUrl}
               alt={cafe.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-[10px]" 
             />
           </div>
 
-          <div className="relative flex-1 bg-[#FEF6EA] border-2 border-black rounded-[20px] px-6 py-6 flex-col shadow-[6px_6px_0_0_#85522533,inset_4px_4px_10px_rgba(133,82,37,0.2)]">
+          <div className="relative flex-1 bg-[#FEF6EA] border-2 border-[#855225] rounded-[10px] px-6 py-6 flex-col shadow-[5px_5px_0_0_#85522533]">
             {/* TITLE */}
-            <h1 className="text-[42px] font-black uppercase mb-4 tracking-tighter leading-none text-[#262626] ">
+            <h1 className="text-[42px] font-black mb-4 tracking-tighter leading-none text-[#855225] ">
               {cafe.title}
             </h1>
 
             {/* METADATA */}
-            <div className="flex gap-8 mb-8 items-center font-black text-sm uppercase">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-[#4A90E2] rounded-lg border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex items-center justify-center text- text-xl shadow-[5px_5px_0_0_#85522533]">
+            <div className="flex gap-5 mb-8 items-center font-black text-sm uppercase">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#4A90E2] rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text- text-xl shadow-[5px_5px_0_0_#85522533]">
                   ₱
                 </div>
-                <div className="flex flex-col mt-2">
-                  <span className="text-[14px] font-montserrat font-black text-[#262626] leading-none">Price:</span>
-                  <span className="text-[18px] font-montserrat font-regular text-black">{cafe.price}</span>
+                <div className="flex flex-col mt-1">
+                  <span className="text-[12px] font-montserrat font-black text-[#262626] leading-none">Price:</span>
+                  <span className="text-[10px] font-montserrat font-regular text-black">{cafe.price}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-[#FFD700] rounded-lg  border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#FFD700] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
                   📍
                 </div>
-                <div className="flex flex-col mt-2">
-                  <span className="text-[14px] font-black text-[#262626] leading-none">City:</span>
-                  <span className="text-[18px] font-bold text-black">{cafe.city}</span>
+                <div className="flex flex-col mt-1">
+                  <span className="text-[12px] font-black text-[#262626] leading-none">City:</span>
+                  <span className="text-[10px] font-bold text-black">{cafe.city}</span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-[#FF6B6B] rounded-lg  border-2 border-black shadow-[3px_3px_0_0_rgba(0,0,0,1)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#FF6B6B] rounded-[4px]  border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center text-black text-xl shadow-[5px_5px_0_0_#85522533]">
                   🕒
                 </div>
-                <div className="flex flex-col mt-2">
-                  <span className="text-[14px] font-black text-[#262626] leading-none">Time:</span>
-                  <span className="text-[18px] font-bold text-black">{cafe.time}</span>
+                <div className="flex flex-col mt-1">
+                  <span className="text-[12px] font-black text-[#262626] leading-none">Time:</span>
+                  <span className="text-[10px] font-bold text-black">{cafe.time}</span>
                 </div>
               </div>
             </div>
 
             {/* DESCRIPTION PARAGRAPH */}
-            <div className="mb-3">
-              <p className="text-[18px] leading-[1.6] text-[#262626] font-medium text-justify">
+            <div className="-mb-6">
+              <p className="text-[14px] leading-[1.6] text-[#262626] font-medium text-justify">
                 I have been struggling to lock in these past few days. I keep getting distracted by mini tasks 
                 or get consumed by social media. I am glad to have listened to my friend when they 
                 recommended that I should study in this specific cat cafe. At first I was in doubt since how 
@@ -104,30 +101,43 @@ export default async function ViewCafePage({
             <SpotlightSection />
           </div>
 
-          {/* REVIEWS */}
-          <div className="mt-28 border-t-4 border-black pt-16">
-            <div className="flex justify-between items-end mb-12">
-              <div>
-                <h2 className="text-6xl font-black uppercase tracking-tighter">
-                  Reviews
-                </h2>
-                <p className="text-[#666] font-bold uppercase tracking-widest text-sm">
-                  {mockReviews.length} Responses from the community
-                </p>
-              </div>
+          {/* REVIEWS SECTION */}
+          
+            <div className="flex items-center gap-30 mt-10 mb-2">
+              <h2 className="font-montserrat font-bold text-[30px] text-[#855225] uppercase tracking-tighter whitespace-nowrap">
+                Reviews ({mockReviews.length})
+              </h2>
 
-              <button className="bg-[#4A90E2] text-white px-8 py-4 font-black uppercase border-4 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] hover:translate-y-1 hover:shadow-none transition-all rounded-none">
+            <div className="ml-auto flex gap-3">
+              {["All(67)", "Cat (10)", "Most Relevant(10)", "With Media(67)"].map((label, idx) => (
+                <button 
+                  key={label}
+                  className={`px-5 py-2.5 rounded-[12px] text-[12px] font-bold transition-all border-2 border-black
+                    ${idx === 0 
+                      ? 'bg-[#A83600] text-white' 
+                      : 'bg-[#D5AE85] text-white hover:bg-[#A83600] cursor-pointer' 
+                    }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+            <Comments reviews={mockReviews} />
+
+            <div className="mt-2 flex justify-start">
+              <button className="bg-[#E5781E] rounded-[10px] text-white px-8 py-3 font-black uppercase border-2 border-black shadow-[5px_5px_0_0_#85522533] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
                 Write a Review
               </button>
             </div>
-
-            <Comments reviews={mockReviews} />
-          </div>
+          
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <aside className="w-[400px]">
+        <aside className="w-[380px] flex flex-col gap-8 h-fit">
             <RatingSidebar ratings={cafe.ratings} />
+               <CafeMenu />
         </aside>
 
       </div>
