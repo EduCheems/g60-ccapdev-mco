@@ -5,12 +5,12 @@ import { IoAdd, IoSearchOutline } from "react-icons/io5";
 
 export default function Navbar(){
     return(
-        <nav className="w-full bg-[#5C3727] border-b border-white/10 py-4">
+        <nav className="w-full bg-[#5C3727] border-b border-white/10 py-3">
     <div className="container mx-auto px-10 flex items-center justify-between">
     
         <div className="flex-1 flex justify-start">
             <Link href="/home" className="block">
-                <img src="/catpuccino-footer.svg" alt="Catpuccino" className="h-10 w-auto" />
+                <img src="/nav-logo-2.svg" alt="Catpuccino" className="ml-8 h-20 w-20" />
             </Link>
         </div>
 
