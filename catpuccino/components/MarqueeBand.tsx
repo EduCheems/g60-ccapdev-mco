@@ -1,4 +1,3 @@
-// components/MarqueeBand.tsx
 interface MarqueeProps {
   text: string;
   bgColor?: string;

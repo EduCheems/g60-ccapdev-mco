@@ -6,7 +6,6 @@ export default function RadarChart({ ratings }: { ratings: Record<string, number
   const radius = 100; 
   const labelRadius = radius + 28;
   
-  // Update this line to use 'ratings' instead of 'data'
   const labels = Object.keys(ratings);
 
   const getCoordinates = (val: number, i: number, max: number) => {
@@ -20,7 +19,6 @@ export default function RadarChart({ ratings }: { ratings: Record<string, number
 
   const points = labels
     .map((key, i) => {
-      // Update this line to use 'ratings' instead of 'data'
       const { x, y } = getCoordinates(ratings[key], i, radius);
       return `${x},${y}`;
     })
@@ -30,7 +28,6 @@ export default function RadarChart({ ratings }: { ratings: Record<string, number
     <div className="relative w-full flex justify-center items-center">
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
 
-    {/* Main Yellow Polygon */}
     <polygon
       points={points}
       fill="#FCD24C"
@@ -41,7 +38,6 @@ export default function RadarChart({ ratings }: { ratings: Record<string, number
       className="transition-all duration-500 ease-out"
     />
 
-        {/* Radar outline layers */}
     {[1, 2, 3, 4, 5].map((level) => {
       const ringPoints = labels
         .map((_, i) => {

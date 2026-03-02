@@ -1,5 +1,3 @@
-// components/post-view/SpotlightCards.tsx
-
 export const CatSpotlight = ({ name, tags }: { name: string, tags: string[] }) => (
 
   <div className="relative border-4 border-black rounded-[32px] bg-white p-6 w-full flex flex-col items-center min-h-[320px] shadow-[inset_4px_4px_10px_rgba(133,82,37,0.3)]">

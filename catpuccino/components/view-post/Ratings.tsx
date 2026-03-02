@@ -20,7 +20,6 @@ export default function Ratings({ ratings }: RatingsProps) {
   ));
 
   return (
-    /* Changed to origin-right so it scales TOWARDS the right wall */
     <div className="flex items-center gap-1 select-none origin-right scale-125"> 
       <div className="flex text-2xl tracking-tight">
         {stars}
@@ -28,7 +27,6 @@ export default function Ratings({ ratings }: RatingsProps) {
       
       <span className="text-2xl font-black text-[#855225] ml-2">
         {average}
-        {/* If you want the count like your image 5.0(67), add it here */}
         <span className="text-lg font-bold ml-1">(67)</span>
       </span>
     </div>

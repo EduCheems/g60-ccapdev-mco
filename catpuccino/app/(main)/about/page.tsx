@@ -1,5 +1,3 @@
-// /about/page.js (or .tsx)
-
 import React from 'react';
 
 const AboutPage = () => {
@@ -12,7 +10,6 @@ const AboutPage = () => {
           🐾About Catpuccino🐾
         </h1>
       </section>
-
 
       {/*  INTRO SECTION  */}
       <section className="bg-[#FBF3DE] px-[140px] py-12">
@@ -34,7 +31,6 @@ const AboutPage = () => {
 
         </div>
       </section>
-
 
       {/*  WHAT’S OUR DEAL  */}
       <section className="bg-[#FEF6EA] px-[140px] py-20 text-center">
@@ -59,7 +55,6 @@ const AboutPage = () => {
 
         </div>
       </section>
-
 
       {/*  STATS  */}
       <section className="bg-[#FBF3DE] px-[140px] py-20 text-center">
@@ -96,7 +91,6 @@ const AboutPage = () => {
 
         </div>
       </section>
-
 
       {/*  EXPANSION  */}
       <section className="bg-[#FEF6EA] px-[140px] py-20 text-center">
