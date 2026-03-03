@@ -4,6 +4,7 @@ import RadarChart from '@/components/RadarChart';
 import StarSlider from '@/components/StarScale';
 import CafeSearch from '@/components/CafeSearcher';
 
+
 //Upload box (Should be migrated to components folder)
 const UploadBox = ({ label }: { label: string }) => (
   <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
@@ -43,6 +44,48 @@ export default function CreatePostPage() {
     setRatings(prev => ({ ...prev, [category]: val }));
   };
 
+  //handles the submission of the post by sending a POST request to the backend API with the necessary data
+  const handleSubmit = () => {
+      try{
+        // Retrieve the token from localStorage and decode it to get the userID
+        const token = localStorage.getItem("token");
+        const decodedToken = token ? JSON.parse(atob(token.split('.')[1])) : null;
+        const userID = decodedToken?.userID;
+
+        // Prepare the post data to be sent to the backend API
+        const postData = {
+          userID, 
+          selectedCafe,
+          isAnonymous: false, //to be fixed later when we add the option to post anonymously
+          title,
+          ratings,
+          catName,
+          foodName,
+          bodyText
+        };
+        // Send the post data to the backend API
+        const response = fetch('/api/auth/post', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+          body: JSON.stringify(postData)
+        });
+        console.log("Post submission response:", response);
+
+        // Handle the response from the backend
+        response.then(res => {
+          if (!res.ok) {
+            throw new Error("Failed to submit post");
+          }
+        }).catch(error => {
+          console.error("Error submitting post:", error);
+          alert("An error occurred while submitting your post. Please try again.");
+        });
+      }catch(error){
+        console.error("Error submitting post:", error);
+        alert("An error occurred while submitting your post. Please try again.");
+      }
+    }
+  
   return (
 
     <div className="min-h-screen bg-[#FBF3DE] px-[140px] py-12">
@@ -58,7 +101,7 @@ export default function CreatePostPage() {
       <div className="flex gap-83 mt-10">
         <CafeSearch 
         selectedCafe={selectedCafe} 
-        onSelect={setSelectedCafe} 
+        onSelect={(cafeID) => setSelectedCafe(cafeID)} 
         />
       </div>
 
@@ -203,15 +246,19 @@ export default function CreatePostPage() {
             <button className="px-8 py-3 bg-[#FEF6EA] text-black font-poppins uppercase rounded-full hover:bg-[#b8b8b8] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
               Save Draft
             </button>
-            <button className="px-10 py-3 bg-[#E5781E] text-black font-poppins uppercase rounded-full hover:bg-[#c26214] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+            <button className="px-10 py-3 bg-[#E5781E] text-black font-poppins uppercase rounded-full hover:bg-[#c26214] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]" onClick={handleSubmit}>
               Post
             </button>
+            
           </div>
-
-
         </div>
 
       </div>
     </div>
+
   );
+  
 }
+
+
+     
