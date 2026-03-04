@@ -14,10 +14,15 @@ export async function POST(req: NextRequest){
             // If no token is provided, return an unauthorized response
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
+        //JWT_SECRETKEY is used to verify the token and extract the user ID of the post author
         const JWTSKEY = process.env.JWT_SECRETKEY;
+        //Neccessary check to ensure that the JWT_SECRETKEY is defined in the environment variables before attempting to verify the token
         if (!JWTSKEY) {
             throw new Error("JWT_SECRETKEY is not defined in environment variables");
         }
+
+        /*The token is verified using the JWT_SECRETKEY, and if the token is valid, the user ID of 
+        the post author is extracted from the token's payload and stored in holder variable*/
         const holder: any = jwt.verify(token, JWTSKEY);
 
         //extracts the necessary data from the request body and connects to the database

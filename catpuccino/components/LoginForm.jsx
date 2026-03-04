@@ -2,12 +2,19 @@
 import {useRouter} from "next/navigation";
 
 export default function loginForm() {
+  //navigates to a different page after a successful login
   const router = useRouter();
+
+  //Handles the form submission when the user attempts to log in
   const handleSubmit = async (e) => {
+    //Prevents the default form submission behavior, which would cause a page reload
     e.preventDefault();
+
+    //Extracts the username and password values from the form inputs
     const username = e.target.username.value;
     const password = e.target.password.value;
 
+    //Sends a POST request to the server with the username and password in the request body
     const res=fetch("/api/logIn", {
       method: "POST",
       headers: {
@@ -15,11 +22,12 @@ export default function loginForm() {
       },
       body: JSON.stringify({username, password}),
     });
-
+    
+    //Waits for the server's response and processes it as JSON
     const confrimation = res.json();
      confrimation.then((data) => {
       if (data.success) {
-        alert("Login successful!");
+        //If the login is successful, they are redirected to the home page
         router.push("/home");
       } else {
         alert("Login failed: " + data.message);
