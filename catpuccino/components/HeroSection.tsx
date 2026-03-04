@@ -19,7 +19,7 @@ export default function HeroSection() {
       
       <h2 className="text-[#D26500] font-poppins text-2xl font-black mb-1">Bobcat says</h2>
       
-      <div className="relative">
+      <div className="relative justify-center">
         <h1 className="text-[#855225] font-poppins -mt-2 font-black text-[81px] leading-tight uppercase tracking-tight">
           “ FIND YOUR SIPS AND PURRS”
         </h1>
