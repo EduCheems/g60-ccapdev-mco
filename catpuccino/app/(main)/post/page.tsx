@@ -49,12 +49,13 @@ export default function CreatePostPage() {
       try{
         // Retrieve the token from localStorage and decode it to get the userID
         const token = localStorage.getItem("token");
-        const decodedToken = token ? JSON.parse(atob(token.split('.')[1])) : null;
-        const userID = decodedToken?.userID;
+        if (!token) {
+            alert("You must be logged in to submit a post.");
+            return;
+        }
 
         // Prepare the post data to be sent to the backend API
         const postData = {
-          userID, 
           selectedCafe,
           isAnonymous: false, //to be fixed later when we add the option to post anonymously
           title,

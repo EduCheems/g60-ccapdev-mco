@@ -1,10 +1,35 @@
-import Link from 'next/link';
+"use client";
+import {useRouter} from "next/navigation";
+
 export default function loginForm() {
+  const router = useRouter();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+
+    const res=fetch("/api/logIn", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({username, password}),
+    });
+
+    const confrimation = res.json();
+     confrimation.then((data) => {
+      if (data.success) {
+        alert("Login successful!");
+        router.push("/home");
+      } else {
+        alert("Login failed: " + data.message);
+      }});
+  };
   return (
 
     <main className="flex items-center">
 
-      <form className="w-full max-w-sm p-6">
+      <form className="w-full max-w-sm p-6" onSubmit={handleSubmit}>
         <h2 className="text-2x1 font-semibold mb-4 text-left"> Login </h2>
 
         <div className="mb-4">
@@ -33,14 +58,12 @@ export default function loginForm() {
           </label>
         </div>
 
-        <Link href="/home">
           <button
             type="submit"
             className="w-full bg-[#EEB56E] text-white py-2 px-4 rounded-md hover:bg-[#D26500] transition"
           >
             Login
           </button>
-        </Link>
 
       </form>
 

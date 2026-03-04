@@ -2,10 +2,11 @@ import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import CatCafe from "@/models/CatCafe";
-import { NextResponse } from "next/server"; 
+import { NextRequest, NextResponse } from "next/server"; 
+import jwt from "jsonwebtoken";
 
 //handles the POST request to create a new post
-export async function POST(req: Request){
+export async function POST(req: NextRequest){
     try {
         // Extract token from Authorization header
         const token = req.headers.get("Authorization")?.split(" ")[1];
@@ -13,17 +14,24 @@ export async function POST(req: Request){
             // If no token is provided, return an unauthorized response
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
+        const JWTSKEY = process.env.JWT_SECRETKEY;
+        if (!JWTSKEY) {
+            throw new Error("JWT_SECRETKEY is not defined in environment variables");
+        }
+        const holder: any = jwt.verify(token, JWTSKEY);
+
         //extracts the necessary data from the request body and connects to the database
-        const { userID, selectedCafe, isAnonymous, title, body, ratings } = await req.json();
+        const { selectedCafe, isAnonymous, title, body, ratings } = await req.json();
         await connectDB();
 
         //calculates the overall rating based on the individual ratings provided in the request body
         const overallRating= (ratings.sociability + ratings.ambience + ratings.food + ratings.work_friendly + ratings.service) / 5;
 
-        //Finds the user by their userID and the cafe by uts 
+        //Finds the user by their userID and the cafe
+        const userID = holder.userId;
         const user = await User.findById(userID);
         const cafe = await CatCafe.findOne({name: selectedCafe});
-        if(!user&&!cafe){
+        if(!user||!cafe){
             return NextResponse.json({ message: "User or Cafe not found" }, { status: 404 });
         }
         //creates a new post in the database
