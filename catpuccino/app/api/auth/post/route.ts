@@ -4,6 +4,7 @@ import User from "@/models/User";
 import CatCafe from "@/models/CatCafe";
 import { NextRequest, NextResponse } from "next/server"; 
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 //handles the POST request to create a new post
 export async function POST(req: NextRequest){
@@ -27,41 +28,62 @@ export async function POST(req: NextRequest){
 
         //extracts the necessary data from the request body and connects to the database
         const { selectedCafe, isAnonymous, title, body, ratings } = await req.json();
+        console.log("Extracted data from request body:", { selectedCafe, isAnonymous, title, body, ratings });
+        
         await connectDB();
-
+        
         //calculates the overall rating based on the individual ratings provided in the request body
-        const overallRating= (ratings.sociability + ratings.ambience + ratings.food + ratings.work_friendly + ratings.service) / 5;
-
+        const overallRating= (Number(ratings.Sociability) + Number(ratings.Ambience) + Number(ratings.Food) + Number(ratings.Catmosphere) + Number(ratings.Service)) / 5;
+        console.log("Calculated overall rating:", overallRating);
         //Finds the user by their userID and the cafe
         const userID = holder.userId;
         const user = await User.findById(userID);
         const cafe = await CatCafe.findOne({name: selectedCafe});
-        if(!user||!cafe){
-            return NextResponse.json({ message: "User or Cafe not found" }, { status: 404 });
+       
+        
+        if(!user){
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
         }
+        if(!cafe){
+            return NextResponse.json({ message: "Cafe not found" }, { status: 404 });
+        }
+        console.log(Number(ratings.Sociability), Number(ratings.Ambience), Number(ratings.Food), Number(ratings.Catmosphere), Number(ratings.Service));
         //creates a new post in the database
         const newPost = await Post.create({
-            userID,
+            userID: new mongoose.Types.ObjectId(holder.userId),
             cafeID: cafe._id,
-            authorName: user.name,
+            authorName: user.username,
             isAnonymous,
             title,
             body,
-            ratings,
-            overallRating,
+            ratings:{
+                sociability: Number(ratings.Sociability),
+                ambience: Number(ratings.Ambience),
+                food: Number(ratings.Food),
+                catmosphere: Number(ratings.Catmosphere),
+                service: Number(ratings.Service),   
+            },
+            overallRating: Number(overallRating),
         });
+        console.log("New post created:", newPost);
+        console.log("Successful!");
         //updates the total reviews and averages based on the new post's ratings
+        console.log(cafe.name);
         cafe.totalReviews += 1;
-        cafe.averages.sociability = ((cafe.averages.sociability * (cafe.totalReviews - 1)) + ratings.sociability) / cafe.totalReviews;
-        cafe.averages.ambience = ((cafe.averages.ambience * (cafe.totalReviews - 1)) + ratings.ambience) / cafe.totalReviews;
-        cafe.averages.food = ((cafe.averages.food * (cafe.totalReviews - 1)) + ratings.food) / cafe.totalReviews;
-        cafe.averages.work_friendly = ((cafe.averages.work_friendly * (cafe.totalReviews - 1)) + ratings.work_friendly) / cafe.totalReviews;
-        cafe.averages.service = ((cafe.averages.service * (cafe.totalReviews - 1)) + ratings.service) / cafe.totalReviews;
+        console.log("Updated cafe total reviews:", cafe.totalReviews);
+        cafe.averages.sociability = ((cafe.averages.sociability * (cafe.totalReviews - 1)) + Number(ratings.Sociability)) / cafe.totalReviews;
+        cafe.averages.ambience = ((cafe.averages.ambience * (cafe.totalReviews - 1)) + Number(ratings.Ambience)) / cafe.totalReviews;
+        cafe.averages.food = ((cafe.averages.food * (cafe.totalReviews - 1)) + Number(ratings.Food)) / cafe.totalReviews;
+        cafe.averages.catmosphere = ((cafe.averages.catmosphere * (cafe.totalReviews - 1)) + Number(ratings.Catmosphere)) / cafe.totalReviews;
+        cafe.averages.service = ((cafe.averages.service * (cafe.totalReviews - 1)) + Number(ratings.Service)) / cafe.totalReviews;
+       
+        console.log("Updated cafe total reviews:", cafe.totalReviews, cafe.averages);
+        console.log("Updated cafe averages:", cafe.averages);
         await cafe.save();
-        alert("Post created successfully");
+        
         return NextResponse.json({ message: "Post created successfully", post: newPost }, { status: 201 });
 
     }catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ message:"Failed to create post!!!!" }, { status: 500 });
     }
 }

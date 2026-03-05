@@ -45,15 +45,15 @@ export default function CreatePostPage() {
   };
 
   //handles the submission of the post by sending a POST request to the backend API with the necessary data
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
       try{
         // Retrieve the token from localStorage and decode it to get the userID
         const token = localStorage.getItem("token");
+        console.log("Retrieved token from localStorage:", token);
         if (!token) {
-            alert("You must be logged in to submit a post.");
+            alert("You must be logged in to submit a post. from frontend");
             return;
         }
-
         // Prepare the post data to be sent to the backend API
         const postData = {
           selectedCafe,
@@ -62,31 +62,28 @@ export default function CreatePostPage() {
           ratings,
           catName,
           foodName,
-          bodyText
+          body:bodyText
         };
         // Send the post data to the backend API
-        const response = fetch('/api/auth/post', {
+        const res = await fetch('/api/auth/post', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+          headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`},
           body: JSON.stringify(postData)
         });
-        console.log("Post submission response:", response);
-
+        const confrimation = await res.json();
+        console.log("Post submission response:", res);
+        if(res.ok){
+          alert("Post created successfully");
+        }else{
+          alert("Failed to create post: " + confrimation.message);
+        }
         // Handle the response from the backend
-        response.then(res => {
-          if (!res.ok) {
-            throw new Error("Failed to submit post");
-          }
-        }).catch(error => {
-          console.error("Error submitting post:", error);
-          alert("An error occurred while submitting your post. Please try again.");
-        });
-      }catch(error){
+        
+    }catch(error){
         console.error("Error submitting post:", error);
         alert("An error occurred while submitting your post. Please try again.");
-      }
     }
-  
+  };
   return (
 
     <div className="min-h-screen bg-[#FBF3DE] px-[140px] py-12">
@@ -139,6 +136,7 @@ export default function CreatePostPage() {
                 onChange={(newVal) => handleRatingChange(key, newVal)}
               />
             ))}
+            
           </div>
 
           <div className="w-full bg-[#FEF6EA] border-[2px] border-[#855225] rounded-xl px-4 py-4 mb-5 font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] outline-none transition-all shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
