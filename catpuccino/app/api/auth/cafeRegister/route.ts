@@ -33,11 +33,6 @@ export async function POST(req: NextRequest){
         }
         //Checks if the cafe owner id exists in the database and creates a new cafe if it does
         const ownerID = holder.userId;
-        const ownerCafe = await CatCafe.findOne({ownerID});
-        if(!ownerCafe){
-            return NextResponse.json({ message: "Owner does not exist" }, { status: 409 });
-        }
-       
         //creates a new cafe in the database with the provided information and returns a success response
         const newCafe = await CatCafe.create({
             ownerID,

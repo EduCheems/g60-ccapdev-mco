@@ -10,7 +10,7 @@ export default function CafeSearch({ selectedCafe, onSelect }: CafeSearchProps) 
   const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState("");
 
-  const cafes = ["Cat Heaven", "Whiskers & Brew", "The Purrfect Cup", "Neko Cafe", "Meow Meow Land"];
+  const cafes = ["Cat Heaven", "Whiskers & Brew", "The Purrfect Cup", "Neko Cafe", "Meow Meow Land","Pawsome Brews"];
 
   const filteredCafes = cafes.filter(cafe =>
     cafe.toLowerCase().includes(query.toLowerCase())

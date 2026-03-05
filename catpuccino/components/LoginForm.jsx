@@ -15,7 +15,7 @@ export default function loginForm() {
     const password = e.target.password.value;
 
     //Sends a POST request to the server with the username and password in the request body
-    const res=fetch("/api/logIn", {
+    const res=await fetch("/api/auth/logIn", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,14 +24,18 @@ export default function loginForm() {
     });
     
     //Waits for the server's response and processes it as JSON
-    const confrimation = res.json();
-     confrimation.then((data) => {
-      if (data.success) {
-        //If the login is successful, they are redirected to the home page
-        router.push("/home");
-      } else {
-        alert("Login failed: " + data.message);
-      }});
+    console.log("Awaiting server response...");
+    const confrimation = await res.json();
+    if(confrimation.token){
+      console.log("Received token:", confrimation.token);
+    }
+    if(res.ok&&confrimation.token){
+      localStorage.setItem("token", confrimation.token);
+      router.push("/home");
+      
+    }else{
+      console.log("Login failed");
+    }
   };
   return (
 
