@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import GuestNavBar from "@/components/GuestNavbar";
 import Navbar from "../components/Navbar";
 import { Montserrat, Poppins } from "next/font/google";
 import "./globals.css";
@@ -20,20 +21,29 @@ export const metadata: Metadata = {
   description: "Find your purr and sips",
 };
 
-export default function RootLayout({
+//Auth placeholder 
+async function getUser() {
+  const isLoggedIn = false; 
+  return isLoggedIn;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const user = await getUser(); 
   return (
     <html lang="en">
-      <body
-        className={`${montserrat.variable} ${poppins.variable} antialiased`}>
-          <Navbar/>
-          <main>
+      <body className={`${montserrat.variable} ${poppins.variable} antialiased flex flex-col min-h-screen`}>
+          
+          {user ? <Navbar/>: <GuestNavBar/>}
+          
+          <main className="flex-1" style={{ paddingTop: '72px' }}>
             {children}
           </main>
-
+          
       </body>
     </html>
   );
