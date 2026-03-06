@@ -61,24 +61,36 @@ export default function Footer() {
         </div>
 
 
-        <div className="w-full flex justify-center pt-10 pointer-events-none">
+        {/* Container for the desk and the floating button */}
+        <div className="relative w-full flex justify-center mt-[-580px]">
           <img
             src="/footer-bottom.svg"
             alt="Cat at computer"
-            className="w-full h-auto block z-10 -mt-[580px] scale-110 origin-top"
+            className="w-full h-auto block z-10 scale-110 origin-top pointer-events-none"
           />
-        </div>
+
+          {/* The Back to Top Button positioned "on" the desk */}
+          <button
+            onClick={scrollToTop}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 
+               flex flex-col items-center gap-1 cursor-pointer 
+               hover:scale-110 transition-transform active:scale-95"
+          >
+            <img
+              src="/back-to-top.svg"
+              alt="Back to top"
+              className="w-[120px] h-auto drop-shadow-lg"
+            />
+            <p className="text-[10px] font-black text-[#5C3727] opacity-0 group-hover:opacity-100 transition-opacity tracking-tighter">
+              CLICK TO SCROLL UP
+            </p>
+          </button>
+        </div>                        
+
+        
       </div>
 
       <div className="w-full bg-[#5C3727] flex flex-col items-center py-10 relative z-30 -mt-5 pt-8">
-        <button
-          onClick={scrollToTop}
-          className="group flex flex-col items-center gap-2 text-white/80 hover:text-white transition-all"
-        >
-          <span className="text-[12px] font-black tracking-[0.3em] uppercase">BACK TO TOP</span>
-          <div className="w-12 h-[1px] bg-white/40 group-hover:w-20 transition-all"></div>
-        </button>
-
         <p className="mt-2 mb-5 text-[15px] font-bold uppercase tracking-[0.2em] text-white/60">
           Catpuccino 2026 | All rights reserved ©
         </p>

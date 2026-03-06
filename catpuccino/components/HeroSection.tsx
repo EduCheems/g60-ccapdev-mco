@@ -17,11 +17,11 @@ export default function HeroSection() {
         />
       </div>
       
-      <h2 className="text-[#D26500] font-poppins text-2xl font-black mb-1">Bobcat says</h2>
+      <h2 className="text-[#D26500] font-poppins text-2xl font-black pt-2 mb-1">Bobcat says</h2>
       
       <div className="relative justify-center">
-        <h1 className="text-[#855225] font-poppins -mt-2 font-black text-[81px] leading-tight uppercase tracking-tight">
-          “ FIND YOUR SIPS AND PURRS”
+        <h1 className="text-center text-[#855225] font-poppins -mt-2 font-black text-[81px] leading-tight uppercase">
+          “FIND YOUR SIPS AND PURRS”
         </h1>
         <div className="absolute -bottom-[50px] right-0 bg-[#D26500] text-[#FBF3DE] px-8 py-3 rounded-full font-black text-2xl shadow-lg transform rotate-[-4deg]">
           With catpuccino!
