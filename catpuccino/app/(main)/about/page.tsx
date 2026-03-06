@@ -1,6 +1,12 @@
 import React from 'react';
+import {getCountAllPost} from "@/controllers/postAction";
+import {getCountAllUser} from "@/controllers/userAction";
+import {getCountAllCafe} from "@/controllers/cafeAction";
 
-const AboutPage = () => {
+export default async function AboutPage() {
+  const totalPost= await getCountAllPost();
+  const totalUser=await getCountAllUser();
+  const totalCafe=await getCountAllCafe();
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -67,19 +73,19 @@ const AboutPage = () => {
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 users</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">{totalUser} users</h3>
             <p className="text-[#262626]">A growing community of cat lovers sharing their experiences.</p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 reviews</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">{totalPost} reviews</h3>
             <p className="text-[#262626]">Honest feedback on cafés, cats, coffee, and comfort.</p>
           </div>
 
           <div className="flex flex-col items-center">
             <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold text-[#743d0d]">6,767 Cafe's Listed</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">{totalCafe} Cafe's Listed</h3>
             <p className="text-[#262626]">From small local spots to international favorites.</p>
           </div>
 
@@ -106,4 +112,3 @@ const AboutPage = () => {
   );
 };
 
-export default AboutPage;
