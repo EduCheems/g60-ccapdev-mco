@@ -3,7 +3,7 @@ import { useState } from "react";
 import AuthModal from "@/components/AuthModal"; 
 
 export default function AuthPage() {
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -26,7 +26,6 @@ export default function AuthPage() {
           With catpuccino!
       </div>
 
-      {/* 2. Added the onClick trigger here */}
       <button 
         onClick={() => setIsModalOpen(true)}
         className="w-[300px] mt-12 bg-[#855225] text-[#FBF3DE] px-10 py-4 rounded-full font-black text-xl uppercase hover:bg-[#6d431e] transition-all shadow-[0_8px_0_rgb(80,48,22)] active:shadow-none active:translate-y-1"
@@ -34,7 +33,6 @@ export default function AuthPage() {
         Get Started
       </button>
 
-      {/* 3. The Modal Component - Placed at the end so it stays on top */}
       <AuthModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
