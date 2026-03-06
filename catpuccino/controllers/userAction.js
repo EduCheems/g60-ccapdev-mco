@@ -19,3 +19,14 @@ export async function getUserProfile(userId){
         throw error;
     }
 }
+
+export async function getCountAllUser(){
+    try{
+        await connectDB();
+        const count = await User.countDocuments({role:"user"});
+        return count;
+    }catch(error){
+        console.error('Error fetching user profile:', error);
+        throw error;
+    }
+}

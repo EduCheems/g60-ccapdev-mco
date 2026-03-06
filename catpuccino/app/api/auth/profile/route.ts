@@ -1,5 +1,5 @@
 import { NextRequest,NextResponse } from "next/server";
-import { getUserProfile } from "@/controllers/profileAction";
+import { getUserProfile } from "@/controllers/userAction";
 
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";

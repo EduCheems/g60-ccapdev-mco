@@ -18,10 +18,11 @@ const ProfilePage = () => {
     const fetchUserProfile = async () => {
       const token=localStorage.getItem("token");
       if (!token) {
-                  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        console.log("Invalid Token");
+          return;
       }
       try {
-        const res=await fetch("/api/auth/profile", {
+        const res=await fetch(`/api/auth/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
