@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { MongoClient } from 'mongodb'; 
 
 const MONGODB_URI = process.env.MONGODB_URL;
 
@@ -15,3 +16,9 @@ export const connectDB = async () => {
     console.error("MongoDB connection error:", error);
   }
 };
+
+// -- NextAuth client -- 
+const client = new MongoClient(MONGODB_URI);
+const clientPromise = client.connect(); 
+
+export default clientPromise; 

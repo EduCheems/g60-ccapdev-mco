@@ -1,6 +1,9 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { signIn } from "next-auth/react"; //New ver: For actual backend frontend auth process 
+import { signIn as googleSignIn } from "next-auth/react";
+import { loginAction } from "@/app/actions/auth";
 
 //social brand icons 
 import { BsFacebook } from "react-icons/bs";
@@ -18,6 +21,63 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
   
   const [mounted, setMounted] = useState(false);
   const [isLoginMode, setIsLoginMode] = useState(initialView === 'login'); 
+  const [showEmailForm, setShowEmailForm] = useState(false); 
+  const [email, setEmail] = useState(""); 
+  const [password, setPassword] = useState(""); 
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault(); 
+    
+    if (isLoginMode) {
+      try {
+      
+      const res = await loginAction(email, password);
+
+      console.log("Raw NextAuth Error:", res?.error);
+
+      // In NextAuth v5, if there's an error, res.error will be a string
+      if (res?.error) {
+          if (res.error === "GoogleAccount") {
+            alert("This account was created via Google. Please sign in with Google.");
+          } else if (res.error === "UserNotFound") {
+            alert("User not found. Please sign up!");
+          } else if (res.error === "InvalidPassword") {
+            alert("Incorrect password. Please try again.");
+          } else {
+            alert(`Login failed: ${res.error}`);
+          }
+      } else {
+        // Success!
+        window.location.href = "/profile";
+      }
+    } catch (err: any) {
+      // Fallback in case the signIn function throws directly
+      alert("An unexpected error occurred. Please try again.");
+    }
+    } else {
+      try {
+         const rest = await fetch ("/api/auth/register", {
+          method: "POST", 
+          headers: { "Content-Type": "application/json"},
+          body: JSON.stringify({
+            username: email.split('@')[0],
+            email, 
+            password
+          }), 
+          
+          }); 
+
+          if (rest.ok) {
+            await signIn("credentials", {email, password, callbackUrl: "/profile"}); 
+          } else {
+            const data = await rest.json(); 
+            alert(data.message);
+          }
+      } catch (err){
+        console.error("Signup error", err);
+      }
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -71,26 +131,66 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
         {/* signin/signup options */}
         <div className="w-full max-w-[340px] flex flex-col gap-4">
 
-          <button className="flex items-center w-full bg-[#FBF3DE] border border-black rounded-full py-3 px-6  shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] hover:bg-[#855225]/10 transition-all">
+          <button 
+            onClick={() => googleSignIn("google", { callbackUrl: "/profile" })}
+            className="flex items-center w-full bg-[#FBF3DE] border border-black rounded-full py-3 px-6  shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] hover:bg-[#855225]/10 transition-all"
+          >
             <FcGoogle className="text-[#855225] text-xl" />
             <span className="flex-1 text-center font-medium text-[#855225] text-[12px]">
               {isLoginMode ? 'Sign in' : 'Sign up'} with Google
             </span>
           </button>
 
-          <button className="flex items-center w-full bg-[#FBF3DE] border border-black rounded-full py-3 px-6  shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] hover:bg-[#855225]/10 transition-all">
-            <BsFacebook className="text-[#1976D2] text-xl" />
-            <span className="flex-1 text-center font-medium text-[#855225] text-[12px]">
-              {isLoginMode ? 'Sign in' : 'Sign up'} with Facebook
-            </span>
-          </button>
+      {showEmailForm ? (
+        
+        <div className="w-full max-w-[340px] flex flex-col items-center"> 
 
-          <button className="flex items-center w-full bg-[#FBF3DE] border border-black rounded-full py-3 px-6  shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] hover:bg-[#855225]/10 transition-all">
-            <HiOutlineMail className="text-[#855225] text-xl" />
-            <span className="flex-1 text-center font-medium text-[#855225] text-[12px]">
-              {isLoginMode ? 'Sign in' : 'Sign up'} with Email
-            </span>
-          </button>
+            <p className="text-[#855225] text-[14px] font-bold mb-4 uppercase tracking-wide">
+              {isLoginMode ? 'Sign in via Email' : 'Sign up via Email'}
+            </p>
+
+            <form onSubmit={handleEmailAuth} className="w-full max-w-[340px] flex flex-col gap-3">
+            <input 
+              type="email" 
+              placeholder="Email" 
+              className="text-[#855225] text-[12px] font-medium w-full bg-[#FBF3DE] border border-black rounded-full py-2 px-4 outline-none shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              className="text-[#855225] text-[12px] w-full bg-[#FBF3DE] border border-black rounded-full py-2 px-4 outline-none shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            
+            <button type="submit" className="bg-[#855225] text-white rounded-full py-2 font-bold hover:opacity-90">
+              {isLoginMode ? "Login" : "Create Account"}
+            </button>
+
+            <button 
+              type="button" 
+              onClick={() => setShowEmailForm(false)} 
+              className="text-[#855225] text-xs underline"
+            >
+              Back to social login
+            </button>
+          </form>
+        </div>
+      ) : (
+        <button 
+          onClick={() => setShowEmailForm(true)}
+          className="flex items-center w-full bg-[#FBF3DE] border border-black rounded-full py-3 px-6  shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] hover:bg-[#855225]/10 transition-all"
+        >
+        <HiOutlineMail className="text-[#855225] text-xl" />
+          <span className="flex-1 text-center font-medium text-[#855225] text-[12px]">              
+            {isLoginMode ? 'Sign in' : 'Sign up'} with Email 
+          </span>
+        </button>
+      )}
+
+          
         </div>
 
         <p className="mt-8 text-center text-[#D26500] text-[12px] font-medium">
