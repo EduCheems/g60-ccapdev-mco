@@ -1,19 +1,54 @@
 "use client";
+import { useSession } from "next-auth/react"; 
 import React, { useState } from 'react';
 import RadarChart from '@/components/RadarChart';
 import StarSlider from '@/components/StarScale';
 import CafeSearch from '@/components/CafeSearcher';
+import { useRouter } from "next/navigation";
 
+// Updated UploadBox
+const UploadBox = ({ 
+  label, 
+  onImageSelect, 
+  previewUrl 
+}: { 
+  label: string; 
+  onImageSelect: (base64: string) => void;
+  previewUrl: string;
+}) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onImageSelect(reader.result as string); // Converts image to a Base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-//Upload box (Should be migrated to components folder)
-const UploadBox = ({ label }: { label: string }) => (
-  <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
-    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" />
-    <p className="text-black/30 font-bold group-hover:text-[#000000] transition-colors uppercase italic text-sm">
-      {label}
-    </p>
-  </div>
-);
+  return (
+    <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
+      
+      {/* Show the image preview if it exists */}
+      {previewUrl ? (
+        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+      ) : (
+        <p className="text-black/30 font-bold group-hover:text-[#000000] transition-colors uppercase italic text-sm">
+          {label}
+        </p>
+      )}
+
+      {/* The invisible file input */}
+      <input 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileChange}
+        className="absolute inset-0 opacity-0 cursor-pointer" 
+      />
+    </div>
+  );
+};
 
 //Can be also migrated to components folder
 const categoryColors: Record<string, string> = {
@@ -26,6 +61,9 @@ const categoryColors: Record<string, string> = {
 
 
 export default function CreatePostPage() {
+
+  const { data: session } = useSession();
+  const router = useRouter();
   const [selectedCafe, setSelectedCafe] = useState("");
   const [title, setTitle] = useState("");
   const [ratings, setRatings] = useState({
@@ -37,54 +75,58 @@ export default function CreatePostPage() {
   });
 
   const [catName, setCatName] = useState("");
+  const [catImage, setCatImage] = useState("");
   const [foodName, setFoodName] = useState("");
+  const [foodImage, setFoodImage] = useState("");
   const [bodyText, setBodyText] = useState("");
 
   const handleRatingChange = (category: string, val: number) => {
     setRatings(prev => ({ ...prev, [category]: val }));
   };
 
-  //handles the submission of the post by sending a POST request to the backend API with the necessary data
-  const handleSubmit = () => {
-      try{
-        // Retrieve the token from localStorage and decode it to get the userID
-        const token = localStorage.getItem("token");
-        const decodedToken = token ? JSON.parse(atob(token.split('.')[1])) : null;
-        const userID = decodedToken?.userID;
+ const handleSubmit = async () => { 
+      try {
+        if (!session) { 
+          alert("You must be logged in to submit a post."); 
+          return; 
+        }
 
-        // Prepare the post data to be sent to the backend API
+        const userID = session?.user?.id || session?.user?.email;
+
         const postData = {
           userID, 
           selectedCafe,
-          isAnonymous: false, //to be fixed later when we add the option to post anonymously
+          isAnonymous: false,
           title,
           ratings,
           catName,
+          catImage, 
           foodName,
-          bodyText
+          foodImage, 
+          body: bodyText
         };
-        // Send the post data to the backend API
-        const response = fetch('/api/auth/post', {
+
+        const res = await fetch('/api/auth/post', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}`},
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(postData)
         });
-        console.log("Post submission response:", response);
 
-        // Handle the response from the backend
-        response.then(res => {
-          if (!res.ok) {
-            throw new Error("Failed to submit post");
-          }
-        }).catch(error => {
-          console.error("Error submitting post:", error);
-          alert("An error occurred while submitting your post. Please try again.");
-        });
-      }catch(error){
+        const confirmation = await res.json(); 
+        console.log("Post submission response:", res);
+
+        if (res.ok) {
+          alert("Post created successfully");
+          router.push('/home');
+        } else {
+          alert("Failed to create post: " + confirmation.message);
+        }
+
+      } catch (error) {
         console.error("Error submitting post:", error);
         alert("An error occurred while submitting your post. Please try again.");
       }
-    }
+    };
   
   return (
 
@@ -163,7 +205,11 @@ export default function CreatePostPage() {
                             shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
               />
               
-              <UploadBox label="Drag or Drop or upload Media" />
+              <UploadBox 
+                label="Drag or Drop or upload Media" 
+                onImageSelect={(base64) => setCatImage(base64)}
+                previewUrl={catImage}
+              />
             </div>
 
             <div className="space-y-4 mb-5">
@@ -178,15 +224,19 @@ export default function CreatePostPage() {
               <input 
                 type="text" 
                 placeholder="Food Name*"
-                value={catName}
-                onChange={(e) => setCatName(e.target.value)}
+                value={foodName}
+                onChange={(e) => setFoodName(e.target.value)}
                 className="w-full bg-[#FEF6EA] border-2 border-[#855225] rounded-xl px-6 py-4 
                            font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] 
                            outline-none transition-all
                            shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
               />
               
-              <UploadBox label="Drag or Drop or upload Media" />
+              <UploadBox 
+                label="Drag or Drop or upload Media" 
+                onImageSelect={(base64) => setFoodImage(base64)}
+                previewUrl={foodImage}
+              />
             </div>
 
             <div className="flex items-center gap-4 mt-5 mb-2">
@@ -242,7 +292,7 @@ export default function CreatePostPage() {
           </div>
 
           {/* 7. Action Buttons */}
-          <div className="flex justify-end gap-4 mt-6 relative z-50">
+          <div className="flex justify-end gap-4 mt-6">
             <button className="px-8 py-3 bg-[#FEF6EA] text-black font-poppins uppercase rounded-full hover:bg-[#b8b8b8] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
               Save Draft
             </button>
