@@ -29,7 +29,7 @@ const PostSchema = new Schema({
         type: String,
         required: [true, 'Post body is required'],
     },
-    ratings:[{
+    ratings:{
         sociability: {
             type: Number,
             min: 1,
@@ -45,7 +45,7 @@ const PostSchema = new Schema({
             min: 1,
             max: 5,
         },
-        work_friendly:{
+        catmosphere:{
             type: Number,
             min: 1,
             max: 5,
@@ -55,7 +55,8 @@ const PostSchema = new Schema({
             min: 1,
             max: 5,
         }
-    }],
+       
+    },
     overallRating: {
         type: Number,
         min:1,
