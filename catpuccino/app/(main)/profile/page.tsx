@@ -1,14 +1,43 @@
 'use client'
 
-import { useState } from "react";
+import { useState,useEffect, use } from "react";
 import Comments from "@/components/CommentCard";
 import Link from "next/link";
 import PostPreview from "@/components/profile/PostPreview";
+import { NextRequest,NextResponse } from "next/server";
+
+
+
 
 const ProfilePage = () => {
+  const [profile,setProfile]=useState<any>(null);
   const [activeTab, setActiveTab] = useState("reviews");
   const [isFollowing, setIsFollowing] = useState(false);
+  
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token=localStorage.getItem("token");
+      if (!token) {
+        console.log("Invalid Token");
+          return;
+      }
+      try {
+        const res=await fetch(`/api/auth/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+             'Authorization': `Bearer ${token}`
+          },
+        });
+        const data = await res.json();
+        setProfile(data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
 
+    fetchUserProfile();
+  }, []);
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -17,14 +46,16 @@ const ProfilePage = () => {
         <div className="flex items-center gap-8">
 
           {/* Profile Picture */}
-          <div className="w-[180px] h-[180px] bg-gray-300 rounded-full"></div>
+          <div className="w-[180px] h-[180px] bg-gray-300 rounded-full">
+            
+          </div>
 
           {/* Profile Info */}
           <div className="flex flex-col gap-3">
 
             <div className="flex items-center gap-4">
               <h1 className="text-3xl font-poppins font-bold text-[#262626]">
-                CarLover67
+                {profile?.username}
               </h1>
 
               <button
@@ -49,7 +80,7 @@ const ProfilePage = () => {
             </div>
 
             <p className="text-[#262626]">
-              Your average cat and coffee enjoyer :D
+              {profile?.profile.bio}
             </p>
 
           </div>
