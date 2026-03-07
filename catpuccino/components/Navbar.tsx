@@ -5,7 +5,7 @@ import Searchbar from './Searchbar';
 
 import { IoAdd, IoHome, IoHelpCircle, IoMail } from 'react-icons/io5';
 import { User } from "next-auth"; 
-import { signOut } from "next-auth/react"; 
+import { logoutUser } from "./AuthModal";
 
 interface NavbarProps { 
   user?: User; 
@@ -55,6 +55,13 @@ export default function Navbar({user}: NavbarProps) {
                 />
                )}
             </Link>
+
+            <button
+              onClick={logoutUser}
+              className="px-4 py-1.5 bg-[#E67716] text-white rounded-full border border-black text-[11px] font-bold uppercase tracking-wide hover:bg-[#D26500] hover:-translate-y-0.5 transition-all duration-150"
+            >
+              Log out
+            </button>
           </div>
 
         </div>
