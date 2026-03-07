@@ -2,8 +2,10 @@ import mongoose from 'mongoose';
 import { MongoClient } from 'mongodb'; 
 import {setServers} from "node:dns/promises";
 
+
 setServers(["8.8.8.8","1.1.1.1"]);
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URL;
+
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable in .env');
