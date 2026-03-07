@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { signIn } from "next-auth/react"; //New ver: For actual backend frontend auth process 
+import { signIn, signOut } from "next-auth/react"; //New ver: For actual backend frontend auth process 
 import { signIn as googleSignIn } from "next-auth/react";
 import { loginAction } from "@/app/actions/auth";
 
@@ -207,5 +207,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
     document.body
   );
 };
+
+export async function logoutUser() {
+  try {
+    await signOut({ callbackUrl: "/" });
+  } catch (err) {
+    console.error("Logout error", err);
+  }
+}
 
 export default AuthModal;

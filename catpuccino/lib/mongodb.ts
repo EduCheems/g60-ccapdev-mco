@@ -15,9 +15,9 @@ export const connectDB = async () => {
   try {
     mongoose.set('strictQuery', false);
     if (mongoose.connection.readyState >= 1) return;
-    await mongoose.connect(MONGODB_URL);
+    await mongoose.connect(MONGODB_URI);
     console.log("Successfully connected to Catpuccino Database");
-    console.log("MongoDB URL:", MONGODB_URL);
+    console.log("MongoDB URL:", MONGODB_URI);
   } catch (error) {
     console.error("MongoDB connection error:", error);
   }
