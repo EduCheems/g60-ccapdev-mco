@@ -51,13 +51,12 @@ export default function Navbar({user}: NavbarProps) {
             </Link>
             
             <Link href="/profile" className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0 block hover:ring-2 hover:ring-white/50 transition-all overflow-hidden">
-               {user?.image && (
-                 <img src={user.image} 
+               <img
+                 src={user?.image || "/default-profile.svg"}
                  alt="Profile"
-                className="w-full h-full object-cover" 
-                referrerPolicy="no-referrer"
-                />
-               )}
+                 className="w-full h-full object-cover"
+                 referrerPolicy="no-referrer"
+               />
             </Link>
 
             <button
