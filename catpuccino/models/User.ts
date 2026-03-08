@@ -1,11 +1,11 @@
 import mongoose, { Schema, model, models} from 'mongoose'; 
 
 const UserSchema = new Schema({
-    user_id: {
+    _id: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'User ID is required'],
     },
-    username: {
+    name: {
         type: String, 
         required: [true, 'Username is required'], 
         unique: true,
@@ -17,7 +17,12 @@ const UserSchema = new Schema({
     }, 
     password: {
         type: String, 
-        required: [true, 'Password is required'],
+        required: function() { return !this.oauthProvider; } 
+        //required: [true, 'Password is required'],
+    },
+    oauthProvider: {
+    type: String, // 'google', 'facebook', etc.
+    default: null,
     }, 
     role: {
         type: [String], 
@@ -63,7 +68,7 @@ const UserSchema = new Schema({
     favoriteCatCafeID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatCafe',
-        required: [true, 'Favorite Cat Cafe is required'],
+        //required: [true, 'Favorite Cat Cafe is required'],
     }
     }, {
     timestamps: true // Automatically handles createdAt and updatedAt

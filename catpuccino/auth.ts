@@ -5,7 +5,9 @@ import { MongoDBAdapter } from "@auth/mongodb-adapter"
 import clientPromise, { connectDB } from "@/lib/mongodb"
 import User from "@/models/User"
 import bcrypt from "bcryptjs"
+import mongoose from 'mongoose';
 
+ connectDB();
 class GoogleAccountError extends CredentialsSignin {
   code = "GoogleAccount"
 }
@@ -33,7 +35,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: {}, password: {} 
         },
         async authorize(credentials) {
-            await connectDB(); 
             const user = await User.findOne({ email: credentials?.email }); 
             
             // Just throw standard Errors with your exact code word
@@ -53,4 +54,47 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.AUTH_SECRET, 
+
+ callbacks: {
+  async session({ session }) {
+    const fullUser = await User.findOne({ email: session.user.email }).lean();
+    if (!fullUser) return session;
+
+    session.user.id = fullUser._id.toString();
+    session.user.role = fullUser.role;
+    session.user.profile = fullUser.profile;
+    session.user.favoriteCatCafeID = fullUser.favoriteCatCafeID;
+    session.user.isDeactivated = fullUser.isDeactivated;
+
+    return session;
+  },
+},
+
+events: {
+  async createUser({ user}) {
+    const existingUser = await User.findOne({ email: user.email });
+    if (existingUser) {
+      await User.updateOne({email:user.email},{
+        _id:user.id,
+        name:user.name,
+        email: user.email,
+        password: null,
+        oauthProvider: account?.provider || "google",
+        role: ["user"],
+        profile: {
+          firstName: "",
+          lastName: "",
+          profilePicURL: null,
+          coverPicURL: null,
+          bio: "",
+          shortDescription: "",
+        },
+        isDeactivated:false,
+        rememberToken:account.access_token,
+        tokenExpiration: new Date(account.expires_at*1000),
+        favoriteCatCafeID: null,
+      });
+    }
+  },
+},
 })
