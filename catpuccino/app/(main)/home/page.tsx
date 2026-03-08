@@ -3,6 +3,7 @@ import BestCafes from "@/components/BestCafes";
 import MarqueeBand from "@/components/MarqueeBand";
 import { cafes } from "@/app/data/cafes";
 import CategoryIcon from "@/components/CategoryIcon";
+import PostCarousel from "@/components/PostCarousel";
 
 export default function DiscoverPage() {
   return (
@@ -84,6 +85,7 @@ export default function DiscoverPage() {
           badgeText="People Friendly"
           badgeColor="bg-[#ED7364]"
         />
+        <PostCarousel posts={[1, 2, 3]} variant="thread"/>
 
         <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
         <BestCafes
@@ -93,6 +95,7 @@ export default function DiscoverPage() {
           badgeText="Aesthetic"
           badgeColor="bg-[#87AE73]"
         />
+        <PostCarousel posts={[1, 2, 3, 4]} variant="collage"/>
 
         <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
         <BestCafes
@@ -102,6 +105,7 @@ export default function DiscoverPage() {
           badgeText="Best Foods"
           badgeColor="bg-[#FF7300]"
         />
+        <PostCarousel posts={[1, 2, 3]}/>
 
         <div className="h-[400px] w-full bg-[#FCD24C]" />
 
@@ -113,6 +117,7 @@ export default function DiscoverPage() {
           badgeText="Work-Friendly"
           badgeColor="bg-[#699795]"
         />
+        <PostCarousel posts={[1, 2, 3, 4]} />
 
         <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FF5995]" />
         <BestCafes
@@ -122,6 +127,7 @@ export default function DiscoverPage() {
           badgeText="Best Service"
           badgeColor="bg-[#FF5995]"
         />
+        <PostCarousel posts={[1, 2, 3, 4]} />
 
         <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#623D9B]" />
         <BestCafes
@@ -132,6 +138,7 @@ export default function DiscoverPage() {
           badgeColor="bg-[#7454A4]"
           reverse
         />
+        <PostCarousel posts={[1, 2, 3, 4]} />
 
       </section>
 
