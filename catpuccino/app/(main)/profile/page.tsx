@@ -1,18 +1,18 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import Comments from "@/components/CommentCard";
 import Link from "next/link";
 import PostPreview from "@/components/profile/PostPreview";
+import EditProfile from "@/components/EditProfile";
 
 const ProfilePage = () => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState("reviews");
-  const [displayName, setDisplayName] = useState<string>("CarLover67");
+  const [displayName, setDisplayName] = useState<string>("Random User");
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>("/default-profile.svg");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editName, setEditName] = useState<string>(displayName);
@@ -20,25 +20,103 @@ const ProfilePage = () => {
   const [bio, setBio] = useState<string>("add bio here");
   const [editBio, setEditBio] = useState<string>(bio);
 
-  const [topCafe1, setTopCafe1] = useState<string>("Mew Mew Cafe");
-  const [topCafe2, setTopCafe2] = useState<string>("Mew Brew Spot");
-  const [topCafe3, setTopCafe3] = useState<string>("Cat Corner");
+  const [topCafe1, setTopCafe1] = useState<string>("---");
+  const [topCafe2, setTopCafe2] = useState<string>("---");
+  const [topCafe3, setTopCafe3] = useState<string>("---");
   const [editTopCafe1, setEditTopCafe1] = useState<string>(topCafe1);
   const [editTopCafe2, setEditTopCafe2] = useState<string>(topCafe2);
   const [editTopCafe3, setEditTopCafe3] = useState<string>(topCafe3);
 
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
 
   const viewedUserId = searchParams.get("userId");
   const loggedInUserId = (session?.user as any)?.id as string | undefined;
+  const profileUserId = viewedUserId || loggedInUserId;
 
   const isLoggedIn = !!session;
   const isOwnProfile = !viewedUserId || viewedUserId === loggedInUserId;
+  const isOwner =
+    typeof session?.user?.email === "string" &&
+    session.user.email.endsWith("@catpuccino.com");
 
-  const handleToggleFollow = () => {
-    if (!isLoggedIn || isOwnProfile) return;
-    setIsFollowing((prev) => !prev);
-    // TODO: Hook this up to a follow/unfollow API when available
+  useEffect(() => {
+    if (!isLoggedIn || !profileUserId) return;
+
+    const fetchProfile = async () => {
+      try {
+        const url = viewedUserId
+          ? `/api/auth/profile?userId=${viewedUserId}`
+          : "/api/auth/profile";
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setFollowersCount(data.followersCount ?? 0);
+          setFollowingCount(data.followingCount ?? 0);
+          setPostsCount(data.postsCount ?? 0);
+          if (data.username) setDisplayName(data.username);
+          if (data.bio) setBio(data.bio);
+          if (data.profilePic) setProfileImageUrl(data.profilePic);
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    };
+
+    fetchProfile();
+  }, [isLoggedIn, profileUserId, viewedUserId]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !viewedUserId || viewedUserId === loggedInUserId) return;
+
+    const checkFollow = async () => {
+      try {
+        const res = await fetch(`/api/auth/follow?userId=${viewedUserId}`);
+        if (res.ok) {
+          const { isFollowing: following } = await res.json();
+          setIsFollowing(following);
+        }
+      } catch (err) {
+        console.error("Failed to check follow:", err);
+      }
+    };
+
+    checkFollow();
+  }, [isLoggedIn, viewedUserId, loggedInUserId]);
+
+  const handleProfileImageFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditProfileImageUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleToggleFollow = async () => {
+    if (!isLoggedIn || isOwnProfile || !viewedUserId) return;
+
+    const action = isFollowing ? "unfollow" : "follow";
+    try {
+      const res = await fetch("/api/auth/follow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ targetUserId: viewedUserId, action }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsFollowing(data.isFollowing);
+        setFollowersCount((prev) => prev + (data.isFollowing ? 1 : -1));
+      }
+    } catch (err) {
+      console.error("Failed to toggle follow:", err);
+    }
   };
 
   const handleOpenEditProfile = () => {
@@ -86,14 +164,23 @@ const ProfilePage = () => {
 
             {/* Profile Info */}
             <div className="flex flex-col gap-3">
-              <h1 className="text-3xl font-poppins font-bold text-[#262626]">
-                {displayName}
-              </h1>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-3xl font-poppins font-bold text-[#262626]">
+                  {displayName}
+                </h1>
+                {isOwner && (
+                  <img
+                    src="/ownertag.svg"
+                    alt="Cafe owner badge"
+                    className="h-10 w-auto"
+                  />
+                )}
+              </div>
 
               <div className="flex gap-4 text-[#262626] font-medium">
-                <span><strong>67</strong> Followers</span>
-                <span><strong>67</strong> Following</span>
-                <span><strong>67</strong> Posts</span>
+                <span><strong>{followersCount}</strong> Followers</span>
+                <span><strong>{followingCount}</strong> Following</span>
+                <span><strong>{postsCount}</strong> Posts</span>
               </div>
 
               <p className="text-[#262626]">
@@ -163,108 +250,23 @@ const ProfilePage = () => {
         </div>
       </section>
 
-      {/* EDIT PROFILE MODAL */}
-      {isEditingProfile && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-[#FFF7EA] rounded-[16px] shadow-xl px-6 py-5 w-full max-w-lg">
-            <h2 className="text-lg font-bold text-[#262626] mb-3">
-              Edit Profile
-            </h2>
-            <form
-              onSubmit={handleSaveProfile}
-              className="flex flex-col gap-3"
-            >
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-[#262626]">
-                  Display name
-                </label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C9A57A] bg-[#FFF8EC] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B]"
-                  placeholder="Enter your name"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-[#262626]">
-                  Profile picture
-                </label>
-                <input
-                  type="url"
-                  value={editProfileImageUrl}
-                  onChange={(e) => setEditProfileImageUrl(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C2743A] bg-[#FFE3C4] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B]"
-                  placeholder="Insert image/file here"
-                />
-                <span className="text-[11px] text-gray-700">
-                  Use a direct image link for now. Upload support can be added later.
-                </span>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-sm font-semibold text-[#262626]">
-                  Bio
-                </label>
-                <textarea
-                  value={editBio}
-                  onChange={(e) => setEditBio(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C9A57A] bg-[#FFF8EC] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B] resize-none h-24"
-                  placeholder="Write a short bio about yourself"
-                />
-              </div>
-
-              {/* Top 3 recommended cafes (editable) */}
-              <div className="flex flex-col gap-2 mt-1">
-                <label className="text-sm font-semibold text-[#262626]">
-                  Top 3 recommended cafes
-                </label>
-
-                <input
-                  type="text"
-                  value={editTopCafe1}
-                  onChange={(e) => setEditTopCafe1(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C9A57A] bg-[#FFF8EC] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B]"
-                  placeholder="Cafe #1"
-                />
-
-                <input
-                  type="text"
-                  value={editTopCafe2}
-                  onChange={(e) => setEditTopCafe2(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C9A57A] bg-[#FFF8EC] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B]"
-                  placeholder="Cafe #2"
-                />
-
-                <input
-                  type="text"
-                  value={editTopCafe3}
-                  onChange={(e) => setEditTopCafe3(e.target.value)}
-                  className="px-3 py-2 rounded-[8px] border border-[#C9A57A] bg-[#FFF8EC] text-sm text-[#855225] outline-none focus:ring-2 focus:ring-[#AA4B1B]"
-                  placeholder="Cafe #3"
-                />
-              </div>
-
-              <div className="flex gap-2 justify-end mt-3">
-                <button
-                  type="button"
-                  onClick={handleCancelEditProfile}
-                  className="px-4 py-2 rounded-[10px] text-sm font-semibold text-[#855225] bg-transparent hover:bg-[#F5E4C8] transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-[10px] text-sm font-semibold text-white bg-[#AA4B1B] hover:bg-[#8C3A13] transition"
-                >
-                  Save changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <EditProfile
+        isOpen={isEditingProfile}
+        editName={editName}
+        editProfileImageUrl={editProfileImageUrl}
+        editBio={editBio}
+        editTopCafe1={editTopCafe1}
+        editTopCafe2={editTopCafe2}
+        editTopCafe3={editTopCafe3}
+        onChangeName={setEditName}
+        onChangeBio={setEditBio}
+        onChangeTopCafe1={setEditTopCafe1}
+        onChangeTopCafe2={setEditTopCafe2}
+        onChangeTopCafe3={setEditTopCafe3}
+        onProfileImageFileChange={handleProfileImageFileChange}
+        onCancel={handleCancelEditProfile}
+        onSave={handleSaveProfile}
+      />
 
       {/*  TABS SECTION  */}
       <section className="bg-[#FBF3DE] border-t border-[#855225]/20 px-[140px] py-4">
@@ -282,14 +284,14 @@ const ProfilePage = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("media")}
+            onClick={() => setActiveTab("comments")}
             className={`px-5 py-2 rounded-[10px] text-sm font-bold text-white border-2 border-black transition ${
-              activeTab === "media"
+              activeTab === "comments"
                 ? "bg-[#AA4B1B]"
                 : "bg-[#D1B291]"
             }`}
           >
-            Media
+            Comments
           </button>
 
         </div>
@@ -326,18 +328,32 @@ const ProfilePage = () => {
         </div>
       )}
 
-        {/*  MEDIA  */}
-        {activeTab === "media" && (
-          <div className="grid grid-cols-3 gap-4">
-
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-            <div className="h-[200px] bg-gray-300 rounded-lg"></div>
-
-          </div>
+        {/*  COMMENTS  */}
+        {activeTab === "comments" && (
+          <div className="flex flex-col gap-6">
+          <PostPreview 
+            id="post-3"
+            cafeName="Cat Cafe Manila"
+            rating={5}
+            username="CatLover67"
+            price="₱₱"
+            city="Manila"
+            time="10:00 AM - 8:00 PM"
+            content="I have been struggling to lock in these past few days. This place actually helped me think!"
+            image="/cafe-imgs/hero.png"
+          />
+          <PostPreview 
+            id="post-4"
+            cafeName="Neko Coffee"
+            rating={4}
+            username="CatLover67"
+            price="₱₱₱"
+            city="Quezon City"
+            time="9:00 AM - 10:00 PM"
+            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
+            image="/cafe-imgs/cafe2.png"
+          />
+        </div>
         )}
 
       </section>

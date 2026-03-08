@@ -22,7 +22,10 @@ const UserSchema = new Schema({
     profilePic: {
         type: String, 
         default: "/default-profile.svg",
-    }
+    },
+    followersCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
+    postsCount: { type: Number, default: 0 },
     }, {
     timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
 }); 
