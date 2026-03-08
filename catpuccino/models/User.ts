@@ -20,12 +20,8 @@ const UserSchema = new Schema({
         required: function() { return !this.oauthProvider; } 
         //required: [true, 'Password is required'],
     },
-    oauthProvider: {
-    type: String, // 'google', 'facebook', etc.
-    default: null,
-    }, 
     role: {
-        type: [String], 
+        type: String, 
         enum: ["user", "owner", "admin"],
         default: ["user"],
     },
@@ -58,12 +54,6 @@ const UserSchema = new Schema({
     isDeactivated: {
         type: Boolean,
         default: false,
-    },
-    rememberToken: { 
-        type: String 
-    },
-    tokenExpiration: { 
-        type: Date 
     },
     favoriteCatCafeID: {
         type: mongoose.Schema.Types.ObjectId,

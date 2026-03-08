@@ -79,8 +79,7 @@ events: {
         name:user.name,
         email: user.email,
         password: null,
-        oauthProvider: account?.provider || "google",
-        role: ["user"],
+        role: "user",
         profile: {
           firstName: "",
           lastName: "",
@@ -90,8 +89,6 @@ events: {
           shortDescription: "",
         },
         isDeactivated:false,
-        rememberToken:account.access_token,
-        tokenExpiration: new Date(account.expires_at*1000),
         favoriteCatCafeID: null,
       });
     }

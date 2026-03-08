@@ -7,14 +7,14 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      role?: string[];
+      role?: string;
       profile?: {
-        firstName: string;
-        lastName: string;
+        firstName: string| null;
+        lastName: string| null;
         profilePicURL?: string | null;
         coverPicURL?: string | null;
-        bio?: string;
-        shortDescription?: string;
+        bio?: string|null;
+        shortDescription?: string|null;
       };
       favoriteCatCafeID?: string | null;
       isDeactivated?: boolean;
@@ -23,7 +23,7 @@ declare module "next-auth" {
 
   interface User {
     id: string;
-    role?: string[];
+    role?: string;
     profile?: {
       firstName: string;
       lastName: string;
