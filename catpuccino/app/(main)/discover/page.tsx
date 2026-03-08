@@ -32,9 +32,36 @@ export default function DiscoverPage() {
           </div>
 
           <div className="flex flex-col gap-6">
-            <PostPreview />
-            <PostPreview />
-            <PostPreview />
+            <PostPreview 
+              id="thread-1"
+              cafeName="Meow Cafe"
+              rating={5}
+              username="CatLover99"
+              price="₱₱"
+              city="Makati"
+              time="8:00 AM - 9:00 PM"
+              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
+            />
+            <PostPreview 
+              id="thread-1"
+              cafeName="Meow Cafe"
+              rating={5}
+              username="CatLover99"
+              price="₱₱"
+              city="Makati"
+              time="8:00 AM - 9:00 PM"
+              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
+            />
+            <PostPreview 
+              id="thread-1"
+              cafeName="Meow Cafe"
+              rating={5}
+              username="CatLover99"
+              price="₱₱"
+              city="Makati"
+              time="8:00 AM - 9:00 PM"
+              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
+            />
           </div>
 
         </div>

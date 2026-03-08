@@ -13,6 +13,19 @@ import {
   IoPersonCircle, 
 } from "react-icons/io5";
 
+// 1. Define the props that this component will accept
+interface PostPreviewProps {
+  id: string;
+  cafeName: string;
+  rating: number; // You can add logic later to render stars based on this!
+  username: string;
+  price: string;
+  city: string;
+  time: string;
+  content: string;
+  image?: string; // Made optional since not all posts might have images
+}
+
 const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementType; iconColor: string; label: string; value: string }) => (
   <div className="flex items-center gap-2.5">
     <div className="flex items-center justify-center w-7 h-7 bg-white border-[1.5px] border-black rounded-md shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)]">
@@ -25,15 +38,28 @@ const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementT
   </div>
 );
 
-export default function PostPreview() {
+// 2. Destructure the props here so we can use them inside the component
+export default function PostPreview({ 
+  id, 
+  cafeName, 
+  rating, 
+  username, 
+  price, 
+  city, 
+  time, 
+  content, 
+  image 
+}: PostPreviewProps) {
+  
   return (
-    <div className="w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+    // 3. I added id={id} to the outer div here, just in case you need it for scrolling/linking later!
+    <div id={id} className="w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
       {/* Header: User Info */}
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
-          &lt;username&gt; - &lt;no. hr/days ago&gt;
+          {username} - Just now {/* You can pass a real timestamp prop later! */}
         </span>
         <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
           •••
@@ -41,40 +67,46 @@ export default function PostPreview() {
       </div>
 
       {/* Title & Cafe */}
-      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">Title</h2>
-      <p className="text-sm font-medium text-black mb-5">&lt;Cafe Name&gt;</p>
+      {/* Note: You didn't pass a 'title' prop in your ProfilePage, so I just used cafeName here for now, but you should add a title prop later! */}
+      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">Review of {cafeName}</h2>
+      <p className="text-sm font-medium text-black mb-5">{cafeName}</p>
 
       {/* Tags Grid */}
       <div className="flex flex-wrap gap-6 mb-6">
         <InfoTag 
           icon={IoPricetag} 
-          iconColor="text-[#FFB800]" /* Yellow */
+          iconColor="text-[#FFB800]" 
           label="Price" 
-          value="₱150-₱350" 
+          value={price} 
         />
         <InfoTag 
           icon={IoLocationSharp} 
-          iconColor="text-[#E63946]" /* Red */
+          iconColor="text-[#E63946]" 
           label="City" 
-          value="Quezon City" 
+          value={city} 
         />
         <InfoTag 
           icon={IoTime} 
-          iconColor="text-[#FF7A00]" /* Orange */
+          iconColor="text-[#FF7A00]" 
           label="Time" 
-          value="7:30 AM - 10:00 PM" 
+          value={time} 
         />
       </div>
 
       {/* Content Snippet */}
       <div className="mb-6">
         <p className="text-[13px] leading-relaxed text-black/90 text-justify line-clamp-3">
-          I have been struggling to lock in these past few days. I keep getting distracted by mini tasks or get consumed by social media. I am glad to have listened to my friend when they recommended that I should study in this specific cat cafe. At first I was in doubt since how can you lock in on your tasks when there are cats around. But boy, was I in shock when I tried this cafe. Not only did I lock in, but having a cat companion boosted my concentration. If ever I get stuck, I would just pat the cat sitting on my lap which actually helped me think. Definitely would come again. They also study friendly food selection. Foods that aren't too messy to eat.
+          {content}
         </p>
         
+        {/* Optional Image rendering (since you passed an image prop in ProfilePage) */}
+        {image && (
+          <img src={image} alt="Cafe" className="mt-4 w-full h-48 object-cover rounded-xl border border-black/10" />
+        )}
+        
         <Link 
-          href="/post/123" /* TODO: Make  the API shit */
-          className="text-[13px] font-bold text-[#A86734] hover:text-black hover:underline transition-colors mt-1 inline-block"
+          href={`/post/${id}`} // Now it dynamically links to the specific post!
+          className="text-[13px] font-bold text-[#A86734] hover:text-black hover:underline transition-colors mt-2 inline-block"
         >
           See more
         </Link>
@@ -82,10 +114,9 @@ export default function PostPreview() {
 
       {/* Footer Actions */}
       <div className="flex items-center gap-4">
+        {/* You'll eventually want to pass vote/reply counts as props too! */}
         <VoteButtons initialVotes={67} initialUserVote={null} />
-
         <ReplyButton replyCount={24} />
-        
         <ReportButton onClick={()=> console.log("Reported.")}/>
       </div>
 
