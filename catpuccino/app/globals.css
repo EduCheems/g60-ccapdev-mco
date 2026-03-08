@@ -102,4 +102,14 @@ body {
      0px  4px 0px rgba(0,0,0,0.2);
   }
 
+  @layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
+    }
+  }
+
 }
