@@ -58,7 +58,7 @@ const ProfilePage = () => {
           setPostsCount(data.postsCount ?? 0);
           if (data.username) setDisplayName(data.username);
           if (data.bio) setBio(data.bio);
-          if (data.profilePic) setProfileImageUrl(data.profilePicz);
+          if (data.profilePic) setProfileImageUrl(data.profilePic);
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
