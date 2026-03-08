@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserProfile } from "@/controllers/userAction";
 import { auth } from "@/auth";
+import { connectDB } from "@/lib/mongodb"; 
+import User from "@/models/User"; 
+
 
 export async function GET(req: NextRequest) {
   try {
@@ -24,4 +27,34 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req:NextRequest){
+  try{
+    await connectDB();
+     const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const info=await req.json();
+    const {name,bio,profilePic}=info;
+    
+    const changedUser=await User.findOneAndUpdate({email:session.user.email},
+      {
+        name:name,
+        bio:bio,
+        profilePicURL:profilePic
+      },{ new: true }  
+    ).lean();
+    if(!changedUser){
+      return NextResponse.json({error:"User Not Found"},{status:404});
+    }else{
+     return NextResponse.json({ message: "Successfully Updated", user: changedUser });
+    }
+  }catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+  }   
+  
 }

@@ -133,7 +133,7 @@ const ProfilePage = () => {
     setIsEditingProfile(false);
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setDisplayName(editName.trim() || displayName);
     setProfileImageUrl(editProfileImageUrl.trim() || null);
@@ -142,6 +142,22 @@ const ProfilePage = () => {
     setTopCafe2(editTopCafe2.trim() || topCafe2);
     setTopCafe3(editTopCafe3.trim() || topCafe3);
     setIsEditingProfile(false);
+    try{
+      const res= await fetch("api/auth/profile",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        name: editName.trim() || displayName,
+        bio: editBio.trim() || bio,
+        profilePic: editProfileImageUrl.trim() || profileImageUrl
+      }),
+      });
+      if(!res){
+        console.error("Failed to update");
+      }
+    } catch (err) {
+      console.error("Failed to toggle follow:", err);
+    }
   };
 
 
@@ -150,6 +166,9 @@ const ProfilePage = () => {
     setBio(session?.user?.bio ||bio)
     setProfileImageUrl(session?.user.profilePicURL||session?.user.image||profileImageUrl);
   },[session]);
+
+  
+  
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 

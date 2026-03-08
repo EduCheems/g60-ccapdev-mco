@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs"
 import mongoose from 'mongoose';
 import { MongoClient } from "mongodb"
 
-connectDB();
+await connectDB();
 class GoogleAccountError extends CredentialsSignin {
   code = "GoogleAccount"
 }
@@ -36,12 +36,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             email: {}, password: {} 
         },
         async authorize(credentials) {
-           
+            
             const user = await User.findOne({ email: credentials?.email }); 
             
             // Just throw standard Errors with your exact code word
             if (!user) throw new Error("UserNotFound"); 
-            
+          
             if (!user.password) throw new Error("GoogleAccount"); 
 
             const isValid = await bcrypt.compare(credentials!.password as string, user.password);
@@ -75,6 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     if (!UserHolder) return session;
 
     session.user.id = UserHolder._id.toString();
+    session.user.name=UserHolder.name;
     session.user.role = UserHolder.role;
     session.user.bio=UserHolder.bio;
     session.user.profilePicURL=UserHolder.profilePicURL;
@@ -91,10 +92,12 @@ events: {
   async createUser({ user}) {
     const existingUser = await User.findOne({ email: user.email });
     if (existingUser) {
+      const pass = (user.name?.slice(0, 4) ?? "user") + "1234";
+      const hashedPass = await bcrypt.hash(pass, 10); 
       await User.updateOne({email:user.email},{
-        password: null,
+        password:  hashedPass,
         role: "user",
-        profilePicURL: null,
+        profilePicURL: "/default-avatar.png",
         bio: "",
         followersCount:user.followersCount,
         followingCount:user.followingCount,
