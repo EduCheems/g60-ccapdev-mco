@@ -1,6 +1,5 @@
 "use client"; 
 import React, { useState } from 'react';
-// Make sure these paths match where your components actually are!
 import PostPreview from '@/components/profile/PostPreview';
 import RecentlyVisited from '@/components/RecentlyVisited';
 
@@ -8,16 +7,13 @@ export default function DiscoverPage() {
   const [sortBy, setSortBy] = useState("new");
 
   return (
-    // 1. THIS WRAPPER FIXES THE BLACK SPACES: It stretches 100% width and holds the background color
+
     <div className="min-h-screen w-full bg-[#FBF3DE]"> 
       
-      {/* 2. YOUR CONTENT: Stays perfectly centered at 1200px wide */}
       <div className="max-w-[1200px] mx-auto px-6 pt-24 pb-12 font-montserrat flex flex-col lg:flex-row gap-8 items-start">
         
-        {/* Left Side: The Main Feed */}
         <div className="flex-1 flex flex-col gap-6 w-full">
           
-          {/* Sorting Header */}
           <div className="flex justify-between items-center mb-2 px-2">
             <h1 className="text-2xl font-black text-black">Discover</h1>
             
@@ -35,7 +31,6 @@ export default function DiscoverPage() {
             </div>
           </div>
 
-          {/* The Doomscroll Array */}
           <div className="flex flex-col gap-6">
             <PostPreview />
             <PostPreview />
@@ -44,7 +39,6 @@ export default function DiscoverPage() {
 
         </div>
 
-        {/* Right Side: The Sticky Sidebar */}
         <RecentlyVisited />
 
       </div>
