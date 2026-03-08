@@ -17,7 +17,7 @@ const UserSchema = new Schema({
     }, 
     password: {
         type: String, 
-        required: function() { return !this.oauthProvider; } 
+        required: true,
     },
     role: {
         type: String, 
