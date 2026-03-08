@@ -21,7 +21,7 @@ const UserSchema = new Schema({
     },
     profilePic: {
         type: String, 
-        default: "/default-avatar.png",
+        default: "/default-profile.svg",
     }
     }, {
     timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
