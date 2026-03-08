@@ -8,11 +8,11 @@ declare module "next-auth" {
       email?: string | null;
       role?: string;
       bio?: string|null;
+      image?:string|null;
       profilePicURL?: string | null;
-      favoriteCatCafeID?: string | null;
-      followersCount?:Number|null;
-      followingCount?:Number|null;
-      postCount:Number|null;
+      followersCount?:number|null;
+      followingCount?:number|null;
+      postCount?:number|null;
       isDeactivated?: boolean;
     };
   }
@@ -22,11 +22,10 @@ declare module "next-auth" {
     role?: string;
     bio?: string|null;
     profilePicURL?: string | null;
-    favoriteCatCafeID?: string | null;
-    followersCount?:Number|null;
-    followingCount?:Number|null;
-    postCount:Number|null;
-    favoriteCatCafeID?: string | null;
+    followersCount?:number|null;
+    followingCount?:number|null;
+    postCount?:number|null;
     isDeactivated?: boolean;
+    image?:string|null;
   }
 }

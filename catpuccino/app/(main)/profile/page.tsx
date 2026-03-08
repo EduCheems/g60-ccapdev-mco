@@ -56,11 +56,9 @@ const ProfilePage = () => {
 
 
   useEffect(()=>{
-    setDisplayName(session?.user?.name ??"CatLover");
-    setBio(session?.user?.bio ??"Add Bio Here");
-    setProfileImageUrl(session?.user.profilePicURL??"")
-
-
+    setDisplayName(session?.user?.name||displayName)
+    setBio(session?.user?.bio ||bio)
+    setProfileImageUrl(session?.user.profilePicURL||session?.user.image||profileImageUrl);
   },[session]);
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
@@ -117,9 +115,9 @@ const ProfilePage = () => {
             </div>
 
             <div className="flex gap-4 text-[#262626] font-medium">
-              <span><strong>67</strong> Followers</span>
-              <span><strong>67</strong> Following</span>
-              <span><strong>67</strong> Posts</span>
+              <span><strong>{session?.user.followersCount??0}</strong> Followers</span>
+              <span><strong>{session?.user.followingCount??0}</strong> Following</span>
+              <span><strong>{session?.user.postCount??0}</strong> Posts</span>
             </div>
 
             <p className="text-[#262626]">
