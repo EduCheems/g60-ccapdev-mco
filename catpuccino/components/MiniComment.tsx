@@ -1,3 +1,5 @@
+"use client";
+import ReportButton from "./ReportButton";
 import { IoPersonCircle } from "react-icons/io5";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
@@ -26,6 +28,7 @@ export default function MiniComment({ username, content, timeAgo }: MiniCommentP
       <div className="flex items-center gap-3 scale-90 origin-left">
         <VoteButtons initialVotes={12} initialUserVote={null} />
         <ReplyButton replyCount={2} />
+        <ReportButton onClick={()=> console.log("Reported.")}/>
       </div>
     </div>
   );
