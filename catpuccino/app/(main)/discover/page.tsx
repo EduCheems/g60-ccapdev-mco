@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import PostPreview from '@/components/profile/PostPreview';
 import RecentlyVisited from '@/components/RecentlyVisited';
+import Link from 'next/link'; // <-- 1. Imported Link here
 
 export default function DiscoverPage() {
   const [sortBy, setSortBy] = useState("new");
 
   return (
-
     <div className="min-h-screen w-full bg-[#FBF3DE]"> 
       
       <div className="max-w-[1200px] mx-auto px-6 pt-24 pb-12 font-montserrat flex flex-col lg:flex-row gap-8 items-start">
@@ -32,36 +32,49 @@ export default function DiscoverPage() {
           </div>
 
           <div className="flex flex-col gap-6">
-            <PostPreview 
-              id="thread-1"
-              cafeName="Meow Cafe"
-              rating={5}
-              username="CatLover99"
-              price="₱₱"
-              city="Makati"
-              time="8:00 AM - 9:00 PM"
-              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
-            />
-            <PostPreview 
-              id="thread-1"
-              cafeName="Meow Cafe"
-              rating={5}
-              username="CatLover99"
-              price="₱₱"
-              city="Makati"
-              time="8:00 AM - 9:00 PM"
-              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
-            />
-            <PostPreview 
-              id="thread-1"
-              cafeName="Meow Cafe"
-              rating={5}
-              username="CatLover99"
-              price="₱₱"
-              city="Makati"
-              time="8:00 AM - 9:00 PM"
-              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
-            />
+            
+            {/* 2. Wrapped PostPreview in a Link pointing to /view-post/[id] */}
+            <Link href="/view-post/thread-1" className="block transition-transform hover:-translate-y-1">
+              <PostPreview 
+                id="thread-1"
+                cafeName="Meow Cafe"
+                rating={5}
+                username="CatLover99"
+                price="₱₱"
+                city="Makati"
+                time="8:00 AM - 9:00 PM"
+                content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
+              />
+            </Link>
+
+            {/* Faked a second ID for realism */}
+            <Link href="/view-post/thread-2" className="block transition-transform hover:-translate-y-1">
+              <PostPreview 
+                id="thread-2"
+                cafeName="Paws & Claws"
+                rating={4}
+                username="CoffeeAddict_PH"
+                price="₱₱₱"
+                city="BGC"
+                time="10:00 AM - 10:00 PM"
+                content="Great coffee, but the cats were all asleep when I visited. Still a very aesthetic place to get some work done!"
+              />
+            </Link>
+
+            {/* Faked a third ID for realism */}
+            <Link href="/view-post/thread-3" className="block transition-transform hover:-translate-y-1">
+              <PostPreview 
+                id="thread-3"
+                cafeName="Catpuccino Central"
+                rating={5}
+                username="MewMew"
+                price="₱"
+                city="Quezon City"
+                time="9:00 AM - 8:00 PM"
+                content="Super affordable and the staff is amazing. They even let you give treats to the cats if you ask nicely."
+              />
+            </Link>
+
           </div>
 
         </div>
