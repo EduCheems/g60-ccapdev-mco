@@ -12,7 +12,7 @@ export async function GET() {
         .filter(name => name != null);
         return NextResponse.json(cafeNames);
     } catch (error) {
-        console.error("🔥 ACTUAL POST ERROR:", error);
-        return NextResponse.json({ error: "Failed to fetch cafes" }, { status: 500 });
+        console.error("ACTUAL POST ERROR:", error);
+        
     }
 }

@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useSession } from "next-auth/react";
-import { IoHome, IoHelpCircle, IoMail, IoIdCard} from 'react-icons/io5';
+import { IoHome, IoHelpCircle, IoMail, IoIdCard, IoCompass} from 'react-icons/io5';
 import AuthModal, { logoutUser } from './AuthModal'; 
 
 export default function GuestNavBar(){
@@ -21,7 +21,7 @@ export default function GuestNavBar(){
                 style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }}
                 className="bg-[#5C3727] border-b border-white/10 py-3"
             >
-                <div className="w-[85%] max-w-[1100px] mx-auto px-[120px] flex items-center justify-between">
+                <div className="w-full max-w-[1200px] mx-auto px-[120px] flex items-center justify-between">
 
                     {/* Logo */}
                     <div className="flex justify-start">
@@ -34,6 +34,10 @@ export default function GuestNavBar(){
                     <div className="flex items-center gap-8 text-[12px] font-medium uppercase tracking-widest text-white/90">
                         <Link href="/home" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">
                             <IoHome className="text-lg mb-[2px]"/> Home 
+                        </Link>
+
+                        <Link href="/discover" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">
+                            <IoCompass className="text-lg mb-[2px]"/> Discover 
                         </Link>
 
                         <Link href="/about" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">

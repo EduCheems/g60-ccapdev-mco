@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Searchbar from './Searchbar'; 
 
-import { IoAdd, IoHome, IoHelpCircle, IoMail } from 'react-icons/io5';
+import { IoAdd, IoHome, IoHelpCircle, IoMail, IoCompass} from 'react-icons/io5';
 import { User } from "next-auth"; 
 import { logoutUser } from "./AuthModal";
 
@@ -15,7 +15,7 @@ export default function Navbar({user}: NavbarProps) {
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }} className="bg-[#5C3727] border-b border-white/10 py-3" >
       
-      <div className="w-[85%] max-w-[1100px] mx-auto px-[120px] flex items-center justify-between">
+      <div className="w-full max-w-[1200px]  mx-auto px-[120px] flex items-center justify-between">
         
         <div className="flex justify-start">
           <Link href="/home" className="block">
@@ -27,6 +27,10 @@ export default function Navbar({user}: NavbarProps) {
           
           <Link href="/home" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">
             <IoHome className="text-lg mb-[2px]"/> Home 
+          </Link>
+
+          <Link href="/discover" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">
+             <IoCompass className="text-lg mb-[2px]"/> Discover
           </Link>
 
           <Link href="/about" className="flex items-center gap-1.5 hover:text-[#FFB87A] hover:font-bold transition-all">
@@ -47,13 +51,12 @@ export default function Navbar({user}: NavbarProps) {
             </Link>
             
             <Link href="/profile" className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0 block hover:ring-2 hover:ring-white/50 transition-all overflow-hidden">
-               {user?.image && (
-                 <img src={user.image} 
+               <img
+                 src={user?.image || "/default-profile.svg"}
                  alt="Profile"
-                className="w-full h-full object-cover" 
-                referrerPolicy="no-referrer"
-                />
-               )}
+                 className="w-full h-full object-cover"
+                 referrerPolicy="no-referrer"
+               />
             </Link>
 
             <button

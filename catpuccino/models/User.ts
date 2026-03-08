@@ -49,10 +49,10 @@ const UserSchema = new Schema({
         default: 0 
     },
     }, {
-    timestamps: true // Automatically handles createdAt and updatedAt
+    timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
 }); 
 
 // Don't delete this one 
 const User = models.User || model('User', UserSchema); 
 
-export default User; 
+export default User;

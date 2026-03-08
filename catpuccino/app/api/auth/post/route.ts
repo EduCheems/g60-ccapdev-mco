@@ -80,6 +80,9 @@ export async function POST(req: Request){
         console.log("Updated cafe total reviews:", cafe.totalReviews, cafe.averages);
         console.log("Updated cafe averages:", cafe.averages);
         await cafe.save();
+
+        await User.findByIdAndUpdate(user._id, { $inc: { postsCount: 1 } });
+
         return NextResponse.json({ message: "Post created successfully", post: newPost }, { status: 201 });
 
     }catch (error: any) {
