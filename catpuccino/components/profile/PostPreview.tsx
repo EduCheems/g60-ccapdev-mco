@@ -1,5 +1,9 @@
+"use client";
+
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
+import ReportButton from "../ReportButton";
+
 import Link from "next/link"; 
 
 import { 
@@ -81,6 +85,8 @@ export default function PostPreview() {
         <VoteButtons initialVotes={67} initialUserVote={null} />
 
         <ReplyButton replyCount={24} />
+        
+        <ReportButton onClick={()=> console.log("Reported.")}/>
       </div>
 
     </div>
