@@ -13,17 +13,16 @@ import {
   IoPersonCircle, 
 } from "react-icons/io5";
 
-// 1. Define the props that this component will accept
 interface PostPreviewProps {
   id: string;
   cafeName: string;
-  rating: number; // You can add logic later to render stars based on this!
+  rating: number; 
   username: string;
   price: string;
   city: string;
   time: string;
   content: string;
-  image?: string; // Made optional since not all posts might have images
+  image?: string;
 }
 
 const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementType; iconColor: string; label: string; value: string }) => (
@@ -38,7 +37,6 @@ const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementT
   </div>
 );
 
-// 2. Destructure the props here so we can use them inside the component
 export default function PostPreview({ 
   id, 
   cafeName, 
@@ -52,10 +50,8 @@ export default function PostPreview({
 }: PostPreviewProps) {
   
   return (
-    // 3. I added id={id} to the outer div here, just in case you need it for scrolling/linking later!
     <div id={id} className="w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
-      {/* Header: User Info */}
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
@@ -66,12 +62,9 @@ export default function PostPreview({
         </button>
       </div>
 
-      {/* Title & Cafe */}
-      {/* Note: You didn't pass a 'title' prop in your ProfilePage, so I just used cafeName here for now, but you should add a title prop later! */}
       <h2 className="text-3xl font-black text-black mb-1 tracking-tight">Review of {cafeName}</h2>
       <p className="text-sm font-medium text-black mb-5">{cafeName}</p>
 
-      {/* Tags Grid */}
       <div className="flex flex-wrap gap-6 mb-6">
         <InfoTag 
           icon={IoPricetag} 
@@ -93,13 +86,11 @@ export default function PostPreview({
         />
       </div>
 
-      {/* Content Snippet */}
       <div className="mb-6">
         <p className="text-[13px] leading-relaxed text-black/90 text-justify line-clamp-3">
           {content}
         </p>
         
-        {/* Optional Image rendering (since you passed an image prop in ProfilePage) */}
         {image && (
           <img src={image} alt="Cafe" className="mt-4 w-full h-48 object-cover rounded-xl border border-black/10" />
         )}
@@ -112,9 +103,7 @@ export default function PostPreview({
         </Link>
       </div>
 
-      {/* Footer Actions */}
       <div className="flex items-center gap-4">
-        {/* You'll eventually want to pass vote/reply counts as props too! */}
         <VoteButtons initialVotes={67} initialUserVote={null} />
         <ReplyButton replyCount={24} />
         <ReportButton onClick={()=> console.log("Reported.")}/>
