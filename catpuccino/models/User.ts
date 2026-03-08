@@ -18,7 +18,6 @@ const UserSchema = new Schema({
     password: {
         type: String, 
         required: function() { return !this.oauthProvider; } 
-        //required: [true, 'Password is required'],
     },
     role: {
         type: String, 
@@ -59,7 +58,10 @@ const UserSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'CatCafe',
         //required: [true, 'Favorite Cat Cafe is required'],
-    }
+    },
+    followersCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
+    postsCount: { type: Number, default: 0 },
     }, {
     timestamps: true // Automatically handles createdAt and updatedAt
 }); 
