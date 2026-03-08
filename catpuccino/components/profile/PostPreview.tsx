@@ -4,6 +4,8 @@ import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
 import ReportButton from "../ReportButton";
 
+import { useRouter } from 'next/navigation'; 
+
 import Link from "next/link"; 
 
 import { 
@@ -48,9 +50,12 @@ export default function PostPreview({
   content, 
   image 
 }: PostPreviewProps) {
+
+  const router = useRouter();
   
   return (
-    <div id={id} className="w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+
+    <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
@@ -96,7 +101,8 @@ export default function PostPreview({
         )}
         
         <Link 
-          href={`/post/${id}`} // Now it dynamically links to the specific post!
+          href={`/view-post/${id}`} 
+          onClick={(e) => e.stopPropagation()}
           className="text-[13px] font-bold text-[#A86734] hover:text-black hover:underline transition-colors mt-2 inline-block"
         >
           See more
@@ -104,9 +110,17 @@ export default function PostPreview({
       </div>
 
       <div className="flex items-center gap-4">
-        <VoteButtons initialVotes={67} initialUserVote={null} />
+        
+        <div onClick={(e) => e.stopPropagation()}>
+          <VoteButtons initialVotes={67} initialUserVote={null} />
+        </div>
+
         <ReplyButton replyCount={24} />
-        <ReportButton onClick={()=> console.log("Reported.")}/>
+
+        <div onClick={(e) => e.stopPropagation()}>
+          <ReportButton onClick={() => console.log("Reported.")} />
+        </div>
+
       </div>
 
     </div>
