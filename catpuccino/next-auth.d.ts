@@ -4,19 +4,15 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: mongoose.Types.ObjectId;
-      name?: string | null;
+      name?: string;
       email?: string | null;
-      image?: string | null;
       role?: string;
-      profile?: {
-        firstName: string| null;
-        lastName: string| null;
-        profilePicURL?: string | null;
-        coverPicURL?: string | null;
-        bio?: string|null;
-        shortDescription?: string|null;
-      };
+      bio?: string|null;
+      profilePicURL?: string | null;
       favoriteCatCafeID?: string | null;
+      followersCount?:Number|null;
+      followingCount?:Number|null;
+      postCount:Number|null;
       isDeactivated?: boolean;
     };
   }
@@ -24,14 +20,12 @@ declare module "next-auth" {
   interface User {
     id: string;
     role?: string;
-    profile?: {
-      firstName: string;
-      lastName: string;
-      profilePicURL?: string | null;
-      coverPicURL?: string | null;
-      bio?: string;
-      shortDescription?: string;
-    };
+    bio?: string|null;
+    profilePicURL?: string | null;
+    favoriteCatCafeID?: string | null;
+    followersCount?:Number|null;
+    followingCount?:Number|null;
+    postCount:Number|null;
     favoriteCatCafeID?: string | null;
     isDeactivated?: boolean;
   }

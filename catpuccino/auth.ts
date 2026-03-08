@@ -57,14 +57,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
  callbacks: {
   async session({ session }) {
-    const fullUser = await User.findOne({ email: session.user.email }).lean();
-    if (!fullUser) return session;
+    const UserHolder = await User.findOne({ email: session.user.email }).lean();
+    if (!UserHolder) return session;
 
-    session.user.id = fullUser._id.toString();
-    session.user.role = fullUser.role;
-    session.user.profile = fullUser.profile;
-    session.user.favoriteCatCafeID = fullUser.favoriteCatCafeID;
-    session.user.isDeactivated = fullUser.isDeactivated;
+    session.user.id = UserHolder._id.toString();
+    session.user.role = UserHolder.role;
+    session.user.bio=UserHolder.bio;
+    session.user.profilePicURL=UserHolder.profilePicURL;
+    session.user.isDeactivated = UserHolder.isDeactivated;
+    session.user.followersCount=UserHolder.followersCount;
+    session.user.followingCount=UserHolder.followingCount;
+    session.user.postCount=UserHolder.postCount;
+    session.user.name=UserHolder.name;
+   
 
     return session;
   },
@@ -73,23 +78,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 events: {
   async createUser({ user}) {
     const existingUser = await User.findOne({ email: user.email });
-    if (existingUser) {
+    if (existingUser&&!existingUser.role) {
       await User.updateOne({email:user.email},{
-        _id:user.id,
-        name:user.name,
-        email: user.email,
         password: null,
         role: "user",
-        profile: {
-          firstName: "",
-          lastName: "",
-          profilePicURL: null,
-          coverPicURL: null,
-          bio: "",
-          shortDescription: "",
-        },
+        profilePicURL: null,
+        bio: "",
+        followersCount:user.followersCount,
+        followingCount:user.followingCount,
+        postCount:user.postCount,
         isDeactivated:false,
-        favoriteCatCafeID: null,
       });
     }
   },

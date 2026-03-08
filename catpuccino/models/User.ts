@@ -22,46 +22,32 @@ const UserSchema = new Schema({
     role: {
         type: String, 
         enum: ["user", "owner", "admin"],
-        default: ["user"],
+        default: "user",
     },
-    profile: {
-        firstName: { 
-            type: String, 
-            required: true 
-        },
-        lastName: { 
-            type: String, 
-            required: true 
-        },
-        profilePicURL: { 
-            type: String, 
-            default: null 
-        },
-        coverPicURL: { 
-            type: String, 
-            default: null 
-        },
-        bio: { 
-            type: String, 
-            default: "" 
-        },
-        shortDescription: { 
-            type: String, 
-            default: ""
-        },
+    profilePicURL: { 
+        type: String, 
+        default: "/default-avatar.png",
+    },
+    bio: { 
+        type: String, 
+        default: "Meow Meow Meow" 
     },
     isDeactivated: {
         type: Boolean,
         default: false,
     },
-    favoriteCatCafeID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CatCafe',
-        //required: [true, 'Favorite Cat Cafe is required'],
+    followersCount: {
+        type: Number,
+        default: 0
     },
-    followersCount: { type: Number, default: 0 },
-    followingCount: { type: Number, default: 0 },
-    postsCount: { type: Number, default: 0 },
+    followingCount: { 
+        type: Number, 
+        default: 0 
+    },
+    postsCount: { 
+        type: Number, 
+        default: 0 
+    },
     }, {
     timestamps: true // Automatically handles createdAt and updatedAt
 }); 

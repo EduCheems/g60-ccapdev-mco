@@ -1,18 +1,19 @@
 'use client'
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Comments from "@/components/CommentCard";
 import Link from "next/link";
 import PostPreview from "@/components/profile/PostPreview";
 
+
 const ProfilePage = () => {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState("reviews");
-  const [displayName, setDisplayName] = useState<string>("CarLover67");
+  const [displayName, setDisplayName] = useState<string>("CatLover67");
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editName, setEditName] = useState<string>(displayName);
@@ -27,7 +28,7 @@ const ProfilePage = () => {
 
   const isLoggedIn = !!session;
   const isOwnProfile = !viewedUserId || viewedUserId === loggedInUserId;
-
+  
   const handleToggleFollow = () => {
     if (!isLoggedIn || isOwnProfile) return;
     setIsFollowing((prev) => !prev);
@@ -53,6 +54,14 @@ const ProfilePage = () => {
     setIsEditingProfile(false);
   };
 
+
+  useEffect(()=>{
+    setDisplayName(session?.user?.name ??"CatLover");
+    setBio(session?.user?.bio ??"Add Bio Here");
+    setProfileImageUrl(session?.user.profilePicURL??"")
+
+
+  },[session]);
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
