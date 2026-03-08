@@ -32,12 +32,21 @@ export async function POST(req: Request){
 
         await connectDB(); 
 
+        //experimental wait 
+        const dbRatings = {
+            sociability: Number(ratings.Sociability || 0),
+            ambience: Number(ratings.Ambience || 0),
+            food: Number(ratings.Food || 0),
+            catmosphere: Number(ratings.Catmosphere || 0),
+            service: Number(ratings.Service || 0)
+        }
+
         const overallRating = (
-            Number(ratings.Sociability) + 
-            Number(ratings.Ambience) + 
-            Number(ratings.Food) + 
-            Number(ratings.Catmosphere) + 
-            Number(ratings.Service)
+            dbRatings.sociability + 
+            dbRatings.ambience + 
+            dbRatings.food + 
+            dbRatings.catmosphere + 
+            dbRatings.service
         ) / 5; 
 
         const user = await User.findOne({ email: userEmail }); 
@@ -59,8 +68,13 @@ export async function POST(req: Request){
             isAnonymous,
             title,
             body,
-            ratings,
+            ratings: dbRatings,
             overallRating,
+            //Experimental wait
+            catName, 
+            catImage,
+            foodName, 
+            foodImage, 
         });
         console.log("New post created:", newPost);
         console.log("Successful!");
@@ -90,3 +104,26 @@ export async function POST(req: Request){
         return NextResponse.json({ message:"Failed to create post!!!!" }, { status: 500 });
     }
 }
+
+//Experimental wait 
+export async function GET (req: Request){
+  try {
+    await connectDB(); 
+
+    const posts = await Post.find({})
+    .populate("cafeID")
+    .sort({ createdAt: -1})
+    .lean(); 
+
+    // 1. This converts the MongoDB ObjectIds into actual strings
+    const safePosts = JSON.parse(JSON.stringify(posts));
+    
+    // 2. Return safePosts, NOT posts
+    return NextResponse.json(safePosts, { status: 200 });
+
+  } catch (error) {
+    console.error("Error fetching posts: ", error); 
+    return NextResponse.json({message: "Failed to fetch posts "}, { status: 500}); 
+  }
+}
+

@@ -62,6 +62,22 @@ const PostSchema = new Schema({
         min:1,
         max:5,
     },
+
+    //Experimental wait
+    catName: { 
+        type: String 
+    }, 
+    catImage: {
+        type: String
+    }, 
+    foodName: {
+        type: String
+    }, 
+    foodImage: {
+        type: String
+    },
+    //Experimental wait
+
     upvoteCount: {
         type: Number,
         default: 0,
