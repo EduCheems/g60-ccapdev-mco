@@ -33,4 +33,4 @@ const UserSchema = new Schema({
 // Don't delete this one 
 const User = models.User || model('User', UserSchema); 
 
-export default User; 
+export default User;
