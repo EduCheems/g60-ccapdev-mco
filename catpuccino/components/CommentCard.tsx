@@ -10,19 +10,19 @@ import { IoEllipsisHorizontal } from "react-icons/io5";
 
 export default function CommentCard({ comment }: { comment: any }) {
   const [showReplyBox, setShowReplyBox] = useState(false);
-  const initialVotes = (comment.upvoteCount || comment.upvotes || 0) - (comment.downvoteCount || comment.downvotes || 0);
+  const initialVotes = (comment?.upvoteCount || comment?.upvotes || 0) - (comment?.downvoteCount || comment?.downvotes || 0);
   
   // -- Edit and delete State -- 
 
   const [isEditing, setIsEditing] = useState(false); 
-  const [editValue, setEditValue] = useState(comment.content); 
+  const [editValue, setEditValue] = useState(comment?.content); 
   const [isLoading, setIsLoading] = useState(false); 
   const [isDeleted, setIsDeleted] = useState(false);
 
   // --
 
   const [showMenu, setShowMenu] = useState(false);
-  const [localReplies, setLocalReplies] = useState(comment.replies || []);
+  const [localReplies, setLocalReplies] = useState(comment?.replies || []);
   
   const handleReplySubmit = (content: string) => {
     const newReply = {
@@ -41,7 +41,7 @@ export default function CommentCard({ comment }: { comment: any }) {
 
   // -- Handler for backend 
   const handleSaveEdit = async () => {
-    if (!editValue.trim() || editValue === comment.content){
+    if (!editValue.trim() || editValue === comment?.content){
       setIsEditing(false); 
       return; 
     }
@@ -91,9 +91,9 @@ export default function CommentCard({ comment }: { comment: any }) {
           {/* Comment Header */}
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
-              [{isDeleted ? 'deleted' : comment.authorName}]
+              [{isDeleted ? 'deleted' : comment?.authorName}]
             </span>
-            <span className="text-black/50">• {comment.timeAgo || "just now"}</span>
+            <span className="text-black/50">• {comment?.timeAgo || "just now"}</span>
           
           {/* Ellipsis Menu */}
           {!isDeleted && !isEditing && (
@@ -133,9 +133,9 @@ export default function CommentCard({ comment }: { comment: any }) {
           </div>
 
           {/* Image (Will be hidden if deleted comment) */}
-          {!isDeleted && comment.imageUrl && !isEditing && (
+          {!isDeleted && comment?.imageUrl && !isEditing && (
             <div className="my-2 rounded-lg overflow-hidden max-w-sm border-[1.5px] border-[#855225]/20">
-              <img src={comment.imageUrl} alt="attached" className="w-full object-cover" />
+              <img src={comment?.imageUrl} alt="attached" className="w-full object-cover" />
             </div>
           )}
 
@@ -156,7 +156,7 @@ export default function CommentCard({ comment }: { comment: any }) {
                 <button 
                   onClick={() => {
                     setIsEditing(false);
-                    setEditValue(comment.content); 
+                    setEditValue(comment?.content); 
                   }}
                   disabled={isLoading}
                   className="px-4 py-1.5 rounded-full text-[12px] font-bold text-[#855225] hover:bg-[#855225]/10 transition-colors disabled:opacity-50"
@@ -174,14 +174,14 @@ export default function CommentCard({ comment }: { comment: any }) {
             </div>
           ) : (
             <p className="text-[14px] text-black mb-3 leading-snug pr-4">
-              {comment.content}
+              {comment?.content}
             </p>
           )}
 
           {/* Actions (Hide if deleted or editing) */}
           {!isDeleted && !isEditing && (
             <div className="flex items-center gap-3">
-              <VoteButtons postId={comment._id || comment.id} initialVotes={initialVotes} />
+              <VoteButtons postId={comment?._id || comment?.id} initialVotes={initialVotes} />
               <ReplyButton 
                 replyCount={localReplies?.length} 
                 onClick={() => setShowReplyBox(!showReplyBox)} 

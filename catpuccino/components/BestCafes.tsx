@@ -10,7 +10,14 @@ function slugify(name: string): string {
     .replace(/\s+/g, "-")    
     .replace(/[^\w-]/g, ""); 
 }
-interface BestCafeProps {
+
+function calculateOverallRating(averages: BestCafeProps["averages"]): number {
+  const total = averages.sociability + averages.ambience + averages.food + averages.work_friendly + averages.service;
+  const overall = total / 5;
+  return Math.round(overall * 10) / 10; // rounds to 1 decimal place
+}
+
+export interface BestCafeProps {
   _id: string
   name: string
   description: string
@@ -39,7 +46,7 @@ interface BestCafeProps {
   }[]
 }
 
-interface BestCafesProps {
+interface BestCafesProps_2 {
   title?: string
   cardColor: string
   badgeText: string
@@ -48,6 +55,8 @@ interface BestCafesProps {
   filterKey?: keyof BestCafeProps["averages"]
   reverse?: boolean
 }
+
+
 export default function BestCafes({title,
   cardColor,
   badgeColor,
@@ -55,7 +64,7 @@ export default function BestCafes({title,
   cafes,
   filterKey,
   reverse = false
-}: BestCafesProps){
+}: BestCafesProps_2){
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -94,13 +103,17 @@ export default function BestCafes({title,
               >
                 <div className="shrink-0">
                   <CafeCard 
-                    id={cafe._id} 
+                    id={slugify(cafe.name)} 
                     index={i}
                     name={cafe.name}
                     slug={slugify(cafe.name)} 
                     cardColor={cardColor}
                     badgeText={badgeText}
                     badgeColor={badgeColor}
+                    cafe={cafe}
+                    ratings={calculateOverallRating(cafe.averages)}
+                    
+
                   />
                 </div>
 
