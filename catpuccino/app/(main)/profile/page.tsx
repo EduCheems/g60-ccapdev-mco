@@ -188,16 +188,16 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile Info */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-3xl font-poppins font-bold text-[#262626]">
+              <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-3xl font-poppins font-bold text-[#262626] leading-none">
                   {displayName}
                 </h1>
                 {isOwner && (
                   <img
                     src="/ownertag.svg"
                     alt="Cafe owner badge"
-                    className="h-25 w-auto"
+                    className="h-8 w-auto"
                   />
                 )}
               </div>

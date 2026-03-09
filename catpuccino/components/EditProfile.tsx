@@ -41,8 +41,8 @@ const EditProfile: React.FC<EditProfileProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-[#FFF7EA] rounded-[16px] shadow-xl px-6 py-5 w-full max-w-lg">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div className="bg-[#FFF7EA] rounded-[16px] shadow-xl px-6 py-5 w-full max-w-lg max-h-[90vh] overflow-y-auto custom-scrollbar">
         <h2 className="text-lg font-bold text-[#262626] mb-3">Edit Profile</h2>
         <form onSubmit={onSave} className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
