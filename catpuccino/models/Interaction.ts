@@ -4,7 +4,7 @@ const InteractionSchema = new Schema({
   
     voteID: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: [true, "voteID is required"],
     },
 
     userID: {
