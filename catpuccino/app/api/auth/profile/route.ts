@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getUserProfile } from "@/controllers/userAction";
 import { auth } from "@/auth";
+import { connectDB } from "@/lib/mongodb"; 
+import User from "@/models/User"; 
 
-export async function GET() {
+
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
@@ -10,7 +13,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userId = session.user.id as string;
+    const { searchParams } = new URL(req.url);
+    const targetUserId = searchParams.get("userId");
+
+    const userId = targetUserId || (session.user.id as string);
     const userProfile = await getUserProfile(userId);
 
     return NextResponse.json(userProfile);
@@ -21,4 +27,34 @@ export async function GET() {
       { status: 500 }
     );
   }
+}
+
+export async function POST(req:NextRequest){
+  try{
+    await connectDB();
+     const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const info=await req.json();
+    const {name,bio,profilePic}=info;
+    
+    const changedUser=await User.findOneAndUpdate({email:session.user.email},
+      {
+        name:name,
+        bio:bio,
+        profilePicURL:profilePic
+      },{ new: true }  
+    ).lean();
+    if(!changedUser){
+      return NextResponse.json({error:"User Not Found"},{status:404});
+    }else{
+     return NextResponse.json({ message: "Successfully Updated", user: changedUser });
+    }
+  }catch (error: any) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+  }   
+  
 }

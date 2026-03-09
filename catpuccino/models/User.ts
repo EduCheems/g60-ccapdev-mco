@@ -1,11 +1,11 @@
 import mongoose, { Schema, model, models} from 'mongoose'; 
 
 const UserSchema = new Schema({
-    user_id: {
+    _id: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'User ID is required'],
     },
-    username: {
+    name: {
         type: String, 
         required: [true, 'Username is required'], 
         unique: true,
@@ -17,59 +17,42 @@ const UserSchema = new Schema({
     }, 
     password: {
         type: String, 
-        required: [true, 'Password is required'],
-    }, 
-    role: {
-        type: [String], 
-        enum: ["user", "owner", "admin"],
-        default: ["user"],
+        required: true,
     },
-    profile: {
-        firstName: { 
-            type: String, 
-            required: true 
-        },
-        lastName: { 
-            type: String, 
-            required: true 
-        },
-        profilePicURL: { 
-            type: String, 
-            default: null 
-        },
-        coverPicURL: { 
-            type: String, 
-            default: null 
-        },
-        bio: { 
-            type: String, 
-            default: "" 
-        },
-        shortDescription: { 
-            type: String, 
-            default: ""
-        },
+    role: {
+        type: String, 
+        enum: ["user", "owner", "admin"],
+        default: "user",
+    },
+    profilePicURL: { 
+        type: String, 
+        default: "/default-avatar.png",
+    },
+    bio: { 
+        type: String, 
+        default: "Meow Meow Meow" 
     },
     isDeactivated: {
         type: Boolean,
         default: false,
     },
-    rememberToken: { 
-        type: String 
+    followersCount: {
+        type: Number,
+        default: 0
     },
-    tokenExpiration: { 
-        type: Date 
+    followingCount: { 
+        type: Number, 
+        default: 0 
     },
-    favoriteCatCafeID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'CatCafe',
-        required: [true, 'Favorite Cat Cafe is required'],
-    }
+    postsCount: { 
+        type: Number, 
+        default: 0 
+    },
     }, {
-    timestamps: true // Automatically handles createdAt and updatedAt
+    timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
 }); 
 
 // Don't delete this one 
 const User = models.User || model('User', UserSchema); 
 
-export default User; 
+export default User;

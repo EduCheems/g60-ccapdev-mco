@@ -37,13 +37,13 @@ export const BestBuyer = ({ name, tags }: { name: string, tags: string[] }) => (
 );
 
 export const CafeMenu = () => (
-  <div className="w-[380px] relative border-2 border-black rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[350px] overflow-hidden shadow-[5px_5px_0_0_#85522533]">
+  <div className="w-[380px] relative border-2 border-[#855225] rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[350px] overflow-hidden">
     <div className="absolute inset-0 pointer-events-none rounded-[10px] shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)] z-10" />
     <h3 className="font-black text-2xl mb-4 uppercase tracking-tighter text-[#855225] z-20">Cafe Menu</h3>
     
     <div className="relative w-full flex-1 border-2 border-[#855225] rounded-[10px] overflow-hidden z-20">
-       <div className="absolute inset-0 flex items-center justify-center text-black/20 font-black text-sm uppercase p-4 text-center">
-         Click to expand menu
+       <div className="absolute inset-0 flex items-center justify-center text-[#855225] font-black text-sm uppercase p-4 text-center">
+         
        </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ export const CafeMenu = () => (
 
 export const SpotlightSection = () => {
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full mt-12 items-stretch">
+    <div className="flex flex-col md:flex-row gap-6 w-full mt-12 items-stretch shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)]">
       <div className="flex-1 flex">
         <CatSpotlight name="Pochacco" tags={["Friendly", "Calm"]} />
       </div>

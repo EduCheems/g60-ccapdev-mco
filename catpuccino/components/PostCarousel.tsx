@@ -16,7 +16,17 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
           <div key={index} className="snap-center shrink-0 first:pl-0 last:pr-[140px]">
             {variant === "thread" && <PostThread />}
             {variant === "collage" && <PhotoCollage />}
-            {variant === "preview" && <PostPreview />}
+            {variant === "preview" && 
+            <PostPreview 
+              id="thread-1"
+              cafeName="Meow Cafe"
+              rating={5}
+              username="CatLover99"
+              price="₱₱"
+              city="Makati"
+              time="8:00 AM - 9:00 PM"
+              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
+            />}
           </div>
         ))}
 

@@ -1,5 +1,11 @@
+"use client";
+
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
+import ReportButton from "../ReportButton";
+
+import { useRouter } from 'next/navigation'; 
+
 import Link from "next/link"; 
 
 import { 
@@ -8,6 +14,20 @@ import {
   IoTime, 
   IoPersonCircle, 
 } from "react-icons/io5";
+
+interface PostPreviewProps {
+  id: string;
+  title: string; 
+  cafeName: string;
+  rating: number; 
+  username: string;
+  price: string;
+  city: string;
+  time: string;
+  content: string;
+  image?: string;
+  initialVotes: number; 
+}
 
 const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementType; iconColor: string; label: string; value: string }) => (
   <div className="flex items-center gap-2.5">
@@ -21,66 +41,91 @@ const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementT
   </div>
 );
 
-export default function PostPreview() {
+export default function PostPreview({ 
+  id, 
+  title, 
+  cafeName, 
+  rating, 
+  username, 
+  price, 
+  city, 
+  time, 
+  content, 
+  image, 
+  initialVotes  
+}: PostPreviewProps) {
+
+  const router = useRouter();
+  
+  
   return (
-    <div className="w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+
+    <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
-      {/* Header: User Info */}
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
-          &lt;username&gt; - &lt;no. hr/days ago&gt;
+          {username} - Just now {/* You can pass a real timestamp prop later! */}
         </span>
         <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
           •••
         </button>
       </div>
 
-      {/* Title & Cafe */}
-      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">Title</h2>
-      <p className="text-sm font-medium text-black mb-5">&lt;Cafe Name&gt;</p>
+      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">{title}</h2>
+      <p className="text-sm font-medium text-black mb-5">{cafeName}</p>
 
-      {/* Tags Grid */}
       <div className="flex flex-wrap gap-6 mb-6">
         <InfoTag 
           icon={IoPricetag} 
-          iconColor="text-[#FFB800]" /* Yellow */
+          iconColor="text-[#FFB800]" 
           label="Price" 
-          value="₱150-₱350" 
+          value={price} 
         />
         <InfoTag 
           icon={IoLocationSharp} 
-          iconColor="text-[#E63946]" /* Red */
+          iconColor="text-[#E63946]" 
           label="City" 
-          value="Quezon City" 
+          value={city} 
         />
         <InfoTag 
           icon={IoTime} 
-          iconColor="text-[#FF7A00]" /* Orange */
+          iconColor="text-[#FF7A00]" 
           label="Time" 
-          value="7:30 AM - 10:00 PM" 
+          value={time} 
         />
       </div>
 
-      {/* Content Snippet */}
       <div className="mb-6">
         <p className="text-[13px] leading-relaxed text-black/90 text-justify line-clamp-3">
-          I have been struggling to lock in these past few days. I keep getting distracted by mini tasks or get consumed by social media. I am glad to have listened to my friend when they recommended that I should study in this specific cat cafe. At first I was in doubt since how can you lock in on your tasks when there are cats around. But boy, was I in shock when I tried this cafe. Not only did I lock in, but having a cat companion boosted my concentration. If ever I get stuck, I would just pat the cat sitting on my lap which actually helped me think. Definitely would come again. They also study friendly food selection. Foods that aren't too messy to eat.
+          {content}
         </p>
         
+        {image && (
+          <img src={image} alt="Cafe" className="mt-4 w-full h-48 object-cover rounded-xl border border-black/10" />
+        )}
+        
         <Link 
-          href="/post/123" /* TODO: Make  the API shit */
-          className="text-[13px] font-bold text-[#A86734] hover:text-black hover:underline transition-colors mt-1 inline-block"
+          href={`/view-post/${id}`} 
+          onClick={(e) => e.stopPropagation()}
+          className="text-[13px] font-bold text-[#A86734] hover:text-black hover:underline transition-colors mt-2 inline-block"
         >
           See more
         </Link>
       </div>
 
-      {/* Footer Actions */}
       <div className="flex items-center gap-4">
-        <VoteButtons initialVotes={67} initialUserVote={null} />
+        
+        <div onClick={(e) => e.stopPropagation()}>
+          <VoteButtons postId={id} initialVotes={initialVotes} initialUserVote={null} />
+        </div>
 
         <ReplyButton replyCount={24} />
+
+        <div onClick={(e) => e.stopPropagation()}>
+          <ReportButton onClick={() => console.log("Reported.")} />
+        </div>
+
       </div>
 
     </div>
