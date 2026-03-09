@@ -58,7 +58,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     followingCount: user.followingCount ?? 0,
                     postCount: user.postCount ?? 0,
                     isDeactivated: user.isDeactivated ?? false, 
-                    image:user.image??null
+                    image:user.image??null,
+                    favCafe:user.favCafe??[],
                   };
         },
     }),
@@ -84,6 +85,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session.user.followingCount=UserHolder.followingCount;
     session.user.postCount=UserHolder.postCount;
     session.user.image=UserHolder.image;
+    session.user.favCafe=UserHolder.favCafe;
     return session;
   },
 },
@@ -97,13 +99,14 @@ events: {
       await User.updateOne({email:user.email},{
         password:  hashedPass,
         role: "user",
-        profilePicURL: "/default-avatar.png",
+        profilePicURL: "",
         bio: "",
-        followersCount:user.followersCount,
-        followingCount:user.followingCount,
-        postCount:user.postCount,
+        followersCount:0,
+        followingCount:0,
+        postCount:0,
         isDeactivated:false,
         image:user.image,
+        favCafe:[],
       });
     }
   },
