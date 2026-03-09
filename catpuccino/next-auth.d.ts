@@ -14,6 +14,7 @@ declare module "next-auth" {
       followingCount?:number|null;
       postCount?:number|null;
       isDeactivated?: boolean;
+      favCafe?:mongoose.Types.ObjectId[];
     };
   }
 
@@ -27,5 +28,6 @@ declare module "next-auth" {
     postCount?:number|null;
     isDeactivated?: boolean;
     image?:string|null;
+    favCafe?:mongoose.Types.ObjectId[];
   }
 }

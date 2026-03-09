@@ -39,14 +39,15 @@ export async function POST(req:NextRequest){
     }
 
     const info=await req.json();
-    const {name,bio,profilePic}=info;
+    const {name,bio,profilePic,favCafe}=info;
     
     const changedUser=await User.findOneAndUpdate({email:session.user.email},
       {
         name:name,
         bio:bio,
-        profilePicURL:profilePic
-      },{ new: true }  
+        profilePicURL:profilePic,
+        favCafe:favCafe
+      },{  returnDocument: "after"  }  
     ).lean();
     if(!changedUser){
       return NextResponse.json({error:"User Not Found"},{status:404});

@@ -104,6 +104,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 <CafeSearch
                   selectedCafe={editTopCafe1}
                   onSelect={onChangeTopCafe1}
+                  takenCafes={[editTopCafe2,editTopCafe3].filter(Boolean)}
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -113,6 +114,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 <CafeSearch
                   selectedCafe={editTopCafe2}
                   onSelect={onChangeTopCafe2}
+                  takenCafes={[editTopCafe1,editTopCafe3].filter(Boolean)}
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -122,6 +124,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 <CafeSearch
                   selectedCafe={editTopCafe3}
                   onSelect={onChangeTopCafe3}
+                  takenCafes={[editTopCafe1,editTopCafe2].filter(Boolean)}
                 />
               </div>
             </div>
