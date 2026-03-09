@@ -12,7 +12,7 @@ interface CafeCardProps {
   badgeColor: string; 
   cafe:BestCafeProps;
   ratings:number;
-}
+} 
 
 const getRankStyle = (index: number) => {
   switch (index) {
