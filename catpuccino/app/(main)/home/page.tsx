@@ -1,9 +1,13 @@
+'use client'
 import HeroSection from "@/components/HeroSection";
 import BestCafes from "@/components/BestCafes";
 import MarqueeBand from "@/components/MarqueeBand";
-import { cafes } from "@/app/data/cafes";
+import CatCafe from "@/models/CatCafe";
 import CategoryIcon from "@/components/CategoryIcon";
 import PostCarousel from "@/components/PostCarousel";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import  BestCafeProps  from "@/components/BestCafes";
 
 const mockPosts = [
   {
@@ -62,7 +66,32 @@ const mockPosts = [
   }
 ];
 
-export default function DiscoverPage() {
+const DiscoverPage=()=> {
+
+  const [cafes, setCafes] = useState<any[]>([]);
+  useEffect(() => {
+      const fetchCafes = async () => {
+        try {
+          const res = await fetch("/api/cafe-home");
+          if (res.ok) {
+            const data = await res.json();
+          console.log("Fetched data:", data);
+          setCafes(Array.isArray(data) ? data : []);
+          }else{
+           console.error("Failed to fetch cafes:");
+          }
+        } catch (err) {
+          console.error("Failed to fetch profile:", err);
+        }
+      };
+      
+      fetchCafes();
+      console.log(cafes);
+    },[]);
+    useEffect(() => {
+    console.log(cafes.length);
+    }, [cafes]); // this is safe
+    
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -137,7 +166,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="GENERAL MUNCHKIN'S SOCIAL SPOTS" bgColor="bg-[#EE7D6C]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Sociability"
+          filterKey="sociability"
           cardColor="bg-[#ED7364]"
           badgeText="People Friendly"
           badgeColor="bg-[#ED7364]"
@@ -147,7 +176,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Ambience"
+          filterKey="ambience"
           cardColor="bg-[#87AE73]"
           badgeText="Aesthetic"
           badgeColor="bg-[#87AE73]"
@@ -157,7 +186,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Food"
+          filterKey="food"
           cardColor="bg-[#FF7300]"
           badgeText="Best Foods"
           badgeColor="bg-[#FF7300]"
@@ -169,7 +198,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="LIL’JIMBOB’S FOCUS ZONES" bgColor="bg-[#57928F]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Catmosphere"
+          filterKey="work_friendly"
           cardColor="bg-[#699795]"
           badgeText="Work-Friendly"
           badgeColor="bg-[#699795]"
@@ -179,7 +208,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FF5995]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Service"
+          filterKey="service"
           cardColor="bg-[#FF5995]"
           badgeText="Best Service"
           badgeColor="bg-[#FF5995]"
@@ -189,7 +218,7 @@ export default function DiscoverPage() {
         <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#623D9B]" />
         <BestCafes
           cafes={cafes}
-          filterKey="Sociability"
+          filterKey="sociability"
           cardColor="bg-[#7454A4]"
           badgeText="Underrated"
           badgeColor="bg-[#7454A4]"
@@ -204,3 +233,5 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
+export default DiscoverPage;
