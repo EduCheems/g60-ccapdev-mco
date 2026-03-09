@@ -16,6 +16,10 @@
         ref: 'Comment',
         default: null,
     },
+    imageUrl: {
+        type: String, 
+        default: null, 
+    }, 
     content: {
         type: String,
         required: [true, "Comment content cannot be empty"],
