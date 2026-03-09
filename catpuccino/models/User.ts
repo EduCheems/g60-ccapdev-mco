@@ -1,7 +1,11 @@
 import mongoose, { Schema, model, models} from 'mongoose'; 
 
 const UserSchema = new Schema({
-    username: {
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'User ID is required'],
+    },
+    name: {
         type: String, 
         required: [true, 'Username is required'], 
         unique: true,
@@ -13,19 +17,37 @@ const UserSchema = new Schema({
     }, 
     password: {
         type: String, 
-        required: [true, 'Password is required'],
-    }, 
-    bio: {
-        type: String, 
-        default: "Meow meow meow mewo...", 
+        required: function() { return !this.oauthProvider; } 
     },
-    profilePic: {
+    role: {
         type: String, 
-        default: "/default-profile.svg",
+        enum: ["user", "owner", "admin"],
+        default: "user",
     },
-    followersCount: { type: Number, default: 0 },
-    followingCount: { type: Number, default: 0 },
-    postsCount: { type: Number, default: 0 },
+    profilePicURL: { 
+        type: String, 
+        default: "/default-avatar.png",
+    },
+    bio: { 
+        type: String, 
+        default: "Meow Meow Meow" 
+    },
+    isDeactivated: {
+        type: Boolean,
+        default: false,
+    },
+    followersCount: {
+        type: Number,
+        default: 0
+    },
+    followingCount: { 
+        type: Number, 
+        default: 0 
+    },
+    postsCount: { 
+        type: Number, 
+        default: 0 
+    },
     }, {
     timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
 }); 

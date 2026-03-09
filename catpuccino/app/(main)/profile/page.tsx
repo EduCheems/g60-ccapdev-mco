@@ -144,6 +144,12 @@ const ProfilePage = () => {
     setIsEditingProfile(false);
   };
 
+
+  useEffect(()=>{
+    setDisplayName(session?.user?.name||displayName)
+    setBio(session?.user?.bio ||bio)
+    setProfileImageUrl(session?.user.profilePicURL||session?.user.image||profileImageUrl);
+  },[session]);
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 

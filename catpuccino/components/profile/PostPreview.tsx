@@ -17,6 +17,7 @@ import {
 
 interface PostPreviewProps {
   id: string;
+  title: string; 
   cafeName: string;
   rating: number; 
   username: string;
@@ -25,6 +26,7 @@ interface PostPreviewProps {
   time: string;
   content: string;
   image?: string;
+  initialVotes: number; 
 }
 
 const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementType; iconColor: string; label: string; value: string }) => (
@@ -41,6 +43,7 @@ const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementT
 
 export default function PostPreview({ 
   id, 
+  title, 
   cafeName, 
   rating, 
   username, 
@@ -48,10 +51,12 @@ export default function PostPreview({
   city, 
   time, 
   content, 
-  image 
+  image, 
+  initialVotes  
 }: PostPreviewProps) {
 
   const router = useRouter();
+  
   
   return (
 
@@ -67,7 +72,7 @@ export default function PostPreview({
         </button>
       </div>
 
-      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">Review of {cafeName}</h2>
+      <h2 className="text-3xl font-black text-black mb-1 tracking-tight">{title}</h2>
       <p className="text-sm font-medium text-black mb-5">{cafeName}</p>
 
       <div className="flex flex-wrap gap-6 mb-6">
@@ -112,7 +117,7 @@ export default function PostPreview({
       <div className="flex items-center gap-4">
         
         <div onClick={(e) => e.stopPropagation()}>
-          <VoteButtons initialVotes={67} initialUserVote={null} />
+          <VoteButtons postId={id} initialVotes={initialVotes} initialUserVote={null} />
         </div>
 
         <ReplyButton replyCount={24} />
