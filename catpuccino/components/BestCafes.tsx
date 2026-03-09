@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRef, useEffect } from "react";
 import CafeCard from "./CafeCard";
 import { Cafe } from "@/app/data/cafes";
+import Link from "next/link";
 
 interface BestCafesProps {
   title?: string;
@@ -97,9 +98,11 @@ export default function BestCafes({
                       "{displayDescription}"
                     </p>
 
-                    <button className="bg-[#E4B67E] text-black px-10 py-3 rounded-xl font-black text-lg border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
-                      See more
-                    </button>
+                    <Link href={`/cafes/${cafe.id}`}>
+                      <button className="bg-[#E4B67E] ...">
+                        See more
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>
