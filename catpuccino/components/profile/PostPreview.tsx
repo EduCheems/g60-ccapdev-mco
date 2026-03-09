@@ -26,6 +26,8 @@ interface PostPreviewProps {
   content: string;
   image?: string;
   initialVotes: number; 
+  initialUserVote?: "up" | "down" | null; 
+  commentCount?: number; 
 }
 
 export default function PostPreview({ 
@@ -39,7 +41,9 @@ export default function PostPreview({
   time, 
   content, 
   image, 
-  initialVotes  
+  initialVotes,
+  initialUserVote, 
+  commentCount = 0
 }: PostPreviewProps) {
 
   const router = useRouter();
@@ -102,10 +106,15 @@ export default function PostPreview({
       <div className="flex items-center gap-4">
         
         <div onClick={(e) => e.stopPropagation()}>
-          <VoteButtons postId={id} initialVotes={initialVotes} initialUserVote={null} />
+          <VoteButtons 
+            postId={id} 
+            initialVotes={initialVotes} 
+            initialUserVote={initialUserVote}
+            targetType="Post" 
+          />
         </div>
 
-        <ReplyButton replyCount={24} />
+        <ReplyButton replyCount={commentCount} />
 
         <div onClick={(e) => e.stopPropagation()}>
           <ReportButton onClick={() => console.log("Reported.")} />

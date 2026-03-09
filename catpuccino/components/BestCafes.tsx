@@ -68,13 +68,13 @@ export default function BestCafes({title,
 
     
   return (
-    <section className="w-full pt-2 pb-8 overflow-hidden">
+    <section className="w-full pt-2 pb-0 overflow-hidden">
       {title && <h2 className="px-10 mb-6 font-poppins text-2xl text-white">{title}</h2>}
 
       <div className="relative flex items-center group px-10">
         <div 
           ref={scrollRef}
-          className="flex overflow-x-auto gap-6 px-10 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth"
+          className="flex overflow-x-auto gap-6 px-2 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth"
         >
           {filteredCafes.map((cafe, i) => {
             const isHovered = hoveredId === cafe._id;
