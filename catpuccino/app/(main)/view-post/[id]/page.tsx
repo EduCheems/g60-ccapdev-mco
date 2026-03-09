@@ -3,6 +3,7 @@ import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import CatCafe from "@/models/CatCafe";
+import Interaction from "@/models/Interaction";
 import InfoTag from "@/components/InfoTag"; 
 import PostActions from "@/components/PostActions";
 import CommentThread from "@/components/CommentThread";
@@ -23,6 +24,9 @@ import {
 import { connectDB } from "@/lib/mongodb"; 
 import Post from "@/models/Post"; 
 import Comment from "@/models/Comment"; 
+import User from "@/models/User";
+
+export const dynamic = "force-dynamic";
 
 export default async function ViewPostPage({
   params,
@@ -35,7 +39,11 @@ export default async function ViewPostPage({
 
   // fetch user session
   const session = await auth();
-  const currentUserId = session?.user?.id || "";
+  let currentUserId = null; 
+  if (session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).lean();
+    if (user) currentUserId = user._id.toString(); // Converted to string for safety
+  }
   
   // fetch post
   const postDoc = await Post.findById(id).populate('cafeID').lean();
@@ -53,6 +61,7 @@ export default async function ViewPostPage({
   .sort({ createdAt: -1 })
   .lean();
 
+  const totalComments = await Comment.countDocuments({ postID: id, isDeleted: false });
   const initialVotes = (postDoc.upvoteCount || 0) - (postDoc.downvoteCount || 0);
 
   const cafeData = postDoc.cafeID || {};
@@ -62,7 +71,21 @@ export default async function ViewPostPage({
   const cafeTime = cafeData.operatingHours || "N/A";
 
   const post = JSON.parse(JSON.stringify(postDoc));
-  const initialComments = await getCommentsForPost(id);
+  
+  const initialComments = await getCommentsForPost(id, currentUserId);
+
+  let currentUserVote: "up" | "down" | null = null; 
+  if (currentUserId){
+    const postInteraction = await Interaction.findOne({
+      userID: currentUserId, 
+      targetID: id, 
+      targetType: "Post"
+    }).lean(); 
+
+    if (postInteraction) {
+      currentUserVote = postInteraction.voteValue === 1 ? "up" : postInteraction.voteValue === -1 ? "down" : null; 
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
@@ -144,13 +167,15 @@ export default async function ViewPostPage({
           <PostActions 
              postId={post._id} 
              initialVotes={initialVotes} 
-             replyCount={0} 
+             replyCount={totalComments} 
+             initialUserVote={currentUserVote}
+             currentUserId={currentUserId || ""}
           />
 
           <DiscussionSection 
             initialComments={initialComments} 
             postId={post._id}
-            currentUserId={currentUserId}
+            currentUserId={currentUserId || ""}
           />
 
         </div>

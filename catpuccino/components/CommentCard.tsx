@@ -213,7 +213,12 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
           {/* Actions (Hide if deleted or editing) */}
           {!isDeleted && !isEditing && (
             <div className="flex items-center gap-3">
-              <VoteButtons postId={comment._id || comment.id} initialVotes={initialVotes} />
+              <VoteButtons 
+                postId={comment._id || comment.id} 
+                initialVotes={initialVotes} 
+                initialUserVote={comment.userVote || 0}
+                targetType="Comment" 
+              />
               <ReplyButton 
                 replyCount={localReplies?.length} 
                 onClick={() => setShowReplyBox(!showReplyBox)} 
