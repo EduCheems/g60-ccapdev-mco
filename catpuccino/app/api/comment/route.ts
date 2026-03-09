@@ -3,6 +3,8 @@ import Comment from "@/models/Comment";
 import { NextResponse} from "next/server";
 import { auth } from "@/auth"
 
+// NOTE: RAH this is the API method in fetching data from mongoDB. Slower than the server action method.
+
 export async function POST(req: Request) {
     try {
         const session = await auth();
@@ -13,7 +15,7 @@ export async function POST(req: Request) {
 
         await connectDB();
 
-        const { postID, content, isAnon, parentCommentID } = await req.json();
+        const { postID, imageUrl, content, isAnon, parentCommentID} = await req.json();
 
         if (!postID || !content) {
             return NextResponse.json({ message: "Missing required fields" }, { status: 400});
@@ -23,6 +25,7 @@ export async function POST(req: Request) {
         const newComment = await Comment.create({
             postID,
             userID: session.user.id,
+            imageUrl,
             content,
             isAnon: isAnon || false,
             parentCommentID: parentCommentID || null,

@@ -4,16 +4,29 @@
 import { useState } from "react";
 import CommentThread from "./CommentThread";
 import CommentBox from "./CommentBox";
+import { createComment } from "@/controllers/commentAction";
 
-export default function DiscussionSection({ initialComments }: { initialComments: any[] }) {
+interface DiscussionSectionProps {
+  initialComments: any[];
+  postId: string;      
+  currentUserId: string; 
+}
+
+export default function DiscussionSection({initialComments, postId, currentUserId}: DiscussionSectionProps) {
   
     // Store the comments in local state for UI
   const [comments, setComments] = useState(initialComments);
 
   // This handles the top-level comment box submission
-  const handleNewTopLevelComment = (content: string) => {
+  const handleNewTopLevelComment = async (content: string) => {
 
-    // 1. (Pa change backend wise or idk API)
+    const newComment = {
+        postID: postId,
+        userID: currentUserId,
+        content: content,
+    };
+
+    /*
     const newComment = {
       id: Math.random().toString(), // Change based on how we generate ID
       authorName: "currentUser", // Replace with user's username
@@ -22,10 +35,16 @@ export default function DiscussionSection({ initialComments }: { initialComments
       upvotes: 0,
       downvotes: 0,
       replies: []
-    };
+    }; */
 
+    const result = await createComment(newComment);
+    
     // 2. Add it to the top of the feed instantly
-    setComments([newComment, ...comments]);
+    if (result.success) {
+        setComments((prev) => [result.comment, ...prev]);
+    } else {
+        alert("Failed to post comment: " + result.error);
+    }
   };
 
   return (
@@ -41,12 +60,16 @@ export default function DiscussionSection({ initialComments }: { initialComments
 
       {/* Top-level Comment Box for the main post */}
       <div className="mb-4">
-        <CommentBox onSubmit={handleNewTopLevelComment} />
+        <CommentBox 
+          onSubmit={handleNewTopLevelComment} 
+          id={postId} 
+          userId={currentUserId}
+        />
       </div>
 
       {/* Map through the STATE, not the static prop */}
       {comments.map((comment) => (
-        <CommentThread key={comment.id || comment._id} data={comment} />
+        <CommentThread key={comment._id} data={comment} currentUserId={currentUserId}/>
       ))}
       
     </div>

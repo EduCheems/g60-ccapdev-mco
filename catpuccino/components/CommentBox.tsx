@@ -2,14 +2,17 @@
 
 import { useState, useRef, useEffect } from "react";
 import { MdImage, MdClose } from "react-icons/md";
+import { createComment } from "@/controllers/commentAction";
 
 interface CommentBoxProps {
+  id: string; // post id
+  userId: string;
   isForceExpanded?: boolean;
   onCancel?: () => void;
   onSubmit?: (content: string) => void;
 }
 
-export default function CommentBox( { isForceExpanded = false, onCancel, onSubmit }: CommentBoxProps ) {
+export default function CommentBox( { id, userId, isForceExpanded = false, onCancel, onSubmit }: CommentBoxProps ) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [text, setText] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -51,19 +54,15 @@ export default function CommentBox( { isForceExpanded = false, onCancel, onSubmi
     if (onCancel) onCancel();
   };
 
-  const handleSubmit = (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!isValid) return;
+        
+      if (onSubmit) {
+        onSubmit(text);
+      }
 
-    console.log("Submitting comment:", { text, imageFile });
-    
-    if (onSubmit) {
-      onSubmit(text); 
-    }
-
-    // TODO: Add backend POST logic here
-    
-    handleCancel();
+      handleCancel();
   };
 
   return (
