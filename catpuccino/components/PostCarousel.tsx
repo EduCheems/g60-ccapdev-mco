@@ -12,23 +12,36 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
     <div className="w-full bg-[#FEF6EA] py-12 overflow-hidden">
       <div className="flex overflow-x-auto gap-12 px-[140px] pb-10 -mb-10 snap-x snap-mandatory no-scrollbar">
         
-        {posts.map((_, index) => (
-          <div key={index} className="snap-center shrink-0 first:pl-0 last:pr-[140px]">
-            {variant === "thread" && <PostThread />}
-            {variant === "collage" && <PhotoCollage />}
-            {variant === "preview" && 
-            <PostPreview 
-              id="thread-1"
-              cafeName="Meow Cafe"
-              rating={5}
-              username="CatLover99"
-              price="₱₱"
-              city="Makati"
-              time="8:00 AM - 9:00 PM"
-              content="This place is amazing! The orange cat 'Mochi' is literally a social butterfly. Highly recommend checking this place out if you need a study break."
-            />}
-          </div>
-        ))}
+        {posts.map((post) => {
+          // Safely calculate the net score for the votes
+          const netScore = (post.upvoteCount || 0) - (post.downvoteCount || 0);
+          const safeId = post._id || post.id;
+
+          return (
+            <div key={safeId} className="snap-center shrink-0 first:pl-0 last:pr-[140px]">
+              
+              {/* Pass the real post data down to PostThread and PhotoCollage too! */}
+              {variant === "thread" && <PostThread post={post} />}
+              {variant === "collage" && <PhotoCollage post={post} />} 
+              
+              {variant === "preview" && (
+                <PostPreview 
+                  id={safeId}
+                  title={post.title || "Untitled"}
+                  cafeName={post.cafeID?.name || "Unknown Cafe"}
+                  rating={post.overallRating || 0}
+                  username={post.authorName || "Anonymous"}
+                  price={post.cafeID?.priceRange || "₱ 0"}
+                  city={post.cafeID?.location || "Metro Manila"}
+                  time={post.cafeID?.operatingHours || "N/A"}
+                  content={post.body || ""}
+                  image={post.catImage}
+                  initialVotes={netScore}
+                />
+              )}
+            </div>
+          );
+        })}
 
       </div>
     </div>

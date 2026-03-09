@@ -3,6 +3,7 @@ import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import CatCafe from "@/models/CatCafe";
+import InfoTag from "@/components/InfoTag"; 
 
 import VoteButtons from "@/components/VoteButtons";
 import ReplyButton from "@/components/ReplyButton";
@@ -40,8 +41,8 @@ export default async function ViewPostPage({
 
   const cafeData = postDoc.cafeID || {};
   const cafeName = cafeData.name || "Unknown Cafe";
-  const cafePrice = cafeData.price || "N/A";
-  const cafeCity = cafeData.location || "N/A";
+  const cafePrice = cafeData.priceRange || "N/A"; 
+  const cafeCity = cafeData.location || "N/A";    
   const cafeTime = cafeData.operatingHours || "N/A";
 
   const post = JSON.parse(JSON.stringify(postDoc));
@@ -78,37 +79,28 @@ export default async function ViewPostPage({
           <div className="flex items-center gap-8 mb-6 text-[12px] font-bold">
           
             {/* Price */}
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center">
-                    <IoPricetag className="text-xl text-[#FBBA00]" />
-                </div>
-                <div className="flex flex-col mt-1 text-[10px]">
-                    <span className="leading-none text-[#262626]">Price:</span>
-                    <span className="text-black/70">{cafePrice}</span>
-                </div>
-            </div>
+            <InfoTag 
+              icon={IoPricetag}
+              iconColor="text-[#FBBA00]"
+              label="Price"
+              value={cafePrice}
+            />
             
             {/* City */}
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center">
-                    <IoLocationSharp className="text-xl text-[#E11F25]" />
-                </div>
-                <div className="flex flex-col mt-1 text-[10px]">
-                    <span className="leading-none text-[#262626]">City:</span>
-                    <span className="text-black/70">{cafeCity}</span>
-                </div>
-            </div>
+            <InfoTag 
+              icon={IoLocationSharp}
+              iconColor="text-[#E11F25]"
+              label="City"
+              value={cafeCity}
+            />
             
             {/* Time */}
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-white rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center">
-                    <IoTime className="text-xl text-[#FF7300]" />
-                </div>
-                <div className="flex flex-col mt-1 text-[10px]">
-                    <span className="leading-none text-[#262626]">Time:</span>
-                    <span className="text-black/70">{cafeTime}</span>
-                </div>
-            </div>
+            <InfoTag 
+              icon={IoTime}
+              iconColor="text-[#FF7300]"
+              label="Time"
+              value={cafeTime}
+            />
             
             <div className="ml-auto flex items-center h-10">
                 <Ratings ratings={{ "Overall": postDoc.overallRating }} />
