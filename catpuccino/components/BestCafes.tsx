@@ -31,6 +31,8 @@ export interface BestCafeProps {
     work_friendly: number
     service: number
   }
+
+  
 }
 
 interface BestCafesProps_2 {
