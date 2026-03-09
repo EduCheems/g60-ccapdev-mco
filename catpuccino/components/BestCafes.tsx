@@ -31,19 +31,6 @@ export interface BestCafeProps {
     work_friendly: number
     service: number
   }
-  totalReviews: number
-  menu: {
-    itemName: string
-    price: number
-    description: string
-    pictureUrl: string
-  }[]
-  cats: {
-    name: string
-    breed: string
-    description: string
-    pictureUrl: string
-  }[]
 }
 
 interface BestCafesProps_2 {

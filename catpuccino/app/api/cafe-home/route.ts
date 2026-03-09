@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         await connectDB();
-        const cafes = await CatCafe.find({}); 
+        const cafes = await CatCafe.find({},"-cat -menu -totalReviews"); 
         return NextResponse.json(cafes);
     } catch (error) {
        return NextResponse.json({ error: "Database error" }, { status: 500 });
