@@ -32,10 +32,10 @@ export interface BestCafeProps {
     service: number
   }
 
-  
+
 }
 
-interface BestCafesProps_2 {
+interface BestCafesProps {
   title?: string
   cardColor: string
   badgeText: string
@@ -53,7 +53,7 @@ export default function BestCafes({title,
   cafes,
   filterKey,
   reverse = false
-}: BestCafesProps_2){
+}: BestCafesProps){
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
