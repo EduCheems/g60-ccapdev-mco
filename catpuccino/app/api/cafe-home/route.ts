@@ -10,5 +10,6 @@ export async function GET() {
     } catch (error) {
        return NextResponse.json({ error: "Database error" }, { status: 500 });
         
+       
     }
 }
