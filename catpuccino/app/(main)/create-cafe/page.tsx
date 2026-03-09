@@ -234,16 +234,18 @@ export default function CreateCafePage() {
             className="bg-[#FEF6EA] rounded-xl px-6 py-5 flex flex-col justify-between shadow-[5px_5px_0_rgb(133_82_37_/_0.2)]"
           >
             <h3 className="font-poppins font-black uppercase text-lg text-[#855225] mb-4">
-              Pawmeter
+              Rate your cafe based on these categories to generate your cafe's unique Pawmeter profile!
             </h3>
-            {Object.entries(ratings).map(([key, val]) => (
-              <StarSlider
-                key={key}
-                label={key}
-                value={val}
-                onChange={(newVal) => handleRatingChange(key, newVal)}
-              />
-            ))}
+            <div className="space-y-1.5">
+              {Object.entries(ratings).map(([key, val]) => (
+                <StarSlider
+                  key={key}
+                  label={key}
+                  value={val}
+                  onChange={(newVal) => handleRatingChange(key, newVal)}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -305,7 +307,7 @@ export default function CreateCafePage() {
           </h2>
           <div className="h-[3px] flex-1 rounded-full bg-[#855225] mt-1" />
         </div>
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(310px,310px))] gap-4 w-full">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(310px,1fr))] gap-x-2 gap-y-6 w-full items-start">
           {companions.map((cat, index) => (
             <div key={index} className="min-w-0">
               <CatInfo

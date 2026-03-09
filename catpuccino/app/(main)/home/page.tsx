@@ -4,65 +4,118 @@ import MarqueeBand from "@/components/MarqueeBand";
 import { cafes } from "@/app/data/cafes";
 import CategoryIcon from "@/components/CategoryIcon";
 import PostCarousel from "@/components/PostCarousel";
+import CatCafe from "@/models/CatCafe";
 
-const mockPosts = [
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c9e1", // Unique Post ID
-    title: "Perfect Study Spot!",
-    authorName: "CoffeeCat",
-    upvoteCount: 45,
-    downvoteCount: 2,
-    cafeID: { name: "Meow Cafe", priceRange: "₱₱", location: "Makati" },
-    body: "This place is amazing! The orange cat 'Mochi' is literally a social butterfly.",
-    comments: [
-      {
-        _id: "65f0a1b2c3d4e5f6a7b8c9d1",
-        authorName: "CatLover99",
-        timeAgo: "2h ago",
-        body: "The orange cat 'Mochi' is literally a social butterfly. Highly recommend!",
-        upvoteCount: 15,
-        downvoteCount: 3
-      },
-      {
-        _id: "65f0a1b2c3d4e5f6a7b8c9d2",
-        authorName: "StudyHard",
-        timeAgo: "5h ago",
-        body: "Great place to meet people. The cats are the perfect icebreakers.",
-        upvoteCount: 5,
-        downvoteCount: 0
-      }
-    ]
-  },
-  {
-    _id: "65f0a1b2c3d4e5f6a7b8c9e2", // Unique Post ID
-    title: "Quiet and Cozy",
-    authorName: "SleepyStudent",
-    upvoteCount: 30,
-    downvoteCount: 1,
-    cafeID: { name: "Purrfect Brew", priceRange: "₱", location: "Quezon City" },
-    body: "Best place to read a book. The ambient music is great.",
-    comments: [
-      {
-        _id: "65f0a1b2c3d4e5f6a7b8c9d3", // First comment ID
-        authorName: "CatLover99",
-        timeAgo: "2h ago",
-        body: "The coffee is top tier.",
-        upvoteCount: 15,
-        downvoteCount: 3
-      },
-      {
-        _id: "65f0a1b2c3d4e5f6a7b8c9d4", // CHANGED THIS: was d3, now d4
-        authorName: "StudyHard",
-        timeAgo: "5h ago",
-        body: "I actually finished my thesis here. Very productive vibe.",
-        upvoteCount: 5,
-        downvoteCount: 0
-      }
-    ]
+import { connectDB } from "@/lib/mongodb";
+import Post from "@/models/Post";
+import Comment from "@/models/Comment";
+
+import User from "@/models/User";
+import Interaction from "@/models/Interaction";
+import { auth } from "@/auth";
+
+export const dynamic = "force-dynamic";
+
+export default async function DiscoverPage() {
+
+  // 1. Connect to DB
+  await connectDB();
+
+
+  // Get current logged-in user 
+  const session = await auth();
+  let currentUserId = null; 
+  if (session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).lean();
+    if (user) currentUserId = user._id.toString();
   }
-];
 
-export default function DiscoverPage() {
+  // 2. Fetch the latest posts (No calculation logic yet)
+  const postDocs = await Post.find()
+    .populate("cafeID")
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .lean();
+
+  // Fetch user's votes for the post
+  let userInteractions: { targetID: any; voteValue: number }[] = [];
+  if (currentUserId) {
+    const postIds = postDocs.map(p => p._id);
+    userInteractions = await Interaction.find({
+      userID: currentUserId,
+      targetID: { $in: postIds },
+      targetType: "Post"
+    }).lean();
+  }
+
+  // vote map logic 
+  const voteMap: Record<string, "up" | "down" | null> = {};
+  userInteractions.forEach(interaction => {
+    voteMap[interaction.targetID.toString()] = 
+      interaction.voteValue === 1 ? "up" : interaction.voteValue === -1 ? "down" : null;
+  });
+
+  // 3. Format them and fetch 2 recent comments for each to match your mock data shape
+  const realPosts = await Promise.all(
+    postDocs.map(async (post) => {
+      // Find top 2 parent comments for this specific post
+      const commentsDocs = await Comment.find({ postID: post._id, parentCommentID: null, isDeleted: false })
+        .sort({ createdAt: -1 })
+        .limit(2)
+        .lean();
+
+      // Fetch user's votes for comments 
+      let commentVoteMap: Record<string, "up" | "down" | null> = {};
+      if (currentUserId && commentsDocs.length > 0) {
+        const commentIds = commentsDocs.map(c => c._id);
+        const commentInteractions = await Interaction.find({
+          userID: currentUserId,
+          targetID: { $in: commentIds },
+          targetType: "Comment" 
+        }).lean();
+
+        commentInteractions.forEach(interaction => {
+          commentVoteMap[interaction.targetID.toString()] = 
+            interaction.voteValue === 1 ? "up" : interaction.voteValue === -1 ? "down" : null;
+        });
+      }
+
+      const postCommentCount = await Comment.countDocuments({ postID: post._id, isDeleted: false });
+
+      return {
+        _id: post._id.toString(),
+        title: post.title,
+        authorName: post.authorName,
+        upvoteCount: post.upvoteCount || 0,
+        downvoteCount: post.downvoteCount || 0,
+        userVote: voteMap[post._id.toString()] || null,
+        body: post.body,
+        commentCount: postCommentCount,
+        cafeID: post.cafeID ? {
+            name: post.cafeID.name,
+            priceRange: post.cafeID.priceRange,
+            location: post.cafeID.location,
+        } : null,
+        
+        comments: await Promise.all(commentsDocs.map(async (c: any) => {
+          const replyCount = await Comment.countDocuments({ parentCommentID: c._id, isDeleted: false });
+
+          return {
+            _id: c._id.toString(),
+            authorName: c.userID?.username || "Anonymous", 
+            timeAgo: new Date(c.createdAt).toLocaleDateString(), 
+            content: c.content, 
+            body: c.content, 
+            upvoteCount: c.upvoteCount || 0,
+            downvoteCount: c.downvoteCount || 0,
+            userVote: commentVoteMap[c._id.toString()] || null, 
+            replyCount: replyCount
+          };
+        })),
+      };
+    })
+  );
+
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -142,7 +195,7 @@ export default function DiscoverPage() {
           badgeText="People Friendly"
           badgeColor="bg-[#ED7364]"
         />
-        <PostCarousel posts={mockPosts} variant="thread"/>
+        <PostCarousel posts={realPosts} variant="thread"/>
 
         <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
         <BestCafes
@@ -152,7 +205,7 @@ export default function DiscoverPage() {
           badgeText="Aesthetic"
           badgeColor="bg-[#87AE73]"
         />
-        <PostCarousel posts={mockPosts} variant="collage"/>
+        <PostCarousel posts={realPosts} variant="collage"/>
 
         <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
         <BestCafes
@@ -162,7 +215,7 @@ export default function DiscoverPage() {
           badgeText="Best Foods"
           badgeColor="bg-[#FF7300]"
         />
-        <PostCarousel posts={mockPosts}/>
+        <PostCarousel posts={realPosts}/>
 
         <div className="h-[400px] w-full bg-[#FCD24C]" />
 
@@ -174,7 +227,7 @@ export default function DiscoverPage() {
           badgeText="Work-Friendly"
           badgeColor="bg-[#699795]"
         />
-        <PostCarousel posts={mockPosts} />
+        <PostCarousel posts={realPosts} />
 
         <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FF5995]" />
         <BestCafes
@@ -184,7 +237,7 @@ export default function DiscoverPage() {
           badgeText="Best Service"
           badgeColor="bg-[#FF5995]"
         />
-        <PostCarousel posts={mockPosts} />
+        <PostCarousel posts={realPosts} />
 
         <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#623D9B]" />
         <BestCafes
@@ -195,7 +248,7 @@ export default function DiscoverPage() {
           badgeColor="bg-[#7454A4]"
           reverse
         />
-        <PostCarousel posts={mockPosts} />
+        <PostCarousel posts={realPosts} />
 
       </section>
 

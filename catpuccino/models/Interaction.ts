@@ -2,11 +2,6 @@ import mongoose, { Schema, model, models } from "mongoose";
 
 const InteractionSchema = new Schema({
   
-    voteID: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: [true, "voteID is required"],
-    },
-
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

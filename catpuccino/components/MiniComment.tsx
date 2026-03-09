@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import ReportButton from "./ReportButton";
 import { IoPersonCircle } from "react-icons/io5";
 import VoteButtons from "./VoteButtons";
@@ -10,6 +11,9 @@ interface MiniCommentProps {
   content: string;
   timeAgo: string;
   initialVotes: number; 
+  parentPostId: string; 
+  initialUserVote?: "up" | "down" | null; 
+  replyCount?: number;
 }
 
 export default function MiniComment({ 
@@ -17,10 +21,19 @@ export default function MiniComment({
   username, 
   content, 
   timeAgo,
-  initialVotes
+  initialVotes, 
+  parentPostId, 
+  initialUserVote = null,
+  replyCount = 0 
 }: MiniCommentProps) {
+
+  const router = useRouter(); 
+
   return (
-    <div className="w-full border-[1.5px] border-black bg-[#FEF6EA] rounded-xl p-5 shadow-[4px_4px_0_0_rgb(133_82_37_/_0.2)]">
+    <div 
+      onClick={() => router.push(`/view-post/${parentPostId}`)}
+      className="w-full border-[1.5px] border-black bg-[#FEF6EA] rounded-xl p-5 shadow-[4px_4px_0_0_rgb(133_82_37_/_0.2)]"
+    >
         
       <div className="flex items-center gap-2 mb-3">
         <IoPersonCircle className="w-7 h-7 text-[#A86734]" />
@@ -34,15 +47,25 @@ export default function MiniComment({
       </p>
 
       <div className="flex items-center gap-3 scale-90 origin-left">
-        {/* Pass the ID, targetType, and real votes down to the button! */}
-        <VoteButtons 
-          postId={id} 
-          targetType="Comment" 
-          initialVotes={initialVotes} 
-          initialUserVote={null} 
-        />
-        <ReplyButton replyCount={2} />
-        <ReportButton onClick={()=> console.log("Reported.")}/>
+        
+        <div onClick={(e) => e.stopPropagation()}>
+          <VoteButtons 
+            postId={id} 
+            targetType="Comment" 
+            initialVotes={initialVotes} 
+            initialUserVote={initialUserVote} 
+          />
+        </div>
+        
+        <div onClick={(e) => e.stopPropagation()}>
+          <div onClick={() => router.push(`/view-post/${parentPostId}`)}>
+            <ReplyButton replyCount={replyCount} />
+          </div>
+        </div>
+        
+        <div onClick={(e) => e.stopPropagation()}>
+          <ReportButton onClick={()=> console.log("Reported.")}/>
+        </div>
       </div>
     </div>
   );

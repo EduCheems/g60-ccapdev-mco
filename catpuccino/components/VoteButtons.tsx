@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 interface VoteButtonsProps {
   postId: string; 
@@ -9,9 +10,16 @@ interface VoteButtonsProps {
 }
 
 export default function VoteButtons({ postId, initialVotes, initialUserVote = null, targetType = "Post" }: VoteButtonsProps) {
+  
+  const router = useRouter();
   const [vote, setVote] = useState<"up" | "down" | null>(initialUserVote);
   const [count, setCount] = useState(initialVotes || 0);
 
+  useEffect(() => {
+    setVote(initialUserVote);
+    setCount(initialVotes);
+  }, [initialUserVote, initialVotes]);
+  
   const handleVote = async (type: "up" | "down") => {
 
     console.log("DEBUG: Voting on postId:", postId);
@@ -66,6 +74,8 @@ export default function VoteButtons({ postId, initialVotes, initialUserVote = nu
         const errorData = await res.json().catch(() => ({ message: "Server crashed or returned HTML" }));
         throw new Error(`Backend rejected the vote. Status: ${res.status}. Reason: ${errorData.message}`);
       }
+
+      router.refresh();
     } catch (error) {
       console.error("Failed to save vote:", error);
     }

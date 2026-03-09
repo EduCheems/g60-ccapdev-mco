@@ -27,9 +27,12 @@ export default function PostThread({ post }: PostThreadProps) {
         content={post.body || ""}
         image={post.catImage}
         initialVotes={netScore}
+        initialUserVote={post.userVote}
+        commentCount={post.commentCount || 0}
       />
 
-      <div className="relative flex gap-6 mt-12">
+      {comments.length > 0 && (
+        <div className="relative flex gap-6 mt-12">
         
         {/* Branch lines */}
         <div className="absolute left-[48px] -top-12 w-[1.5px] h-12 bg-[#855225]/40" />
@@ -48,12 +51,16 @@ export default function PostThread({ post }: PostThreadProps) {
                 timeAgo={comment.timeAgo || "Just now"} 
                 content={comment.body || ""} 
                 initialVotes={commentScore}
+                initialUserVote={comment.userVote}
+                parentPostId={safeId}
+                replyCount={comment.replyCount || 0}
               />
             </div>
           );
         })}
 
       </div>
+      )}
     </div>
   );
 }

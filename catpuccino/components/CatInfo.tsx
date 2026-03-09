@@ -15,11 +15,10 @@ interface CatInfoProps {
 }
 
 const cardOuter =
-  "rounded-[20px] border-2 border-[#E6B84D] bg-[#FFF8EC] border-b-0 rounded-b-none shadow-[0_2px_8px_rgba(0,0,0,0.06)]";
+  "rounded-[24px] border-[2px] border-black/60 bg-[#FCD24C] shadow-[0_4px_0_rgba(0,0,0,0.35)]";
 const cardInner =
-  "rounded-[16px] border border-black bg-white overflow-hidden";
-const cardFooter =
-  "rounded-b-[17px] border-2 border-t-0 border-[#FCD24C] bg-[#FCD24C] px-4 py-3 shadow-[4px_4px_0_rgba(0,0,0,0.1)]";
+  "h-40 rounded-[18px] border border-black bg-[#FFF8EC] flex items-center justify-center overflow-hidden";
+const cardFooter = "mt-3 px-4 pb-4";
 
 export default function CatInfo({ value = null, onChange }: CatInfoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,13 +73,15 @@ export default function CatInfo({ value = null, onChange }: CatInfoProps) {
         <button
           type="button"
           onClick={() => openModal(false)}
-          className={`w-[310px] min-h-[380px] text-left block ${cardOuter}`}
+          className={`w-[310px] min-h-[380px] flex flex-col ${cardOuter}`}
         >
-          <div className={`h-40 flex items-center justify-center ${cardInner} m-1.5`}>
-            <span className="text-4xl font-light text-black leading-none">+</span>
+          <div className="mt-3 mx-3">
+            <div className={cardInner}>
+              <span className="text-4xl font-light text-black leading-none">+</span>
+            </div>
           </div>
-          <div className={cardFooter}>
-            <p className="text-center text-black font-black text-base leading-tight uppercase">
+          <div className={`${cardFooter}`}>
+            <p className="text-center text-black font-black text-base leading-tight uppercase break-words">
               Click me to add a cat companion
             </p>
           </div>
@@ -111,27 +112,29 @@ export default function CatInfo({ value = null, onChange }: CatInfoProps) {
       <button
         type="button"
         onClick={() => openModal(true)}
-        className={`w-[310px] min-h-[380px] text-left block ${cardOuter}`}
+        className={`w-[310px] min-h-[380px] flex flex-col ${cardOuter}`}
       >
-        <div className={`h-40 flex items-center justify-center overflow-hidden ${cardInner} m-1.5`}>
-          {value?.imageUrl ? (
-            <img src={value.imageUrl} alt={value.name} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-black font-black text-sm uppercase">CAT IMG</span>
-          )}
+        <div className="mt-3 mx-3">
+          <div className={cardInner}>
+            {value?.imageUrl ? (
+              <img src={value.imageUrl} alt={value.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-black font-black text-sm uppercase">CAT IMG*</span>
+            )}
+          </div>
         </div>
         <div className={`${cardFooter} text-left`}>
-          <p className="text-center font-black text-black underline decoration-black underline-offset-2 uppercase">
+          <p className="text-center font-black text-black underline decoration-black underline-offset-2 uppercase break-words">
             {value!.name || "—"}
           </p>
-          <p className="mt-1 text-sm text-black">
+          <p className="mt-1 text-sm text-black break-words">
             <span className="font-bold underline decoration-black underline-offset-1">Breed:</span>{" "}
             {value!.breed || "—"}
           </p>
-          <p className="mt-1 text-sm text-black">
+          <p className="mt-1 text-sm text-black break-words">
             <span className="font-bold underline decoration-black underline-offset-1">Description:</span>
           </p>
-          <p className="mt-0.5 text-sm text-black line-clamp-3">
+          <p className="mt-0.5 text-sm text-black line-clamp-3 break-words">
             {value!.description || "—"}
           </p>
         </div>

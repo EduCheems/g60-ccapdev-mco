@@ -9,8 +9,8 @@ interface PostCarouselProps {
 
 export default function PostCarousel({ posts, variant = "preview" }: PostCarouselProps) {
   return (
-    <div className="w-full bg-[#FEF6EA] py-12 overflow-hidden">
-      <div className="flex overflow-x-auto gap-12 px-[140px] pb-10 -mb-10 snap-x snap-mandatory no-scrollbar">
+    <div className="w-full bg-[#FEF6EA] pt-0 pb-12 overflow-hidden">
+      <div className="flex overflow-x-auto gap-12 px-12 pb-10 -mb-10 snap-x snap-mandatory no-scrollbar">
         
         {posts.map((post) => {
           // Safely calculate the net score for the votes
@@ -18,9 +18,8 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
           const safeId = post._id || post.id;
 
           return (
-            <div key={safeId} className="snap-center shrink-0 first:pl-0 last:pr-[140px]">
+            <div key={safeId} className="snap-center shrink-0 first:pl-0 last:pr-10">
               
-              {/* Pass the real post data down to PostThread and PhotoCollage too! */}
               {variant === "thread" && <PostThread post={post} />}
               {variant === "collage" && <PhotoCollage post={post} />} 
               
@@ -37,6 +36,8 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
                   content={post.body || ""}
                   image={post.catImage}
                   initialVotes={netScore}
+                  initialUserVote={post.userVote}
+                  commentCount={post.commentCount || 0}
                 />
               )}
             </div>
