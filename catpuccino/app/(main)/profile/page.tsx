@@ -171,6 +171,9 @@ const ProfilePage = () => {
     setDisplayName(session?.user?.name||displayName)
     setBio(session?.user?.bio ||bio)
     setProfileImageUrl(session?.user.profilePicURL||profileImageUrl);
+    setTopCafe1(session?.user?.favCafe?.[0]||topCafe1);
+    setTopCafe2(session?.user?.favCafe?.[1]||topCafe2);
+    setTopCafe3(session?.user?.favCafe?.[2]||topCafe3);
   },[session]);
 
   
