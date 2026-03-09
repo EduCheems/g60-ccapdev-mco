@@ -20,6 +20,7 @@ export default async function DiscoverPage() {
 
   // 1. Connect to DB
   await connectDB();
+  const _forceRegister = CatCafe;
 
 
   // Get current logged-in user 
