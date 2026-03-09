@@ -3,10 +3,9 @@
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
 import ReportButton from "../ReportButton";
-
 import { useRouter } from 'next/navigation'; 
-
 import Link from "next/link"; 
+import InfoTag from "../InfoTag";
 
 import { 
   IoLocationSharp, 
@@ -29,18 +28,6 @@ interface PostPreviewProps {
   initialVotes: number; 
 }
 
-const InfoTag = ({ icon: Icon, iconColor, label, value }: { icon: React.ElementType; iconColor: string; label: string; value: string }) => (
-  <div className="flex items-center gap-2.5">
-    <div className="flex items-center justify-center w-7 h-7 bg-white border-[1.5px] border-black rounded-md shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)]">
-      <Icon className={`text-[15px] ${iconColor}`} />
-    </div>
-    <div className="flex flex-col gap-0.5 leading-none">
-      <span className="text-[10px] text-black font-extrabold uppercase tracking-wide">{label}:</span>
-      <span className="text-xs text-black font-bold">{value}</span>
-    </div>
-  </div>
-);
-
 export default function PostPreview({ 
   id, 
   title, 
@@ -57,15 +44,13 @@ export default function PostPreview({
 
   const router = useRouter();
   
-  
   return (
-
     <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
-          {username} - Just now {/* You can pass a real timestamp prop later! */}
+          {username} - Just now
         </span>
         <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
           •••

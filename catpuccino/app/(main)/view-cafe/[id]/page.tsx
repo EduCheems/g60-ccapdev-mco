@@ -1,6 +1,7 @@
 import { cafes } from "@/app/data/cafes";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
+import InfoTag from "@/components/InfoTag"; 
 import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import { 

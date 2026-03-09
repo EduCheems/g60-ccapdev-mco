@@ -16,6 +16,18 @@ const CatCafeSchema = new Schema({
         type: String,
         required: [true, 'Cafe description is required'],
     },
+    location: {
+        type: String,
+        default: "Unknown City",
+    },
+    operatingHours: {
+        type: String,
+        default: "9:00 AM - 8:00 PM",
+    },
+    priceRange: {
+        type: String,
+        default: "$$",
+    },
     averages:{
         sociability: {
             type: Number,
@@ -90,6 +102,9 @@ const CatCafeSchema = new Schema({
             default: "/default-cat.png",
         }
     }],
+
+
+
 
 });
 

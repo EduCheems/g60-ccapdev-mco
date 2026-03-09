@@ -1,6 +1,12 @@
-export default function PhotoCollage() {
+interface PhotoCollageProps {
+  post: any; // Using 'any' to match your PostCarousel setup for now
+}
+
+export default function PhotoCollage({ post }: PhotoCollageProps) {
+  // If there's no post, don't render anything to be safe
+  if (!post) return null; 
+
   return (
-    
     <div className="w-[800px] h-[450px] shrink-0 grid grid-cols-4 grid-rows-3 gap-3">
       
       {/* Box 1: Tall Left (Spans 1 column, 2 rows downwards) */}

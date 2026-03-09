@@ -5,11 +5,12 @@ interface VoteButtonsProps {
   postId: string; 
   initialVotes: number;
   initialUserVote?: "up" | "down" | null;
+  targetType?: "Post" | "Comment";
 }
 
-export default function VoteButtons({ postId, initialVotes, initialUserVote = null }: VoteButtonsProps) {
+export default function VoteButtons({ postId, initialVotes, initialUserVote = null, targetType = "Post" }: VoteButtonsProps) {
   const [vote, setVote] = useState<"up" | "down" | null>(initialUserVote);
-  const [count, setCount] = useState(initialVotes);
+  const [count, setCount] = useState(initialVotes || 0);
 
   const handleVote = async (type: "up" | "down") => {
 
@@ -55,7 +56,7 @@ export default function VoteButtons({ postId, initialVotes, initialUserVote = nu
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
             targetID: postId, 
-            targetType: "Post", // Tells the backend we are voting on a Post
+            targetType: targetType, // Tells the backend we are voting on a Post
             newVoteValue: newVoteValue // Sends 1, -1, or 0
         })
       });
