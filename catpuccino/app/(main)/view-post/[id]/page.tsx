@@ -4,10 +4,9 @@ import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import CatCafe from "@/models/CatCafe";
 import InfoTag from "@/components/InfoTag"; 
-
-import VoteButtons from "@/components/VoteButtons";
-import ReplyButton from "@/components/ReplyButton";
-import ReportButton from "@/components/ReportButton";
+import PostActions from "@/components/PostActions";
+import CommentThread from "@/components/CommentThread";
+import DiscussionSection from "@/components/DiscussionSection";
 
 import { 
   IoLocationSharp, 
@@ -21,6 +20,55 @@ import {
 
 import { connectDB } from "@/lib/mongodb"; 
 import Post from "@/models/Post"; 
+
+
+const dummyComments = [
+  {
+    id: "c1",
+    authorName: "catlover99",
+    timeAgo: "2 hrs ago",
+    content: "This cafe looks amazing! I definitely need to check out the ambience. Do they have wifi?",
+    imageUrl: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=500&q=80", // random cat placeholder
+    upvotes: 67,
+    downvotes: 0,
+  },
+  {
+    id: "c2",
+    authorName: "matcha_fanatic",
+    timeAgo: "5 hrs ago",
+    content: "I went here last week. The cats are so friendly but the coffee was just okay.",
+    upvotes: 12,
+    downvotes: 2,
+    replies: [
+      {
+        id: "c3",
+        authorName: "op_author",
+        timeAgo: "4 hrs ago",
+        content: "Really? I thought the matcha latte was pretty good! Which one did you order?",
+        upvotes: 5,
+        downvotes: 0,
+        replies: [
+          {
+            id: "c4",
+            authorName: "matcha_fanatic",
+            timeAgo: "1 hr ago",
+            content: "I had the regular Americano. Maybe I'll try the matcha next time based on your recommendation!",
+            upvotes: 2,
+            downvotes: 0,
+          }
+        ]
+      },
+      {
+        id: "c5",
+        authorName: "random_user",
+        timeAgo: "30 mins ago",
+        content: "I agree, coffee is mid.",
+        upvotes: 1,
+        downvotes: 0,
+      }
+    ]
+  }
+];
 
 export default async function ViewPostPage({
   params,
@@ -124,12 +172,13 @@ export default async function ViewPostPage({
             <CafeMenu />
           </div>
 
-          <div className="flex gap-4 mt-auto items-center">
-            
-            <VoteButtons postId={post._id} initialVotes={initialVotes} />
-            <ReplyButton replyCount={0} />
-            <ReportButton />
-          </div>
+          <PostActions 
+             postId={post._id} 
+             initialVotes={initialVotes} 
+             replyCount={0} 
+          />
+
+          <DiscussionSection initialComments={dummyComments} />
 
         </div>
 
