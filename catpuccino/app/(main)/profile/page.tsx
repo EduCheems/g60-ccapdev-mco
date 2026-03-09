@@ -40,7 +40,7 @@ const ProfilePage = () => {
   const isOwnProfile = !viewedUserId || viewedUserId === loggedInUserId;
   const isOwner =
     typeof session?.user?.email === "string" &&
-    session.user.email.endsWith("@catpuccino.com");
+    session.user.email.toLowerCase().includes("owner");
 
   useEffect(() => {
     if (!isLoggedIn || !profileUserId) return;
@@ -172,7 +172,7 @@ const ProfilePage = () => {
                   <img
                     src="/ownertag.svg"
                     alt="Cafe owner badge"
-                    className="h-10 w-auto"
+                    className="h-25 w-auto"
                   />
                 )}
               </div>
@@ -222,8 +222,16 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Right side: action button (Edit / Follow) */}
-          <div className="mt-2">
+          {/* Right side: action button (Create Cafe / Edit / Follow) */}
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {isLoggedIn && isOwnProfile && isOwner && (
+              <Link
+                href="/create-cafe"
+                className="px-8 py-2 rounded-full text-sm font-bold border border-[#d55c06] text-white bg-[#d55c06] hover:bg-[#f37b26] transition"
+              >
+                Create Cafe
+              </Link>
+            )}
             {isLoggedIn && isOwnProfile && (
               <button
                 onClick={handleOpenEditProfile}
