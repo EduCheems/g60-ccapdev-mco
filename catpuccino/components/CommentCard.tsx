@@ -7,8 +7,14 @@ import ReplyButton from "./ReplyButton";
 import ReportButton from "./ReportButton";
 import CommentBox from "./CommentBox";
 import { IoEllipsisHorizontal } from "react-icons/io5"; 
+import { createComment } from "@/controllers/commentAction";
 
-export default function CommentCard({ comment }: { comment: any }) {
+interface CommentCardProps {
+  comment: any;
+  currentUserId: string; 
+}
+
+export default function CommentCard({ comment, currentUserId }: CommentCardProps) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const initialVotes = (comment?.upvoteCount || comment?.upvotes || 0) - (comment?.downvoteCount || comment?.downvotes || 0);
   
@@ -24,7 +30,17 @@ export default function CommentCard({ comment }: { comment: any }) {
   const [showMenu, setShowMenu] = useState(false);
   const [localReplies, setLocalReplies] = useState(comment?.replies || []);
   
-  const handleReplySubmit = (content: string) => {
+  const handleReplySubmit = async (content: string) => {
+    setIsLoading(true);
+
+    const newReply = {
+      postID: comment.postID,
+      userID: currentUserId,
+      content: content,
+      parentCommentID: comment._id, 
+    };
+
+    /*
     const newReply = {
       id: Math.random().toString(),
       authorName: "currentUser", 
@@ -34,9 +50,17 @@ export default function CommentCard({ comment }: { comment: any }) {
       downvoteCount: 0,
       replies: []
     };
+    */
 
-    setLocalReplies([...localReplies, newReply]);
-    setShowReplyBox(false); // Hide the box after replying
+    const result = await createComment(newReply);
+
+    if (result.success) {
+      setLocalReplies([...localReplies, result.comment]);
+      setShowReplyBox(false);
+    } else {
+      alert("Error: " + result.error);
+    }
+    setIsLoading(false);
   };
 
   // -- Handler for backend 
@@ -45,7 +69,12 @@ export default function CommentCard({ comment }: { comment: any }) {
       setIsEditing(false); 
       return; 
     }
-  
+
+    setIsLoading(true); 
+
+    // TODO: Create an updateComment Server Action
+    // const result = await updateComment(comment._id, editValue);
+
     setIsLoading(true); 
 
     //Fake API Call (pa change backend)
@@ -60,6 +89,9 @@ export default function CommentCard({ comment }: { comment: any }) {
 
     const confirmdelete = window.confirm("Are you sure you wanna delete this comment?"); 
     if (!confirmdelete) return; 
+
+    // TODO: Create a deleteComment Server Action (Soft Delete)
+    // await deleteComment(comment._id);
 
     //Fake API Call 
     setTimeout(() =>{
@@ -194,10 +226,12 @@ export default function CommentCard({ comment }: { comment: any }) {
           {showReplyBox && !isDeleted && (
             <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
                <CommentBox 
-                 isForceExpanded={true} 
-                 onCancel={() => setShowReplyBox(false)} 
-                 onSubmit={handleReplySubmit} 
-               />
+                isForceExpanded={true}
+                onCancel={() => setShowReplyBox(false)}
+                onSubmit={handleReplySubmit} 
+                id={comment.postID} 
+                userId={currentUserId}               
+                />
             </div>
           )}
         </div>
@@ -227,7 +261,7 @@ export default function CommentCard({ comment }: { comment: any }) {
                 
                 {/* Comment indent */}
                 <div className="w-full pl-[44px]">
-                  <CommentCard comment={reply} />
+                  <CommentCard comment={reply} currentUserId={currentUserId} />
                 </div>
               </div>
             );
