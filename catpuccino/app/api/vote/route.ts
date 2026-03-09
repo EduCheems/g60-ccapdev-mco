@@ -44,21 +44,22 @@ export async function POST(req: Request) {
         }
 
         if (targetType === "Post") {
-            await Post.findByIdAndUpdate(targetID, {
-                $inc: { upvoteCount: upvoteChange, downvoteCount: downvoteChange }
-            });
-        } else if (targetType === "Comment") {
-            // await Comment.findByIdAndUpdate(targetID, { $inc: { upvoteCount: upvoteChange, downvoteCount: downvoteChange } });
-        }
-
-        if (targetType === "Post") {
             const updatedPost = await Post.findByIdAndUpdate(
                 targetID, 
                 { $inc: { upvoteCount: upvoteChange, downvoteCount: downvoteChange } },
                 { new: true } 
             );
             
-            console.log(`✅ DB UPDATED: Upvotes: ${updatedPost.upvoteCount} | Downvotes: ${updatedPost.downvoteCount}`);
+            if (updatedPost) {
+                console.log(`DB UPDATED: Upvotes: ${updatedPost.upvoteCount} | Downvotes: ${updatedPost.downvoteCount}`);
+            } else {
+                // To not accept mock IDs
+                console.warn(`Vote accepted but target document ${targetID} not found in DB.`);
+                return NextResponse.json({ 
+                    success: false, 
+                    message: "Target not found in database. Voting only works on real posts!" 
+                }, { status: 404 });
+            }
         }
 
         return NextResponse.json({ success: true }, { status: 200 });

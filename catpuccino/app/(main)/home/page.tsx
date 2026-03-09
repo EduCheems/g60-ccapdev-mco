@@ -5,6 +5,63 @@ import { cafes } from "@/app/data/cafes";
 import CategoryIcon from "@/components/CategoryIcon";
 import PostCarousel from "@/components/PostCarousel";
 
+const mockPosts = [
+  {
+    _id: "65f0a1b2c3d4e5f6a7b8c9e1", // Unique Post ID
+    title: "Perfect Study Spot!",
+    authorName: "CoffeeCat",
+    upvoteCount: 45,
+    downvoteCount: 2,
+    cafeID: { name: "Meow Cafe", priceRange: "₱₱", location: "Makati" },
+    body: "This place is amazing! The orange cat 'Mochi' is literally a social butterfly.",
+    comments: [
+      {
+        _id: "65f0a1b2c3d4e5f6a7b8c9d1",
+        authorName: "CatLover99",
+        timeAgo: "2h ago",
+        body: "The orange cat 'Mochi' is literally a social butterfly. Highly recommend!",
+        upvoteCount: 15,
+        downvoteCount: 3
+      },
+      {
+        _id: "65f0a1b2c3d4e5f6a7b8c9d2",
+        authorName: "StudyHard",
+        timeAgo: "5h ago",
+        body: "Great place to meet people. The cats are the perfect icebreakers.",
+        upvoteCount: 5,
+        downvoteCount: 0
+      }
+    ]
+  },
+  {
+    _id: "65f0a1b2c3d4e5f6a7b8c9e2", // Unique Post ID
+    title: "Quiet and Cozy",
+    authorName: "SleepyStudent",
+    upvoteCount: 30,
+    downvoteCount: 1,
+    cafeID: { name: "Purrfect Brew", priceRange: "₱", location: "Quezon City" },
+    body: "Best place to read a book. The ambient music is great.",
+    comments: [
+      {
+        _id: "65f0a1b2c3d4e5f6a7b8c9d3", // First comment ID
+        authorName: "CatLover99",
+        timeAgo: "2h ago",
+        body: "The coffee is top tier.",
+        upvoteCount: 15,
+        downvoteCount: 3
+      },
+      {
+        _id: "65f0a1b2c3d4e5f6a7b8c9d4", // CHANGED THIS: was d3, now d4
+        authorName: "StudyHard",
+        timeAgo: "5h ago",
+        body: "I actually finished my thesis here. Very productive vibe.",
+        upvoteCount: 5,
+        downvoteCount: 0
+      }
+    ]
+  }
+];
+
 export default function DiscoverPage() {
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
@@ -85,7 +142,7 @@ export default function DiscoverPage() {
           badgeText="People Friendly"
           badgeColor="bg-[#ED7364]"
         />
-        <PostCarousel posts={[1, 2, 3]} variant="thread"/>
+        <PostCarousel posts={mockPosts} variant="thread"/>
 
         <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
         <BestCafes
@@ -95,7 +152,7 @@ export default function DiscoverPage() {
           badgeText="Aesthetic"
           badgeColor="bg-[#87AE73]"
         />
-        <PostCarousel posts={[1, 2, 3, 4]} variant="collage"/>
+        <PostCarousel posts={mockPosts} variant="collage"/>
 
         <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
         <BestCafes
@@ -105,7 +162,7 @@ export default function DiscoverPage() {
           badgeText="Best Foods"
           badgeColor="bg-[#FF7300]"
         />
-        <PostCarousel posts={[1, 2, 3]}/>
+        <PostCarousel posts={mockPosts}/>
 
         <div className="h-[400px] w-full bg-[#FCD24C]" />
 
@@ -117,7 +174,7 @@ export default function DiscoverPage() {
           badgeText="Work-Friendly"
           badgeColor="bg-[#699795]"
         />
-        <PostCarousel posts={[1, 2, 3, 4]} />
+        <PostCarousel posts={mockPosts} />
 
         <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FF5995]" />
         <BestCafes
@@ -127,7 +184,7 @@ export default function DiscoverPage() {
           badgeText="Best Service"
           badgeColor="bg-[#FF5995]"
         />
-        <PostCarousel posts={[1, 2, 3, 4]} />
+        <PostCarousel posts={mockPosts} />
 
         <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#623D9B]" />
         <BestCafes
@@ -138,7 +195,7 @@ export default function DiscoverPage() {
           badgeColor="bg-[#7454A4]"
           reverse
         />
-        <PostCarousel posts={[1, 2, 3, 4]} />
+        <PostCarousel posts={mockPosts} />
 
       </section>
 

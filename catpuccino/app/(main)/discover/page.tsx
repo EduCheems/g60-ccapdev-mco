@@ -29,6 +29,7 @@ export default function DiscoverPage() {
         if (response.ok) {
           const data = await response.json();
           setPosts(data);
+          console.log("FETCHED POSTS", data);
         }
       } catch (error) {
         console.error("Failed to fetch posts:", error);
