@@ -1,52 +1,67 @@
-import { cafes } from "@/app/data/cafes";
+import { connectDB } from "@/lib/mongodb";
+import CatCafe from "@/models/CatCafe";
+import User from "@/models/User";
+import Interaction from "@/models/Interaction";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
-import InfoTag from "@/components/InfoTag"; 
 import Ratings from "@/components/view-post/Ratings";
+import DiscussionSection from "@/components/DiscussionSection";
+import { auth } from "@/auth";
+import { getCommentsForPost } from "@/controllers/commentAction";
 import Link from "next/link";
 import { 
   IoLocationSharp, 
   IoPricetag, 
   IoTime, 
-  IoCalendarOutline, 
-  IoPersonCircle, 
-  IoArrowUpOutline, 
-  IoArrowDownOutline,
+  IoPersonCircle,
   IoChatbubbleOutline 
 } from "react-icons/io5";
 
-const sampleComments = [
-  {
-    cafeId: 1,
-    username: "CoffeeBean_24",
-    timeAgo: "2 hours ago",
-    text: "This place is actually amazing for studying! The cats are super chill and don't jump on your laptop while you're working.",
-    likes: 12,
-  },
-  {
-    cafeId: 1,
-    username: "MeowMaster",
-    timeAgo: "5 hours ago",
-    text: "Did you try the Mango Frappe? It's a game changer.",
-    likes: 8,
-    imageUrl: "/images/frappe-sample.jpg" 
-  }
-];
+export const dynamic = "force-dynamic";
 
-export default async function ViewPostPage({
+export default async function ViewCafePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const cafe = cafes.find((c) => c.slug === id) || cafes[0]; 
 
-  const mockPost = {
-    username: "CatLover_PH",
-    date: "Feb 15, 2026",
-    userRating: { "Cats": 5, "Service": 4, "Ambiance": 5, "Value": 4 },
-    content: "I have been struggling to lock in these past few days. I keep getting distracted by mini tasks or get consumed by social media. I am glad to have listened to my friend when they recommended that I should study in this specific cat cafe. At first I was in doubt since how can you lock in on your tasks when there are cats around. But boy, was I in shock when I tried this cafe.", 
+  // 1. Connect to MongoDB
+  await connectDB(); 
+
+  // 2. Fetch User Session
+  const session = await auth();
+  let currentUserId = null; 
+  if (session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).lean();
+    if (user) currentUserId = user._id.toString();
+  }
+
+  // 3. Fetch the cafe
+  const dbCafe = await CatCafe.findById(id).lean(); 
+
+  // Handler for 404 error 
+  if (!dbCafe) {
+    return (
+      <div className="min-h-screen bg-[#FBF3DE] flex items-center justify-center font-montserrat">
+        <h1 className="text-3xl font-black text-[#855225]">Cafe not found! 😿</h1>
+      </div>
+    );
+  }
+
+  // 4. data map
+  const displayData = {
+    name: dbCafe.name || "Unknown Cafe",
+    content: dbCafe.description || "No description available for this cafe.",
+    price: dbCafe.priceRange || "P150 - P400",
+    city: dbCafe.location || "Metro Manila",  
+    time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
+    ratings: dbCafe.averages || { sociability: 0, ambience: 0, food: 0, work_friendly: 0, service: 0 },
+    imageUrl: dbCafe.imageUrl || "/images/placeholder-cat.jpg", 
+    totalReviews: dbCafe.totalReviews || 0,
   };
+
+  const initialComments = await getCommentsForPost(id, currentUserId);
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
@@ -54,29 +69,31 @@ export default async function ViewPostPage({
 
         <div className="flex-1">
 
+          {/* Cover image */}
           <div className="w-full aspect-[21/9] bg-[#D9D9D9] border-2 border-black mb-10 overflow-hidden rounded-[10px] shadow-[5px_5px_0_0_#85522533]">
-            <img src={cafe.imageUrl} alt="User Post" className="w-full h-full object-cover rounded-[10px]" />
+            <img src={displayData.imageUrl} alt="Cafe Hero" className="w-full h-full object-cover rounded-[10px]" />
           </div>
 
+          {/* Main profile */}
           <div className="relative flex-1 bg-[#FEF6EA] border-2 border-[#855225] rounded-[10px] px-6 py-6 flex-col shadow-[5px_5px_0_0_#85522533]">
             
-            <h1 className="text-[47px] font-black mb-4 tracking-tighter leading-none text-[#855225]">
-              {cafe.title} Review
+            <h1 className="text-[47px] font-black mb-4 tracking-tighter leading-none text-[#855225] uppercase">
+              {displayData.name} Profile
             </h1>
 
             {/* Headlines */}
             <div className="flex flex-wrap gap-5 mb-5 items-center font-black text-sm uppercase">
               
               {/* Posted By */}
-              <Link href={`/profile/${mockPost.username}`} className="flex items-center gap-3 group">
+              <div className="flex items-center gap-3 group">
                 <div className="w-8 h-8 bg-white rounded-[4px] border-2 border-black shadow-[inset_3px_3px_1px_rgba(133,82,37,0.3)] flex items-center justify-center">
                   <IoPersonCircle className="text-xl text-[#4A90E2]" />
                 </div>
                 <div className="flex flex-col mt-1">
-                  <span className="text-[10px] leading-none text-[#262626]">Posted By:</span>
-                  <span className="text-[10px] text-black/70">{mockPost.username}</span>
+                  <span className="text-[10px] leading-none text-[#262626]">Managed By:</span>
+                  <span className="text-[10px] text-black/70">Cafe Admin</span>
                 </div>
-              </Link>
+              </div>
 
               {/* Price */}
               <div className="flex items-center gap-3">
@@ -85,7 +102,7 @@ export default async function ViewPostPage({
                 </div>
                 <div className="flex flex-col mt-1 text-[10px]">
                   <span className="leading-none text-[#262626]">Price:</span>
-                  <span className="text-black/70">{cafe.price}</span>
+                  <span className="text-black/70">{displayData.price}</span>
                 </div>
               </div>
 
@@ -96,7 +113,7 @@ export default async function ViewPostPage({
                 </div>
                 <div className="flex flex-col mt-1 text-[10px]">
                   <span className="leading-none text-[#262626]">City:</span>
-                  <span className="text-black/70">{cafe.city}</span>
+                  <span className="text-black/70">{displayData.city}</span>
                 </div>
               </div>
 
@@ -107,67 +124,63 @@ export default async function ViewPostPage({
                 </div>
                 <div className="flex flex-col mt-1 text-[10px]">
                   <span className="leading-none text-[#262626]">Time:</span>
-                  <span className="text-black/70">{cafe.time}</span>
+                  <span className="text-black/70">{displayData.time}</span>
                 </div>
               </div>
 
-              {/* Ratings*/}
+              {/* Ratings */}
               <div className="ml-auto flex items-center h-10">
-                <Ratings ratings={mockPost.userRating} />
+                <Ratings ratings={displayData.ratings} />
               </div>
             </div>
 
             <div className="border-b-2 border-[#855225] mb-5 w-full" />
 
-            {/* DESCRIPTION */}
+            {/* Description */}
             <p className="text-[14px] leading-[1.6] text-[#262626] font-medium text-justify mb-8">
-              {mockPost.content}
+              {displayData.content}
             </p>
 
-            {/* SPOTLIGHT SECTION */}
+            {/* Spotlight */}
             <SpotlightSection />
 
-            {/* INTERACTION BAR (NOW BELOW SPOTLIGHT) */}
+    
+            {/* PROFILE ACTIONS 
             <div className="flex items-center gap-4 mt-8">
-              <div className="flex items-center bg-white border-2 border-[#855225] rounded-[10px] shadow-[4px_4px_0_0_#85522533] overflow-hidden">
-                <button className="p-2 hover:bg-green-50 border-r-2 border-[#855225] transition-colors active:translate-y-[1px]">
-                  <IoArrowUpOutline className="text-xl text-[#855225]" />
-                </button>
-                <span className="px-4 font-black text-[#855225] text-md tabular-nums">124</span>
-                <button className="p-2 hover:bg-red-50 border-l-2 border-[#855225] transition-colors active:translate-y-[1px]">
-                  <IoArrowDownOutline className="text-xl text-[#855225]" />
-                </button>
-              </div>
-
-              <button className="flex items-center gap-2 bg-[#855225] text-white px-4 py-2 rounded-[8px] border-2 border-[#855225] shadow-[4px_4px_0_0_#26262633] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-black text-xs uppercase active:scale-95">
-                <IoChatbubbleOutline className="text-lg" />
-                Comment
+            
+              <button className="flex items-center gap-2 bg-white text-[#855225] px-6 py-2 rounded-[8px] border-2 border-[#855225] shadow-[4px_4px_0_0_#85522533] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-black text-xs uppercase active:scale-95">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                </svg>
+                Save to Favorites
               </button>
-            </div>
-          </div>
 
-          {/* DISCUSSION HEADER & FILTERS */}
-          <div className="flex items-center mt-12 mb-4">
-            <h2 className="font-bold text-[30px] text-[#855225] uppercase tracking-tighter">
-              Discussion (12)
-            </h2>
-            <div className="ml-auto flex gap-2">
-              {["All(67)", "Cat (10)", "Most Relevant(10)"].map((label, idx) => (
-                <button 
-                  key={label}
-                  className={`px-4 py-2 rounded-[10px] text-[10px] font-black border-2 border-black transition-all
-                    ${idx === 0 ? 'bg-[#A83600] text-white shadow-[3px_3px_0_0_#000]' : 'bg-[#D1B291] text-white hover:bg-[#A83600]'}`}
-                >
-                  {label}
-                </button>
-              ))}
+              <a 
+                href="#discussion-section"
+                className="flex items-center gap-2 bg-[#855225] text-white px-6 py-2 rounded-[8px] border-2 border-[#855225] shadow-[4px_4px_0_0_#26262633] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all font-black text-xs uppercase active:scale-95"
+              >
+                <IoChatbubbleOutline className="text-lg" />
+                Write a Review
+              </a>
             </div>
+            */}
+
+          </div> 
+
+          {/* Discussion board */}
+          <div id="discussion-section" className="mt-12 scroll-mt-8">
+            <DiscussionSection 
+              initialComments={initialComments} 
+              postId={id}
+              currentUserId={currentUserId || ""}
+            />
           </div>
+     
         </div>
 
-        {/* RIGHT SIDEBAR */}
+        {/* Right side contents */}
         <aside className="w-[380px] flex flex-col gap-8 h-fit">
-            <RatingSidebar ratings={cafe.ratings} />
+            <RatingSidebar ratings={displayData.ratings} />
             <CafeMenu />
         </aside>
 

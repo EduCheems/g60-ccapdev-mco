@@ -10,14 +10,15 @@ import Comment from "@/models/Comment";
 import User from "@/models/User";
 import Interaction from "@/models/Interaction";
 import { auth } from "@/auth";
+import { Cafe } from "@/app/data/cafes";
 
 export const dynamic = "force-dynamic";
 
 export default async function DiscoverPage() {
+  
   // 1. Connect to DB
   await connectDB();
   
-  // Force registration of CatCafe model for .populate()
   const _forceRegister = CatCafe;
 
   // 2. Handle Authentication
@@ -34,23 +35,25 @@ export default async function DiscoverPage() {
     CatCafe.find().lean() 
   ]);
 
-  const cafeDocs = cafeDocsRaw.map((cafe: any) => ({
-    id: cafe._id.toString(),
-    title: cafe.name || "Unknown Cafe",
-    description: cafe.description || "",
-    price: cafe.priceRange || "??",
-    city: cafe.location || "Philippines",
-    time: cafe.operatingHours || "N/A",
-    slug: cafe._id.toString(),
-    tags: Array.isArray(cafe.tags) ? cafe.tags : [],
-    imageUrl: cafe.image || "/placeholder-cafe.jpg", 
-    ratings: cafe.averages || {
+  // updated mapping from mongodb 
+  const cafeDocs: Cafe[] = cafeDocsRaw.map((cafe: any) => ({
+    _id: cafe._id.toString(),
+    ownerID: cafe.ownerID?.toString() || "",
+    name: cafe.name || "Uknown Cafe",
+    description: cafe.description || "A cozy spot for coffee and cats.",
+    location: cafe.location || "Unknown City",
+    operatingHours: cafe.operatingHours || "N/A",
+    priceRange: cafe.priceRange || "₱0",
+    averages: cafe.averages || {
       sociability: 0,
       ambience: 0,
       food: 0,
       work_friendly: 0,
       service: 0
-    }
+    },
+    totalReviews: cafe.totalReviews || 0,
+    cats: cafe.cats || [],
+    menu: cafe.menu || []
   }));
 
   // 4. Fetch user's votes for the posts
