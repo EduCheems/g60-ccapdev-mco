@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PostPreview from "@/components/profile/PostPreview";
+import MiniComment from "@/components/MiniComment";
 import EditProfile from "@/components/EditProfile";
 
 const ProfilePage = () => {
@@ -32,6 +33,11 @@ const ProfilePage = () => {
   const [followingCount, setFollowingCount] = useState(0);
   const [postsCount, setPostsCount] = useState(0);
 
+  const [posts, setPosts] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+
   const viewedUserId = searchParams.get("userId");
   const loggedInUserId = (session?.user as any)?.id as string | undefined;
   const profileUserId = viewedUserId || loggedInUserId;
@@ -56,9 +62,9 @@ const ProfilePage = () => {
           setFollowersCount(data.followersCount ?? 0);
           setFollowingCount(data.followingCount ?? 0);
           setPostsCount(data.postsCount ?? 0);
-          if (data.username) setDisplayName(data.username);
-          if (data.bio) setBio(data.bio);
-          if (data.profilePic) setProfileImageUrl(data.profilePic);
+          if (data.username != null || data.name != null) setDisplayName(data.username ?? data.name);
+          if (data.bio != null) setBio(data.bio);
+          if (data.profilePic != null || data.profilePicURL != null) setProfileImageUrl(data.profilePic ?? data.profilePicURL ?? null);
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -85,6 +91,38 @@ const ProfilePage = () => {
 
     checkFollow();
   }, [isLoggedIn, viewedUserId, loggedInUserId]);
+
+  // Fetch user's posts (Reviews tab) from DB
+  useEffect(() => {
+    if (!profileUserId) return;
+    setPostsLoading(true);
+    fetch(`/api/auth/post?userId=${profileUserId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setPosts(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch profile posts:", err);
+        setPosts([]);
+      })
+      .finally(() => setPostsLoading(false));
+  }, [profileUserId]);
+
+  // Fetch user's comments from DB
+  useEffect(() => {
+    if (!profileUserId) return;
+    setCommentsLoading(true);
+    fetch(`/api/comment?userId=${profileUserId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setComments(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch profile comments:", err);
+        setComments([]);
+      })
+      .finally(() => setCommentsLoading(false));
+  }, [profileUserId]);
 
   const handleProfileImageFileChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -167,17 +205,19 @@ const ProfilePage = () => {
   };
 
 
-  useEffect(()=>{
-    setDisplayName(session?.user?.name||displayName)
-    setBio(session?.user?.bio ||bio)
-    setProfileImageUrl(session?.user.profilePicURL||profileImageUrl);
-    setTopCafe1(session?.user?.favCafe?.[0]||topCafe1);
-    setTopCafe2(session?.user?.favCafe?.[1]||topCafe2);
-    setTopCafe3(session?.user?.favCafe?.[2]||topCafe3);
-  },[session]);
+  useEffect(() => {
+    setDisplayName(session?.user?.name || displayName);
+    setBio(session?.user?.bio || bio);
+    setProfileImageUrl(session?.user.profilePicURL || profileImageUrl);
+    setTopCafe1(session?.user?.favCafe?.[0] || topCafe1);
+    setTopCafe2(session?.user?.favCafe?.[1] || topCafe2);
+    setTopCafe3(session?.user?.favCafe?.[2] || topCafe3);
+  }, [session, displayName, bio, profileImageUrl, topCafe1, topCafe2, topCafe3]);
 
-  
-  
+  const nonAnonymousCommentsCount = comments.filter(
+    (comment) => comment.authorName !== "Anonymous"
+  ).length;
+
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -186,7 +226,7 @@ const ProfilePage = () => {
         <div className="flex items-start justify-between gap-8">
 
           {/* Left side: avatar + profile info */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 min-w-0 flex-1">
             {/* Profile Picture */}
             <div className="w-[180px] h-[180px] rounded-full border-4 border-[#733903] overflow-hidden bg-gray-300">
               <img
@@ -197,7 +237,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile Info */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-3xl font-poppins font-bold text-[#262626] leading-none">
                   {displayName}
@@ -214,7 +254,7 @@ const ProfilePage = () => {
               <div className="flex gap-4 text-[#262626] font-medium">
                 <span><strong>{followersCount}</strong> Followers</span>
                 <span><strong>{followingCount}</strong> Following</span>
-                <span><strong>{postsCount}</strong> Posts</span>
+                <span><strong>{postsCount + nonAnonymousCommentsCount}</strong> Posts</span>
               </div>
 
               <p className="text-[#262626]">
@@ -222,42 +262,42 @@ const ProfilePage = () => {
               </p>
 
               {/* Top 3 recommended cafes */}
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-nowrap gap-3 w-full min-w-0">
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0C35B] text-[#3A240D] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.25)] border border-black/20"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0C35B] text-[#3A240D] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.25)] border border-black/20 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#DFA52B] text-xs font-bold border border-black/20">
                     1
                   </span>
-                  <span>{topCafe1}</span>
+                  <span className="truncate">{topCafe1}</span>
                 </button>
 
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E2E2E6] text-[#262626] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.15)] border border-black/10"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E2E2E6] text-[#262626] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.15)] border border-black/10 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#C0C0C5] text-xs font-bold border border-black/10">
                     2
                   </span>
-                  <span>{topCafe2}</span>
+                  <span className="truncate">{topCafe2}</span>
                 </button>
 
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#B57335] text-[#FBF3DE] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.35)] border border-black/20"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#B57335] text-[#FBF3DE] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.35)] border border-black/20 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#8E531B] text-xs font-bold border border-black/20">
                     3
                   </span>
-                  <span>{topCafe3}</span>
+                  <span className="truncate">{topCafe3}</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Right side: action button (Create Cafe / Edit / Follow) */}
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="mt-2 flex flex-col items-end gap-2 shrink-0 flex-none">
             {isLoggedIn && isOwnProfile && isOwner && (
               <Link
                 href="/create-cafe"
@@ -344,58 +384,71 @@ const ProfilePage = () => {
 
 
         {activeTab === "reviews" && (
-        <div className="flex flex-col gap-6">
-          <PostPreview 
-            id="post-1"
-            cafeName="Cat Cafe Manila"
-            rating={5}
-            username="CatLover67"
-            price="₱₱"
-            city="Manila"
-            time="10:00 AM - 8:00 PM"
-            content="I have been struggling to lock in these past few days. This place actually helped me think!"
-            image="/cafe-imgs/hero.png"
-          />
-          <PostPreview 
-            id="post-2"
-            cafeName="Neko Coffee"
-            rating={4}
-            username="CatLover67"
-            price="₱₱₱"
-            city="Quezon City"
-            time="9:00 AM - 10:00 PM"
-            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
-            image="/cafe-imgs/cafe2.png"
-          />
-        </div>
-      )}
+          <div className="flex flex-col gap-6">
+            {postsLoading ? (
+              <p className="text-[#855225] font-medium">Loading reviews…</p>
+            ) : posts.length === 0 ? (
+              <p className="text-[#855225]/80">No reviews yet.</p>
+            ) : (
+              posts.map((post) => {
+                const netScore = (post.upvoteCount ?? 0) - (post.downvoteCount ?? 0);
+                const safeId = post._id ?? post.id;
+                return (
+                  <PostPreview
+                    key={safeId}
+                    id={safeId}
+                    title={post.title ?? "Untitled"}
+                    cafeName={post.cafeID?.name ?? "Unknown Cafe"}
+                    rating={post.overallRating ?? 0}
+                    username={post.authorName ?? "Anonymous"}
+                    price={post.cafeID?.priceRange ?? "₱"}
+                    city={post.cafeID?.location ?? "—"}
+                    time={post.cafeID?.operatingHours ?? "—"}
+                    content={post.body ?? ""}
+                    image={post.catImage}
+                    initialVotes={netScore}
+                    initialUserVote={post.userVote ?? null}
+                    commentCount={post.commentCount ?? 0}
+                  />
+                );
+              })
+            )}
+          </div>
+        )}
 
-        {/*  COMMENTS  */}
         {activeTab === "comments" && (
           <div className="flex flex-col gap-6">
-          <PostPreview 
-            id="post-3"
-            cafeName="Cat Cafe Manila"
-            rating={5}
-            username="CatLover67"
-            price="₱₱"
-            city="Manila"
-            time="10:00 AM - 8:00 PM"
-            content="I have been struggling to lock in these past few days. This place actually helped me think!"
-            image="/cafe-imgs/hero.png"
-          />
-          <PostPreview 
-            id="post-4"
-            cafeName="Neko Coffee"
-            rating={4}
-            username="CatLover67"
-            price="₱₱₱"
-            city="Quezon City"
-            time="9:00 AM - 10:00 PM"
-            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
-            image="/cafe-imgs/cafe2.png"
-          />
-        </div>
+            {commentsLoading ? (
+              <p className="text-[#855225] font-medium">Loading comments…</p>
+            ) : comments.length === 0 ? (
+              <p className="text-[#855225]/80">No comments yet.</p>
+            ) : (
+              comments.map((comment) => {
+                const initialVotes = (comment.upvoteCount ?? 0) - (comment.downvoteCount ?? 0);
+                const parentPostId = comment.postID ?? comment.postId;
+                if (!parentPostId) return null;
+                return (
+                  <div key={comment._id} className="flex flex-col gap-2">
+                    {comment.postTitle && (
+                      <p className="text-xs text-[#855225] font-medium">
+                        Comment on: {comment.postTitle}
+                      </p>
+                    )}
+                    <MiniComment
+                      id={comment._id}
+                      username={comment.authorName ?? "Anonymous"}
+                      content={comment.content ?? comment.body ?? ""}
+                      timeAgo={comment.timeAgo ?? "Just now"}
+                      initialVotes={initialVotes}
+                      parentPostId={parentPostId}
+                      initialUserVote={comment.userVote ?? null}
+                      replyCount={comment.replyCount ?? 0}
+                    />
+                  </div>
+                );
+              })
+            )}
+          </div>
         )}
 
       </section>
