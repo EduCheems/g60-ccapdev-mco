@@ -6,7 +6,6 @@ import StarSlider from '@/components/StarScale';
 import CafeSearch from '@/components/CafeSearcher';
 import { useRouter } from "next/navigation";
 
-// Updated UploadBox
 const UploadBox = ({ 
   label, 
   onImageSelect, 
@@ -21,7 +20,7 @@ const UploadBox = ({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        onImageSelect(reader.result as string); // Converts image to a Base64 string
+        onImageSelect(reader.result as string); 
       };
       reader.readAsDataURL(file);
     }
@@ -30,7 +29,6 @@ const UploadBox = ({
   return (
     <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
       
-      {/* Show the image preview if it exists */}
       {previewUrl ? (
         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
       ) : (
@@ -39,7 +37,6 @@ const UploadBox = ({
         </p>
       )}
 
-      {/* The invisible file input */}
       <input 
         type="file" 
         accept="image/*" 
@@ -50,7 +47,6 @@ const UploadBox = ({
   );
 };
 
-//Can be also migrated to components folder
 const categoryColors: Record<string, string> = {
   Sociability: "#ED7364", 
   Ambience: "#7DA06C",    
@@ -79,6 +75,7 @@ export default function CreatePostPage() {
   const [foodName, setFoodName] = useState("");
   const [foodImage, setFoodImage] = useState("");
   const [bodyText, setBodyText] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
 
   const handleRatingChange = (category: string, val: number) => {
     setRatings(prev => ({ ...prev, [category]: val }));
@@ -96,7 +93,7 @@ export default function CreatePostPage() {
         const postData = {
           userID, 
           selectedCafe,
-          isAnonymous: false,
+          isAnonymous,
           title,
           ratings,
           catName,
@@ -289,6 +286,25 @@ export default function CreatePostPage() {
                  </div>
                ))}
             </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 mt-4 pr-2">
+            <span className="text-[#855225] font-poppins font-bold uppercase text-sm">
+              Post Anonymously
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsAnonymous(!isAnonymous)}
+              className={`w-12 h-6 rounded-full border-2 border-[#855225] p-0.5 transition-colors duration-300 ease-in-out flex ${
+                isAnonymous ? "bg-[#E5781E]" : "bg-[#FEF6EA]"
+              } shadow-[2px_2px_0_0_rgb(133_82_37_/_0.2)]`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full bg-[#855225] transition-transform duration-300 ease-in-out ${
+                  isAnonymous ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
           </div>
 
           {/* 7. Action Buttons */}

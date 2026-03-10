@@ -205,17 +205,19 @@ const ProfilePage = () => {
   };
 
 
-  useEffect(()=>{
-    setDisplayName(session?.user?.name||displayName)
-    setBio(session?.user?.bio ||bio)
-    setProfileImageUrl(session?.user.profilePicURL||profileImageUrl);
-    setTopCafe1(session?.user?.favCafe?.[0]||topCafe1);
-    setTopCafe2(session?.user?.favCafe?.[1]||topCafe2);
-    setTopCafe3(session?.user?.favCafe?.[2]||topCafe3);
-  },[session]);
+  useEffect(() => {
+    setDisplayName(session?.user?.name || displayName);
+    setBio(session?.user?.bio || bio);
+    setProfileImageUrl(session?.user.profilePicURL || profileImageUrl);
+    setTopCafe1(session?.user?.favCafe?.[0] || topCafe1);
+    setTopCafe2(session?.user?.favCafe?.[1] || topCafe2);
+    setTopCafe3(session?.user?.favCafe?.[2] || topCafe3);
+  }, [session, displayName, bio, profileImageUrl, topCafe1, topCafe2, topCafe3]);
 
-  
-  
+  const nonAnonymousCommentsCount = comments.filter(
+    (comment) => comment.authorName !== "Anonymous"
+  ).length;
+
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -224,7 +226,7 @@ const ProfilePage = () => {
         <div className="flex items-start justify-between gap-8">
 
           {/* Left side: avatar + profile info */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-8 min-w-0 flex-1">
             {/* Profile Picture */}
             <div className="w-[180px] h-[180px] rounded-full border-4 border-[#733903] overflow-hidden bg-gray-300">
               <img
@@ -235,7 +237,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile Info */}
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-3xl font-poppins font-bold text-[#262626] leading-none">
                   {displayName}
@@ -252,7 +254,7 @@ const ProfilePage = () => {
               <div className="flex gap-4 text-[#262626] font-medium">
                 <span><strong>{followersCount}</strong> Followers</span>
                 <span><strong>{followingCount}</strong> Following</span>
-                <span><strong>{postsCount}</strong> Posts</span>
+                <span><strong>{postsCount + nonAnonymousCommentsCount}</strong> Posts</span>
               </div>
 
               <p className="text-[#262626]">
@@ -260,42 +262,42 @@ const ProfilePage = () => {
               </p>
 
               {/* Top 3 recommended cafes */}
-              <div className="mt-4 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-nowrap gap-3 w-full min-w-0">
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0C35B] text-[#3A240D] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.25)] border border-black/20"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#F0C35B] text-[#3A240D] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.25)] border border-black/20 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#DFA52B] text-xs font-bold border border-black/20">
                     1
                   </span>
-                  <span>{topCafe1}</span>
+                  <span className="truncate">{topCafe1}</span>
                 </button>
 
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E2E2E6] text-[#262626] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.15)] border border-black/10"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E2E2E6] text-[#262626] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.15)] border border-black/10 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#C0C0C5] text-xs font-bold border border-black/10">
                     2
                   </span>
-                  <span>{topCafe2}</span>
+                  <span className="truncate">{topCafe2}</span>
                 </button>
 
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#B57335] text-[#FBF3DE] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.35)] border border-black/20"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#B57335] text-[#FBF3DE] text-sm font-semibold shadow-[0_3px_0_rgba(0,0,0,0.35)] border border-black/20 flex-1 min-w-0"
                 >
                   <span className="w-6 h-6 flex items-center justify-center rounded-full bg-[#8E531B] text-xs font-bold border border-black/20">
                     3
                   </span>
-                  <span>{topCafe3}</span>
+                  <span className="truncate">{topCafe3}</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Right side: action button (Create Cafe / Edit / Follow) */}
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="mt-2 flex flex-col items-end gap-2 shrink-0 flex-none">
             {isLoggedIn && isOwnProfile && isOwner && (
               <Link
                 href="/create-cafe"
