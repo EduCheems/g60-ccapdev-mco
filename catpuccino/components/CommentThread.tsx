@@ -2,8 +2,15 @@
 import CommentCard from "./CommentCard";
 
 export default function CommentThread({ data, currentUserId }: { data: any, currentUserId: string }) {
+  
+  const safeId = data._id || data.id;
+
   return (
-    <div className="w-full bg-[#FEF6EA] border-[1.5px] border-[#855225] rounded-[20px] p-6 mb-6 shadow-[5px_5px_0_0_rgba(133,82,37,0.1)]">
+    
+    <div 
+    id={`comment-${safeId}`}
+    className="w-full bg-[#FEF6EA] border-[1.5px] border-[#855225] rounded-[20px] p-6 mb-6 shadow-[5px_5px_0_0_rgba(133,82,37,0.1)] scroll-mt-24"
+    >
       <CommentCard comment={data} currentUserId={currentUserId} />
     </div>
   );

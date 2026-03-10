@@ -3,6 +3,7 @@
 import { connectDB } from "@/lib/mongodb";
 import Comment from "@/models/Comment";
 import { revalidatePath } from "next/cache";
+import Interaction from "@/models/Interaction";
 
 // server action method
 
@@ -36,7 +37,9 @@ export async function createComment(commentData) {
     }
 }
 
-export async function getCommentsForPost(postID) {
+
+// New argument: UserId
+export async function getCommentsForPost(postID, userId = null) {
     try {
         await connectDB();
         const comments = await Comment.find({ postID, isDeleted: false})
@@ -46,11 +49,31 @@ export async function getCommentsForPost(postID) {
 
         const safeComments = JSON.parse(JSON.stringify(comments));
 
+        // -- Experimental wait (Map all of that particular user's interactions)
+        const interactionMap = {}; 
+        if (userId){
+            //Find all interactions of the user for a specific comment
+            const interactions = await Interaction.find({
+                userID: userId,
+                targetID: { $in: safeComments.map(c => c._id) },
+                targetType: "Comment"
+            }).lean();
+            
+            interactions.forEach(int => {
+                interactionMap[int.targetID.toString()] = 
+                    int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
+            });
+        }
+        // -- 
+
         const commentMap = {};
         const roots = [];
 
         safeComments.forEach(comment => {
             comment.replies = []; // Initialize empty replies array
+            
+            comment.userVote = interactionMap[comment._id] || null; 
+            
             commentMap[comment._id] = comment;
 
             if (comment.parentCommentID === null) {

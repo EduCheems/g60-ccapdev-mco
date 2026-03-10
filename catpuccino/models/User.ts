@@ -26,7 +26,7 @@ const UserSchema = new Schema({
     },
     profilePicURL: { 
         type: String, 
-        default: "/default-avatar.png",
+        default: "",
     },
     bio: { 
         type: String, 
@@ -47,6 +47,10 @@ const UserSchema = new Schema({
     postsCount: { 
         type: Number, 
         default: 0 
+    },
+    favCafe:{
+        type:[String],
+        default:[]
     },
     }, {
     timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"

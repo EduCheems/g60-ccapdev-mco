@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PostPreview from "@/components/profile/PostPreview";
+import MiniComment from "@/components/MiniComment";
 import EditProfile from "@/components/EditProfile";
 
 const ProfilePage = () => {
@@ -32,6 +33,11 @@ const ProfilePage = () => {
   const [followingCount, setFollowingCount] = useState(0);
   const [postsCount, setPostsCount] = useState(0);
 
+  const [posts, setPosts] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+
   const viewedUserId = searchParams.get("userId");
   const loggedInUserId = (session?.user as any)?.id as string | undefined;
   const profileUserId = viewedUserId || loggedInUserId;
@@ -56,9 +62,9 @@ const ProfilePage = () => {
           setFollowersCount(data.followersCount ?? 0);
           setFollowingCount(data.followingCount ?? 0);
           setPostsCount(data.postsCount ?? 0);
-          if (data.username) setDisplayName(data.username);
-          if (data.bio) setBio(data.bio);
-          if (data.profilePic) setProfileImageUrl(data.profilePic);
+          if (data.username != null || data.name != null) setDisplayName(data.username ?? data.name);
+          if (data.bio != null) setBio(data.bio);
+          if (data.profilePic != null || data.profilePicURL != null) setProfileImageUrl(data.profilePic ?? data.profilePicURL ?? null);
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -85,6 +91,38 @@ const ProfilePage = () => {
 
     checkFollow();
   }, [isLoggedIn, viewedUserId, loggedInUserId]);
+
+  // Fetch user's posts (Reviews tab) from DB
+  useEffect(() => {
+    if (!profileUserId) return;
+    setPostsLoading(true);
+    fetch(`/api/auth/post?userId=${profileUserId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setPosts(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch profile posts:", err);
+        setPosts([]);
+      })
+      .finally(() => setPostsLoading(false));
+  }, [profileUserId]);
+
+  // Fetch user's comments from DB
+  useEffect(() => {
+    if (!profileUserId) return;
+    setCommentsLoading(true);
+    fetch(`/api/comment?userId=${profileUserId}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setComments(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch profile comments:", err);
+        setComments([]);
+      })
+      .finally(() => setCommentsLoading(false));
+  }, [profileUserId]);
 
   const handleProfileImageFileChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -142,6 +180,11 @@ const ProfilePage = () => {
     setTopCafe2(editTopCafe2.trim() || topCafe2);
     setTopCafe3(editTopCafe3.trim() || topCafe3);
     setIsEditingProfile(false);
+
+    const cafeHolder=[editTopCafe1.trim() || topCafe1,
+      editTopCafe2.trim() || topCafe2,editTopCafe3.trim() || topCafe3
+    ].filter(Boolean);
+    console.log(cafeHolder);
     try{
       const res= await fetch("api/auth/profile",{
         method: "POST",
@@ -149,7 +192,8 @@ const ProfilePage = () => {
         body: JSON.stringify({
         name: editName.trim() || displayName,
         bio: editBio.trim() || bio,
-        profilePic: editProfileImageUrl.trim() || profileImageUrl
+        profilePic: editProfileImageUrl.trim() || profileImageUrl,
+        favCafe:cafeHolder,
       }),
       });
       if(!res){
@@ -164,7 +208,10 @@ const ProfilePage = () => {
   useEffect(()=>{
     setDisplayName(session?.user?.name||displayName)
     setBio(session?.user?.bio ||bio)
-    setProfileImageUrl(session?.user.profilePicURL||session?.user.image||profileImageUrl);
+    setProfileImageUrl(session?.user.profilePicURL||profileImageUrl);
+    setTopCafe1(session?.user?.favCafe?.[0]||topCafe1);
+    setTopCafe2(session?.user?.favCafe?.[1]||topCafe2);
+    setTopCafe3(session?.user?.favCafe?.[2]||topCafe3);
   },[session]);
 
   
@@ -188,16 +235,16 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile Info */}
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-3xl font-poppins font-bold text-[#262626]">
+              <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-3xl font-poppins font-bold text-[#262626] leading-none">
                   {displayName}
                 </h1>
                 {isOwner && (
                   <img
                     src="/ownertag.svg"
                     alt="Cafe owner badge"
-                    className="h-25 w-auto"
+                    className="h-8 w-auto"
                   />
                 )}
               </div>
@@ -335,58 +382,71 @@ const ProfilePage = () => {
 
 
         {activeTab === "reviews" && (
-        <div className="flex flex-col gap-6">
-          <PostPreview 
-            id="post-1"
-            cafeName="Cat Cafe Manila"
-            rating={5}
-            username="CatLover67"
-            price="₱₱"
-            city="Manila"
-            time="10:00 AM - 8:00 PM"
-            content="I have been struggling to lock in these past few days. This place actually helped me think!"
-            image="/cafe-imgs/hero.png"
-          />
-          <PostPreview 
-            id="post-2"
-            cafeName="Neko Coffee"
-            rating={4}
-            username="CatLover67"
-            price="₱₱₱"
-            city="Quezon City"
-            time="9:00 AM - 10:00 PM"
-            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
-            image="/cafe-imgs/cafe2.png"
-          />
-        </div>
-      )}
+          <div className="flex flex-col gap-6">
+            {postsLoading ? (
+              <p className="text-[#855225] font-medium">Loading reviews…</p>
+            ) : posts.length === 0 ? (
+              <p className="text-[#855225]/80">No reviews yet.</p>
+            ) : (
+              posts.map((post) => {
+                const netScore = (post.upvoteCount ?? 0) - (post.downvoteCount ?? 0);
+                const safeId = post._id ?? post.id;
+                return (
+                  <PostPreview
+                    key={safeId}
+                    id={safeId}
+                    title={post.title ?? "Untitled"}
+                    cafeName={post.cafeID?.name ?? "Unknown Cafe"}
+                    rating={post.overallRating ?? 0}
+                    username={post.authorName ?? "Anonymous"}
+                    price={post.cafeID?.priceRange ?? "₱"}
+                    city={post.cafeID?.location ?? "—"}
+                    time={post.cafeID?.operatingHours ?? "—"}
+                    content={post.body ?? ""}
+                    image={post.catImage}
+                    initialVotes={netScore}
+                    initialUserVote={post.userVote ?? null}
+                    commentCount={post.commentCount ?? 0}
+                  />
+                );
+              })
+            )}
+          </div>
+        )}
 
-        {/*  COMMENTS  */}
         {activeTab === "comments" && (
           <div className="flex flex-col gap-6">
-          <PostPreview 
-            id="post-3"
-            cafeName="Cat Cafe Manila"
-            rating={5}
-            username="CatLover67"
-            price="₱₱"
-            city="Manila"
-            time="10:00 AM - 8:00 PM"
-            content="I have been struggling to lock in these past few days. This place actually helped me think!"
-            image="/cafe-imgs/hero.png"
-          />
-          <PostPreview 
-            id="post-4"
-            cafeName="Neko Coffee"
-            rating={4}
-            username="CatLover67"
-            price="₱₱₱"
-            city="Quezon City"
-            time="9:00 AM - 10:00 PM"
-            content="The cats were super friendly, but the espresso was a bit too bitter for my taste."
-            image="/cafe-imgs/cafe2.png"
-          />
-        </div>
+            {commentsLoading ? (
+              <p className="text-[#855225] font-medium">Loading comments…</p>
+            ) : comments.length === 0 ? (
+              <p className="text-[#855225]/80">No comments yet.</p>
+            ) : (
+              comments.map((comment) => {
+                const initialVotes = (comment.upvoteCount ?? 0) - (comment.downvoteCount ?? 0);
+                const parentPostId = comment.postID ?? comment.postId;
+                if (!parentPostId) return null;
+                return (
+                  <div key={comment._id} className="flex flex-col gap-2">
+                    {comment.postTitle && (
+                      <p className="text-xs text-[#855225] font-medium">
+                        Comment on: {comment.postTitle}
+                      </p>
+                    )}
+                    <MiniComment
+                      id={comment._id}
+                      username={comment.authorName ?? "Anonymous"}
+                      content={comment.content ?? comment.body ?? ""}
+                      timeAgo={comment.timeAgo ?? "Just now"}
+                      initialVotes={initialVotes}
+                      parentPostId={parentPostId}
+                      initialUserVote={comment.userVote ?? null}
+                      replyCount={comment.replyCount ?? 0}
+                    />
+                  </div>
+                );
+              })
+            )}
+          </div>
         )}
 
       </section>

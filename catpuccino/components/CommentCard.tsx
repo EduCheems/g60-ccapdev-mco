@@ -1,4 +1,3 @@
-// components/CommentCard.tsx
 "use client";
 
 import { useState } from "react";
@@ -16,14 +15,12 @@ interface CommentCardProps {
 
 export default function CommentCard({ comment, currentUserId }: CommentCardProps) {
   const [showReplyBox, setShowReplyBox] = useState(false);
-  const initialVotes = (comment.upvoteCount || comment.upvotes || 0) - (comment.downvoteCount || comment.downvotes || 0);
-  
-  // -- Edit and delete State -- 
-
+  const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false); 
-  const [editValue, setEditValue] = useState(comment.content); 
+  const [editValue, setEditValue] = useState(comment?.content || ""); 
   const [isLoading, setIsLoading] = useState(false); 
   const [isDeleted, setIsDeleted] = useState(false);
+  const [localReplies, setLocalReplies] = useState(comment?.replies || []);
 
   // -- Extract Data --
   const user = comment.userID; 
@@ -33,31 +30,17 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const timeAgo = comment.createdAt 
     ? new Date(comment.createdAt).toLocaleDateString() 
     : "just now";
+    
+  const initialVotes = (comment?.upvoteCount || 0) - (comment?.downvoteCount || 0);
 
-  const [showMenu, setShowMenu] = useState(false);
-  const [localReplies, setLocalReplies] = useState(comment.replies || []);
-  
   const handleReplySubmit = async (content: string) => {
     setIsLoading(true);
-
     const newReply = {
-      postID: comment.postID,
+      postID: comment.postID || comment._id,
       userID: currentUserId,
       content: content,
       parentCommentID: comment._id, 
     };
-
-    /*
-    const newReply = {
-      id: Math.random().toString(),
-      authorName: "currentUser", 
-      timeAgo: "just now",
-      content: content,
-      upvoteCount: 0,
-      downvoteCount: 0,
-      replies: []
-    };
-    */
 
     const result = await createComment(newReply);
 
@@ -70,38 +53,31 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
     setIsLoading(false);
   };
 
-  // -- Handler for backend 
   const handleSaveEdit = async () => {
-    if (!editValue.trim() || editValue === comment.content){
+    if (!editValue.trim() || editValue === comment?.content) {
       setIsEditing(false); 
       return; 
     }
 
     setIsLoading(true); 
-
-    // TODO: Create an updateComment Server Action
-    // const result = await updateComment(comment._id, editValue);
-
-    setIsLoading(true); 
-
-    //Fake API Call (pa change backend)
+    
+    // TO DO: add updateComment controller
     setTimeout(() => {
-      comment.content = editValue; 
+      
+      // TO DO: update the DB here
       setIsEditing(false); 
       setIsLoading(false); 
     }, 600);
   };
 
   const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you wanna delete this comment?"); 
+    if (!confirmDelete) return; 
 
-    const confirmdelete = window.confirm("Are you sure you wanna delete this comment?"); 
-    if (!confirmdelete) return; 
+    setIsLoading(true);
 
-    // TODO: Create a deleteComment Server Action (Soft Delete)
-    // await deleteComment(comment._id);
-
-    //Fake API Call 
-    setTimeout(() =>{
+    // TO DO: Add delete logic 
+    setTimeout(() => {
       setIsDeleted(true); 
       setIsLoading(false); 
     }, 600);
@@ -109,11 +85,8 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
 
   return (
     <div className="flex flex-col w-full">
-      
-      {/* Main content row */}
       <div className="flex w-full">
-        
-        {/* User avatar (This should grey out avatar and deets if deleted) */}
+        {/* Avatar & Thread Line */}
         <div className="flex flex-col items-center mr-3 relative shrink-0">
           {/* If deleted, gray out avatar */}
           <div className={`w-8 h-8 rounded-full z-10 overflow-hidden border-[1px] border-[#855225]/20 ${isDeleted ? 'bg-gray-300' : 'bg-[#855225]'}`}>
@@ -128,23 +101,19 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
           )}
         </div>
 
-        {/* Comment Content */}
+        {/* Main Body */}
         <div className="flex flex-col flex-1 pb-4">
-          
-          {/* Comment Header */}
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
               [{isDeleted ? 'deleted' : username}]
             </span>
             <span className="text-black/50">• {timeAgo}</span>
           
-          {/* Ellipsis Menu */}
-          {!isDeleted && !isEditing && (
+            {!isDeleted && !isEditing && (
               <div className="ml-auto relative">
                 <button 
                   onClick={() => setShowMenu(!showMenu)}
                   className="text-black/40 hover:text-black transition-colors p-1 rounded-full hover:bg-black/5"
-                  disabled={isLoading}
                 >
                   <IoEllipsisHorizontal size={16} />
                 </button>
@@ -152,20 +121,14 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
                 {showMenu && (
                   <div className="absolute right-0 top-full mt-1 w-24 bg-white border-[1.5px] border-[#855225] rounded-[10px] shadow-sm overflow-hidden z-20 flex flex-col">
                     <button 
-                      onClick={() => {
-                        setIsEditing(true);
-                        setShowMenu(false);
-                      }}
-                      className="px-3 py-2 text-left text-[12px] font-bold text-[#855225] hover:bg-[#FEF6EA] transition-colors border-b-[1.5px] border-[#855225]/20"
+                      onClick={() => { setIsEditing(true); setShowMenu(false); }}
+                      className="px-3 py-2 text-left text-[12px] font-bold text-[#855225] hover:bg-[#FEF6EA] border-b-[1.5px] border-[#855225]/10"
                     >
                       Edit
                     </button>
                     <button 
-                      onClick={() => {
-                        handleDelete();
-                        setShowMenu(false);
-                      }}
-                      className="px-3 py-2 text-left text-[12px] font-bold text-red-500 hover:bg-red-50 transition-colors"
+                      onClick={() => { handleDelete(); setShowMenu(false); }}
+                      className="px-3 py-2 text-left text-[12px] font-bold text-red-500 hover:bg-red-50"
                     >
                       Delete
                     </button>
@@ -187,100 +150,71 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
           )}
 
           {/* Content */}
-          {isDeleted ? (
-            <p className="text-[14px] text-gray-400 italic mb-3">
-              [This comment was deleted]
-            </p>
-          ) : isEditing ? (
-            <div className="flex flex-col gap-2 mb-3 mr-4">
-              <textarea
-                value={editValue}
-                onChange={(e) => setEditValue(e.target.value)}
-                disabled={isLoading}
-                className="w-full bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] text-black outline-none focus:ring-2 focus:ring-[#855225]/50 resize-none min-h-[80px]"
-              />
-              <div className="flex gap-2 justify-end">
-                <button 
-                  onClick={() => {
-                    setIsEditing(false);
-                    setEditValue(comment.content); 
-                  }}
-                  disabled={isLoading}
-                  className="px-4 py-1.5 rounded-full text-[12px] font-bold text-[#855225] hover:bg-[#855225]/10 transition-colors disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={handleSaveEdit}
-                  disabled={isLoading}
-                  className="px-4 py-1.5 rounded-full text-[12px] font-bold bg-[#855225] text-white hover:bg-[#6b421d] transition-colors disabled:opacity-50"
-                >
-                  {isLoading ? 'Saving...' : 'Save'}
-                </button>
+          <div className="pr-4">
+            {isDeleted ? (
+              <p className="text-[14px] text-gray-400 italic mb-3">[This comment was deleted]</p>
+            ) : isEditing ? (
+              <div className="flex flex-col gap-2 mb-3">
+                <textarea
+                  value={editValue}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  className="w-full bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] outline-none min-h-[80px]"
+                />
+                <div className="flex gap-2 justify-end">
+                  <button onClick={() => setIsEditing(false)} className="text-[12px] font-bold text-[#855225] px-3">Cancel</button>
+                  <button onClick={handleSaveEdit} className="bg-[#855225] text-white px-4 py-1.5 rounded-full text-[12px] font-bold">Save</button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <p className="text-[14px] text-black mb-3 leading-snug pr-4">
-              {comment.content}
-            </p>
-          )}
+            ) : (
+              <p className="text-[14px] text-black mb-3 leading-snug">{comment?.content}</p>
+            )}
+          </div>
 
-          {/* Actions (Hide if deleted or editing) */}
+          {/* Action Buttons */}
           {!isDeleted && !isEditing && (
             <div className="flex items-center gap-3">
-              <VoteButtons postId={comment._id || comment.id} initialVotes={initialVotes} />
+              <VoteButtons 
+                postId={comment?._id || comment?.id} 
+                initialVotes={initialVotes} 
+                initialUserVote={comment?.userVote || 0}
+                targetType="Comment" 
+              />
               <ReplyButton 
-                replyCount={localReplies?.length} 
+                replyCount={localReplies.length} 
                 onClick={() => setShowReplyBox(!showReplyBox)} 
               />
               <ReportButton />
             </div>
           )}
 
-          {/* Inline Reply Box */}
-          {showReplyBox && !isDeleted && (
-            <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+          {showReplyBox && (
+            <div className="mt-4">
                <CommentBox 
                 isForceExpanded={true}
                 onCancel={() => setShowReplyBox(false)}
                 onSubmit={handleReplySubmit} 
-                id={comment.postID} 
-                userId={currentUserId}               
-                />
+                id={comment?.postID} 
+                userId={currentUserId}
+              />
             </div>
           )}
         </div>
       </div>
 
-      {/* 2. Line connector logic for nested comments */}
-      {localReplies && localReplies.length > 0 && (
+      {/* Recursive Replies Section */}
+      {localReplies.length > 0 && (
         <div className="flex flex-col w-full relative">
-          {localReplies.map((reply: any, index: number) => {
-            const isLast = index === localReplies.length - 1;
-            
-            return (
-              <div key={reply._id || reply.id} className="relative flex w-full">
-                
-                {/* Branch line (vertical) */}
-                {isLast ? (
-
-                  /* Branch line tail */
-                  <div className="absolute left-[15px] top-0 h-[16px] w-[1.5px] bg-[#855225]" />
-                ) : (
-                  /* Branch line extender */
-                  <div className="absolute left-[15px] top-0 bottom-0 w-[1.5px] bg-[#855225]" />
-                )}
-
-                {/* Horizontal line connector */}
-                <div className="absolute left-[15px] top-[16px] w-[29px] h-[2px] bg-[#855225]" />
-                
-                {/* Comment indent */}
-                <div className="w-full pl-[44px]">
-                  <CommentCard comment={reply} currentUserId={currentUserId} />
-                </div>
+          {localReplies.map((reply: any, index: number) => (
+            <div key={reply._id || index} className="relative flex w-full">
+              {/* Connector lines */}
+              <div className={`absolute left-[15px] top-0 w-[1.5px] bg-[#855225]/30 ${index === localReplies.length - 1 ? 'h-[16px]' : 'bottom-0'}`} />
+              <div className="absolute left-[15px] top-[16px] w-[29px] h-[2px] bg-[#855225]/30" />
+              
+              <div className="w-full pl-[44px]">
+                <CommentCard comment={reply} currentUserId={currentUserId} />
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       )}
     </div>
