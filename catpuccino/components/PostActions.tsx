@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
@@ -10,9 +11,12 @@ interface PostActionsProps {
   postId: string;
   initialVotes: number;
   replyCount: number;
+  initialUserVote?: "up" | "down" | null
+  currentUserId: string
 }
 
-export default function PostActions({ postId, initialVotes, replyCount }: PostActionsProps) {
+export default function PostActions({ postId, initialVotes, replyCount, initialUserVote, currentUserId }: PostActionsProps) {
+  const router = useRouter(); 
   const [showCommentBox, setShowCommentBox] = useState(false);
 
   const handleReplyClick = (e: React.MouseEvent) => {
@@ -25,7 +29,12 @@ export default function PostActions({ postId, initialVotes, replyCount }: PostAc
 
       {/* The Action Buttons */}
       <div className="flex gap-4 mt-auto items-center">
-        <VoteButtons postId={postId} initialVotes={initialVotes} />
+        <VoteButtons 
+          postId={postId}
+          initialVotes={initialVotes} 
+          initialUserVote={initialUserVote}
+          targetType="Post"
+        />
         <ReplyButton replyCount={replyCount} onClick={handleReplyClick} />
         <ReportButton />
       </div>
@@ -34,6 +43,8 @@ export default function PostActions({ postId, initialVotes, replyCount }: PostAc
       {showCommentBox && (
         <div className="mt-8 border-t-[1.5px] border-[#855225]/20 pt-8 animate-in fade-in slide-in-from-top-4 duration-300">
           <CommentBox 
+            id={postId}
+            userId={currentUserId}
             isForceExpanded={true} 
             onCancel={() => setShowCommentBox(false)} 
           />

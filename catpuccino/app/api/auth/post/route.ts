@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb"; 
 import Post from "@/models/Post";
 import User from "@/models/User";
+import Interaction from "@/models/Interaction";
 import CatCafe from "@/models/CatCafe";
 import { NextRequest, NextResponse } from "next/server"; 
 import jwt from "jsonwebtoken";
@@ -13,7 +14,7 @@ export async function POST(req: Request){
         
         const session = await auth(); 
 
-        if (!session || !session.user){
+        if (!session || !session.user || !session.user.email){
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 }); 
         }
 
@@ -110,6 +111,14 @@ export async function GET (req: Request){
   try {
     await connectDB(); 
 
+    // -- get current user 
+    const session = await auth();
+    let currentUserId = null;
+    if (session?.user?.email) {
+        const user = await User.findOne({ email: session.user.email }).lean();
+        if (user) currentUserId = user._id;
+    }
+
     const posts = await Post.find({})
     .populate("cafeID")
     .sort({ createdAt: -1})
@@ -118,6 +127,27 @@ export async function GET (req: Request){
     // 1. This converts the MongoDB ObjectIds into actual strings
     const safePosts = JSON.parse(JSON.stringify(posts));
     
+    // -- to attach votes to posts 
+    if (currentUserId) {
+
+        const postIds = safePosts.map((p: any) => p._id);
+        const interactions = await Interaction.find({
+            userID: currentUserId,
+            targetID: { $in: postIds },
+            targetType: "Post"
+        }).lean();
+
+        const interactionMap: Record<string, "up" | "down" | null> = {};
+        interactions.forEach(int => {
+            interactionMap[int.targetID.toString()] = 
+                int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
+        });
+
+        safePosts.forEach((post: any) => {
+            post.userVote = interactionMap[post._id] || null;
+        });
+    }
+
     // 2. Return safePosts, NOT posts
     return NextResponse.json(safePosts, { status: 200 });
 

@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 interface CafeSearchProps {
   selectedCafe: string;
   onSelect: (name: string) => void;
+  takenCafes?:string[];
 }
 
-export default function CafeSearch({ selectedCafe, onSelect }: CafeSearchProps) {
+export default function CafeSearch({ selectedCafe, onSelect,takenCafes=[] }: CafeSearchProps) {
   const [isSearching, setIsSearching] = useState(false);
   const [query, setQuery] = useState("");
   const [cafes, setCafes] = useState<string[]>([]); 
+
 
   useEffect(() => {
     const fetchCafes = async () => {
@@ -25,11 +27,12 @@ export default function CafeSearch({ selectedCafe, onSelect }: CafeSearchProps) 
     fetchCafes();
   }, []);
 
+  
   const filteredCafes = cafes.filter(cafe =>
-    cafe && cafe.toLowerCase().includes(query.toLowerCase())
-  );
+    cafe && cafe.toLowerCase().includes(query.toLowerCase())).
+    filter(cafe=>!takenCafes.includes(cafe));
 
-  const handleSelect = (name: string) => {
+  const handleSelect = (name:string) => {
     onSelect(name);
     setIsSearching(false);
     setQuery("");

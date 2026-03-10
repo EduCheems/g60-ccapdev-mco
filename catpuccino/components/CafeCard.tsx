@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { IoLocationSharp, IoPricetag } from "react-icons/io5";
+import type{BestCafeProps} from "./BestCafes"
 
 interface CafeCardProps {
   id: string; 
@@ -9,7 +10,9 @@ interface CafeCardProps {
   cardColor: string; 
   badgeText: string; 
   badgeColor: string; 
-}
+  cafe:BestCafeProps;
+  ratings:number;
+} 
 
 const getRankStyle = (index: number) => {
   switch (index) {
@@ -24,7 +27,7 @@ const getRankStyle = (index: number) => {
   }
 };
 
-export default function CafeCard({ id, name, slug, index, cardColor, badgeText, badgeColor }: CafeCardProps) {
+export default function CafeCard({ id, name, slug, index, cardColor, badgeText, badgeColor,cafe,ratings }: CafeCardProps) {
   
   return (
     <Link href={`/cafe/${id}`} className="flex-shrink-0 snap-center block">
@@ -50,7 +53,7 @@ export default function CafeCard({ id, name, slug, index, cardColor, badgeText, 
 
           <div className="flex items-center gap-1 mb-3">
             <div className="flex text-yellow-400 text-xl">★★★★★</div>
-            <span className="text-xl font-bold text-white ml-2">5.0</span>
+            <span className="text-xl font-bold text-white ml-2">{ratings}</span>
 
             <div className="ml-3 bg-gradient-to-r from-[#FDF68C] to-[#F4CD2A] text-[9px] px-3 py-1 font-bold text-gray-800 relative">
                Very Good!
@@ -67,7 +70,7 @@ export default function CafeCard({ id, name, slug, index, cardColor, badgeText, 
                 <div className="h-[25px] w-[25px] bg-white rounded-[3px] flex items-center justify-center">
                   <IoLocationSharp className="h-[18px] w-[18px] text-lg text-[#E11F25]" />
                 </div>
-                <span className="font-montserrat text-xs font-bold tracking-tight">Manila City</span>
+                <span className="font-montserrat text-xs font-bold tracking-tight">{cafe.location}</span>
              </div>
 
              <div className="w-[1px] h-3 bg-white/30"></div>
@@ -76,13 +79,13 @@ export default function CafeCard({ id, name, slug, index, cardColor, badgeText, 
                 <div className="h-[25px] w-[25px] bg-white rounded-[3px] flex items-center justify-center">
                   <IoPricetag className="h-[18px] w-[18px] text-lg text-[#FBBA00]" />
                 </div>
-                <span className="font-montserrat text-xs font-bold tracking-tight">₱ 100 - ₱ 500</span>
+                <span className="font-montserrat text-xs font-bold tracking-tight">{cafe.priceRange}</span>
              </div>
           </div>
 
           <div className="mt-auto flex justify-between items-end">
             <div className="text-[13px] text-white/90 font-medium">
-                <p><span className="font-bold">Hours:</span> 9 AM to 9 PM</p>
+                <p><span className="font-bold">Hours:</span>{cafe.operatingHours}</p>
                 <p><span className="font-bold">Open:</span> Everyday</p>
             </div>
             

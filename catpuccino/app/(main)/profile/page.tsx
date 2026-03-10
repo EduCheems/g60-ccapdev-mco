@@ -142,6 +142,11 @@ const ProfilePage = () => {
     setTopCafe2(editTopCafe2.trim() || topCafe2);
     setTopCafe3(editTopCafe3.trim() || topCafe3);
     setIsEditingProfile(false);
+
+    const cafeHolder=[editTopCafe1.trim() || topCafe1,
+      editTopCafe2.trim() || topCafe2,editTopCafe3.trim() || topCafe3
+    ].filter(Boolean);
+    console.log(cafeHolder);
     try{
       const res= await fetch("api/auth/profile",{
         method: "POST",
@@ -149,7 +154,8 @@ const ProfilePage = () => {
         body: JSON.stringify({
         name: editName.trim() || displayName,
         bio: editBio.trim() || bio,
-        profilePic: editProfileImageUrl.trim() || profileImageUrl
+        profilePic: editProfileImageUrl.trim() || profileImageUrl,
+        favCafe:cafeHolder,
       }),
       });
       if(!res){
@@ -164,7 +170,10 @@ const ProfilePage = () => {
   useEffect(()=>{
     setDisplayName(session?.user?.name||displayName)
     setBio(session?.user?.bio ||bio)
-    setProfileImageUrl(session?.user.profilePicURL||session?.user.image||profileImageUrl);
+    setProfileImageUrl(session?.user.profilePicURL||profileImageUrl);
+    setTopCafe1(session?.user?.favCafe?.[0]||topCafe1);
+    setTopCafe2(session?.user?.favCafe?.[1]||topCafe2);
+    setTopCafe3(session?.user?.favCafe?.[2]||topCafe3);
   },[session]);
 
   

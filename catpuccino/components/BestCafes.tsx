@@ -1,16 +1,16 @@
 "use client"; 
-import { useState } from "react"; 
-import { useRef, useEffect } from "react";
+import { useState, useRef } from "react"; 
 import CafeCard from "./CafeCard";
 import { Cafe } from "@/app/data/cafes";
+import Link from "next/link";
 
 interface BestCafesProps {
   title?: string;
   cardColor: string;
   badgeText: string; 
   badgeColor: string; 
-  cafes: Cafe[];           
-  filterKey?: string;      
+  cafes: any[]; // Changed to any[] temporarily to allow DB properties
+  filterKey?: string; 
   reverse?: boolean;
 }
 
@@ -20,54 +20,63 @@ export default function BestCafes({
   badgeColor, 
   badgeText, 
   cafes,           
-  filterKey,      
+  filterKey,       
   reverse = false 
 }: BestCafesProps) { 
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | number | null>(null);
 
   const filteredCafes = cafes
-    .filter(c => filterKey ? c.ratings[filterKey] !== undefined : true)
     .sort((a, b) => {
       if (!filterKey) return 0;
-      const valA = a.ratings[filterKey] || 0;
-      const valB = b.ratings[filterKey] || 0;
+      
+      const valA = a.averages?.[filterKey] || a.ratings?.[filterKey] || 0;
+      const valB = b.averages?.[filterKey] || b.ratings?.[filterKey] || 0;
       return reverse ? valA - valB : valB - valA;
     });
 
   return (
-    <section className="w-full pt-2 pb-8 overflow-hidden">
+    <section className="w-full pt-2 pb-0 overflow-hidden">
       {title && <h2 className="px-10 mb-6 font-poppins text-2xl text-white">{title}</h2>}
 
       <div className="relative flex items-center group px-10">
-        <div 
-          ref={scrollRef}
-          className="flex overflow-x-auto gap-6 px-10 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth"
-        >
+        <div ref={scrollRef} className="flex overflow-x-auto gap-6 px-2 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
           {filteredCafes.map((cafe, i) => {
-            const isHovered = hoveredId === cafe.id;
+            // Check for MongoDB _id or Dummy id
+            const currentId = cafe._id || cafe.id;
+            const isHovered = hoveredId === currentId;
 
-            const displayDescription = cafe.description || 
-              `${cafe.title} is a top-rated spot in ${cafe.city} known for its ${cafe.tags.join(" and ")} vibe. Perfect for cat lovers looking for a ${cafe.price} experience.`;
+            // MAPPING LOGIC: DB Name || Dummy Title
+            const name = cafe.name || cafe.title;
+            const location = cafe.location || cafe.city;
+            const price = cafe.priceRange || cafe.price;
+            const hours = cafe.operatingHours || cafe.time;
+
+            // Calculate Ratings for the Badge
+            const displayRating = cafe.overallRating || 
+              (cafe.averages ? (Object.values(cafe.averages) as number[]).reduce((a,b) => a+b, 0) / 5 : 0) ||
+              (cafe.ratings ? (Object.values(cafe.ratings) as number[]).reduce((a,b) => a+b, 0) / 5 : 0);
 
             return (
               <div
-                key={cafe.id}
-                onMouseEnter={() => setHoveredId(cafe.id)}
+                key={currentId}
+                onMouseEnter={() => setHoveredId(currentId)}
                 onMouseLeave={() => setHoveredId(null)}
                 className={`transition-all duration-500 ease-in-out flex-none flex items-center
                   ${isHovered ? "w-[900px]" : "w-[331px]"}`}
               >
                 <div className="shrink-0">
                   <CafeCard 
-                    id={cafe.slug} 
+                    id={cafe.slug || currentId} 
                     index={i}
-                    name={cafe.title}
-                    slug={cafe.slug} 
+                    name={name}
+                    slug={cafe.slug || name.toLowerCase().replace(/\s+/g, '-')}
                     cardColor={cardColor}
                     badgeText={badgeText}
                     badgeColor={badgeColor}
+                    cafe={cafe}
+                    ratings={Math.round(displayRating * 10) / 10}
                   />
                 </div>
 
@@ -79,27 +88,24 @@ export default function BestCafes({
                        <span className="bg-yellow-500 rounded-full w-10 h-10 flex items-center justify-center text-black font-black text-xl">
                          {i + 1}
                        </span>
-                       <h3 className="text-5xl font-black tracking-tighter uppercase">{cafe.title}</h3>
+                       <h3 className="text-5xl font-black tracking-tighter uppercase">{name}</h3>
                     </div>
 
-                    <div className="flex gap-4 mb-6 font-bold uppercase text-xs tracking-widest text-white/70">
-                      <div><p className="text-[#954F2B]">Price</p><p className="text-[#954F2B] text-base mt-1">{cafe.price}</p></div>
-                      <div><p className="text-[#954F2B]">City</p><p className="text-[#954F2B] text-base mt-1">{cafe.city}</p></div>
-                      <div><p className="text-[#954F2B]">Time</p><p className="text-[#954F2B] text-base mt-1">{cafe.time}</p></div>
-                    </div>
-
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="flex text-yellow-400 text-2xl">★★★★★</div>
-                      <span className="text-2xl font-black">5.0</span>
+                    <div className="flex gap-4 mb-6 font-bold uppercase text-xs tracking-widest text-[#954F2B]">
+                      <div><p className="opacity-60">Price</p><p className="text-base mt-1">{price}</p></div>
+                      <div><p className="opacity-60">City</p><p className="text-base mt-1">{location}</p></div>
+                      <div><p className="opacity-60">Time</p><p className="text-base mt-1">{hours}</p></div>
                     </div>
 
                     <p className="text-[#331608]/90 text-sm leading-relaxed mb-8 line-clamp-4 italic">
-                      "{displayDescription}"
+                      "{cafe.description || `${name} is a top spot in ${location}.`}"
                     </p>
 
-                    <button className="bg-[#E4B67E] text-black px-10 py-3 rounded-xl font-black text-lg border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
-                      See more
-                    </button>
+                    <Link href={`/cafes/${cafe.slug || currentId}`}>
+                      <button className="bg-[#E4B67E] px-6 py-2 rounded-full font-bold uppercase text-xs">
+                        See more
+                      </button>
+                    </Link>
                   </div>
                 </div>
               </div>

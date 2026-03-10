@@ -15,6 +15,7 @@ type PostData = {
   catImage?: string; 
   upvoteCount: number; 
   downvoteCount: number; 
+  userVote?: "up" | "down" | null; 
 }
 
 export default function DiscoverPage() {
@@ -25,7 +26,7 @@ export default function DiscoverPage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await fetch('/api/auth/post');
+        const response = await fetch('/api/auth/post', { cache: 'no-store'});
         if (response.ok) {
           const data = await response.json();
           setPosts(data);
@@ -103,6 +104,7 @@ export default function DiscoverPage() {
                     content={post.body}
                     image={post.catImage} 
                     initialVotes={netScore} 
+                    initialUserVote={post.userVote}
                   />
                 )
               })

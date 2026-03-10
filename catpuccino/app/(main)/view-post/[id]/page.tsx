@@ -3,10 +3,13 @@ import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import CatCafe from "@/models/CatCafe";
+import Interaction from "@/models/Interaction";
 import InfoTag from "@/components/InfoTag"; 
 import PostActions from "@/components/PostActions";
 import CommentThread from "@/components/CommentThread";
 import DiscussionSection from "@/components/DiscussionSection";
+import { auth } from "@/auth";
+import { getCommentsForPost } from "@/controllers/commentAction";
 
 import { 
   IoLocationSharp, 
@@ -20,55 +23,10 @@ import {
 
 import { connectDB } from "@/lib/mongodb"; 
 import Post from "@/models/Post"; 
+import Comment from "@/models/Comment"; 
+import User from "@/models/User";
 
-
-const dummyComments = [
-  {
-    id: "c1",
-    authorName: "catlover99",
-    timeAgo: "2 hrs ago",
-    content: "This cafe looks amazing! I definitely need to check out the ambience. Do they have wifi?",
-    imageUrl: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=500&q=80", // random cat placeholder
-    upvotes: 67,
-    downvotes: 0,
-  },
-  {
-    id: "c2",
-    authorName: "matcha_fanatic",
-    timeAgo: "5 hrs ago",
-    content: "I went here last week. The cats are so friendly but the coffee was just okay.",
-    upvotes: 12,
-    downvotes: 2,
-    replies: [
-      {
-        id: "c3",
-        authorName: "op_author",
-        timeAgo: "4 hrs ago",
-        content: "Really? I thought the matcha latte was pretty good! Which one did you order?",
-        upvotes: 5,
-        downvotes: 0,
-        replies: [
-          {
-            id: "c4",
-            authorName: "matcha_fanatic",
-            timeAgo: "1 hr ago",
-            content: "I had the regular Americano. Maybe I'll try the matcha next time based on your recommendation!",
-            upvotes: 2,
-            downvotes: 0,
-          }
-        ]
-      },
-      {
-        id: "c5",
-        authorName: "random_user",
-        timeAgo: "30 mins ago",
-        content: "I agree, coffee is mid.",
-        upvotes: 1,
-        downvotes: 0,
-      }
-    ]
-  }
-];
+export const dynamic = "force-dynamic";
 
 export default async function ViewPostPage({
   params,
@@ -78,13 +36,32 @@ export default async function ViewPostPage({
   const { id } = await params;
   
   await connectDB();
+
+  // fetch user session
+  const session = await auth();
+  let currentUserId = null; 
+  if (session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).lean();
+    if (user) currentUserId = user._id.toString(); // Converted to string for safety
+  }
   
+  // fetch post
   const postDoc = await Post.findById(id).populate('cafeID').lean();
 
   if (!postDoc) {
     return <div className="min-h-screen flex items-center justify-center font-bold text-2xl">Post not found in database!</div>;
   }
 
+  // fetch comments of post
+  const commentDocs = await Comment.find({ 
+    postID: id, 
+    parentCommentID: null,
+    isDeleted: false 
+  })
+  .sort({ createdAt: -1 })
+  .lean();
+
+  const totalComments = await Comment.countDocuments({ postID: id, isDeleted: false });
   const initialVotes = (postDoc.upvoteCount || 0) - (postDoc.downvoteCount || 0);
 
   const cafeData = postDoc.cafeID || {};
@@ -94,6 +71,21 @@ export default async function ViewPostPage({
   const cafeTime = cafeData.operatingHours || "N/A";
 
   const post = JSON.parse(JSON.stringify(postDoc));
+  
+  const initialComments = await getCommentsForPost(id, currentUserId);
+
+  let currentUserVote: "up" | "down" | null = null; 
+  if (currentUserId){
+    const postInteraction = await Interaction.findOne({
+      userID: currentUserId, 
+      targetID: id, 
+      targetType: "Post"
+    }).lean(); 
+
+    if (postInteraction) {
+      currentUserVote = postInteraction.voteValue === 1 ? "up" : postInteraction.voteValue === -1 ? "down" : null; 
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
@@ -175,10 +167,16 @@ export default async function ViewPostPage({
           <PostActions 
              postId={post._id} 
              initialVotes={initialVotes} 
-             replyCount={0} 
+             replyCount={totalComments} 
+             initialUserVote={currentUserVote}
+             currentUserId={currentUserId || ""}
           />
 
-          <DiscussionSection initialComments={dummyComments} />
+          <DiscussionSection 
+            initialComments={initialComments} 
+            postId={post._id}
+            currentUserId={currentUserId || ""}
+          />
 
         </div>
 
