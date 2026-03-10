@@ -3,9 +3,8 @@ import Post from "@/models/Post";
 import User from "@/models/User";
 import Interaction from "@/models/Interaction";
 import CatCafe from "@/models/CatCafe";
+import Comment from "@/models/Comment";
 import { NextRequest, NextResponse } from "next/server"; 
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
 import { auth } from "@/auth";
 
 //handles the POST request to create a new post
@@ -106,54 +105,70 @@ export async function POST(req: Request){
     }
 }
 
-//Experimental wait 
-export async function GET (req: Request){
+// GET: all posts or posts by userId (for profile Reviews tab)
+export async function GET(req: NextRequest) {
   try {
-    await connectDB(); 
+    await connectDB();
 
-    // -- get current user 
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+
     const session = await auth();
     let currentUserId = null;
     if (session?.user?.email) {
-        const user = await User.findOne({ email: session.user.email }).lean();
-        if (user) currentUserId = user._id;
+      const user = await User.findOne({ email: session.user.email }).lean();
+      if (user) currentUserId = user._id;
     }
 
-    const posts = await Post.find({})
-    .populate("cafeID")
-    .sort({ createdAt: -1})
-    .lean(); 
+    const filter: Record<string, unknown> = {};
+    if (userId) {
+      filter.userID = userId;
+    }
 
-    // 1. This converts the MongoDB ObjectIds into actual strings
+    const posts = await Post.find(filter)
+      .populate("cafeID")
+      .sort({ createdAt: -1 })
+      .lean();
+
     const safePosts = JSON.parse(JSON.stringify(posts));
-    
-    // -- to attach votes to posts 
-    if (currentUserId) {
 
-        const postIds = safePosts.map((p: any) => p._id);
-        const interactions = await Interaction.find({
+    // Attach comment count and user vote for each post
+    const postIds = safePosts.map((p: { _id: string }) => p._id);
+    const [commentCounts, interactions] = await Promise.all([
+      postIds.length > 0
+        ? Comment.aggregate([
+            { $match: { postID: { $in: postIds }, isDeleted: false } },
+            { $group: { _id: "$postID", count: { $sum: 1 } } },
+          ])
+        : [],
+      currentUserId && postIds.length > 0
+        ? Interaction.find({
             userID: currentUserId,
             targetID: { $in: postIds },
-            targetType: "Post"
-        }).lean();
+            targetType: "Post",
+          }).lean()
+        : [],
+    ]);
 
-        const interactionMap: Record<string, "up" | "down" | null> = {};
-        interactions.forEach(int => {
-            interactionMap[int.targetID.toString()] = 
-                int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
-        });
+    const commentCountMap: Record<string, number> = {};
+    commentCounts.forEach((c: { _id: string; count: number }) => {
+      commentCountMap[c._id.toString()] = c.count;
+    });
+    const interactionMap: Record<string, "up" | "down" | null> = {};
+    interactions.forEach((int: { targetID: { toString: () => string }; voteValue: number }) => {
+      interactionMap[int.targetID.toString()] =
+        int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
+    });
 
-        safePosts.forEach((post: any) => {
-            post.userVote = interactionMap[post._id] || null;
-        });
-    }
+    safePosts.forEach((post: { _id: string; userVote?: "up" | "down" | null; commentCount?: number }) => {
+      post.userVote = interactionMap[post._id] ?? null;
+      post.commentCount = commentCountMap[post._id] ?? 0;
+    });
 
-    // 2. Return safePosts, NOT posts
     return NextResponse.json(safePosts, { status: 200 });
-
   } catch (error) {
-    console.error("Error fetching posts: ", error); 
-    return NextResponse.json({message: "Failed to fetch posts "}, { status: 500}); 
+    console.error("Error fetching posts: ", error);
+    return NextResponse.json({ message: "Failed to fetch posts" }, { status: 500 });
   }
 }
 
