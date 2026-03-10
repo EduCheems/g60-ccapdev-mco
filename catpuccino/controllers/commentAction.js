@@ -13,11 +13,13 @@ export async function createComment(commentData) {
         const newComment = await Comment.create({
             postID: commentData.postID,
             userID: commentData.userID,
-            imageUrl: commentData.imageUrl,
+            imageUrl: commentData.imageUrl || null,
             content: commentData.content,
             isAnon: commentData.isAnon,
             parentCommentID: commentData.parentCommentID || null,
         });
+
+        await newComment.populate("userID", "name profilePicURL");
 
         // reload DB immediately
         revalidatePath(`/view-post/${commentData.postID}`);
@@ -38,7 +40,7 @@ export async function getCommentsForPost(postID) {
     try {
         await connectDB();
         const comments = await Comment.find({ postID, isDeleted: false})
-            .populate("userID", "username profile") 
+            .populate("userID", "name profilePicURL") 
             .sort({ createdAt: 1 })
             .lean();
 

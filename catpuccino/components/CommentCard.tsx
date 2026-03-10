@@ -25,7 +25,14 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const [isLoading, setIsLoading] = useState(false); 
   const [isDeleted, setIsDeleted] = useState(false);
 
-  // --
+  // -- Extract Data --
+  const user = comment.userID; 
+  const username = user?.name || "Anonymous User"; 
+  const profilePic = user?.profilePicURL || "/default-avatar.png"; 
+
+  const timeAgo = comment.createdAt 
+    ? new Date(comment.createdAt).toLocaleDateString() 
+    : "just now";
 
   const [showMenu, setShowMenu] = useState(false);
   const [localReplies, setLocalReplies] = useState(comment.replies || []);
@@ -109,7 +116,11 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
         {/* User avatar (This should grey out avatar and deets if deleted) */}
         <div className="flex flex-col items-center mr-3 relative shrink-0">
           {/* If deleted, gray out avatar */}
-          <div className={`w-8 h-8 rounded-full z-10 ${isDeleted ? 'bg-gray-300' : 'bg-[#855225]'}`} />
+          <div className={`w-8 h-8 rounded-full z-10 overflow-hidden border-[1px] border-[#855225]/20 ${isDeleted ? 'bg-gray-300' : 'bg-[#855225]'}`}>
+            {!isDeleted && profilePic ? (
+              <img src={profilePic} alt={username} className="w-full h-full object-cover" />
+            ) : null}
+          </div>
           
           {/* Connector line */}
           {localReplies && localReplies.length > 0 && (
@@ -123,9 +134,9 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
           {/* Comment Header */}
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
-              [{isDeleted ? 'deleted' : comment.authorName}]
+              [{isDeleted ? 'deleted' : username}]
             </span>
-            <span className="text-black/50">• {comment.timeAgo || "just now"}</span>
+            <span className="text-black/50">• {timeAgo}</span>
           
           {/* Ellipsis Menu */}
           {!isDeleted && !isEditing && (
@@ -167,7 +178,11 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
           {/* Image (Will be hidden if deleted comment) */}
           {!isDeleted && comment.imageUrl && !isEditing && (
             <div className="my-2 rounded-lg overflow-hidden max-w-sm border-[1.5px] border-[#855225]/20">
-              <img src={comment.imageUrl} alt="attached" className="w-full object-cover" />
+              <img 
+                src={comment.imageUrl} 
+                alt="Attached content" 
+                className="w-full h-full object-cover max-h-[300px]" 
+              />
             </div>
           )}
 

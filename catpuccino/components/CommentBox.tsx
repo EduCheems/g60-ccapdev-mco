@@ -9,7 +9,7 @@ interface CommentBoxProps {
   userId: string;
   isForceExpanded?: boolean;
   onCancel?: () => void;
-  onSubmit?: (content: string) => void;
+  onSubmit?: (content: string, imageUrl: string | null) => void;
 }
 
 export default function CommentBox( { id, userId, isForceExpanded = false, onCancel, onSubmit }: CommentBoxProps ) {
@@ -58,9 +58,9 @@ export default function CommentBox( { id, userId, isForceExpanded = false, onCan
     e.stopPropagation();
     if (!isValid) return;
         
-      if (onSubmit) {
-        onSubmit(text);
-      }
+    if (onSubmit) {
+      onSubmit(text, imagePreview);
+    }
 
       handleCancel();
   };
