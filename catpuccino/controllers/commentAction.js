@@ -92,3 +92,48 @@ export async function getCommentsForPost(postID, userId = null) {
         throw error;
     }
 }
+
+export async function deleteComment(commentId, postId) {
+    try {
+        await connectDB();
+
+        const deletedComment = await Comment.findByIdAndUpdate(
+            commentId,
+            {
+                isDeleted: true,
+                imageUrl: null,
+            },
+            {new: true}
+        );
+
+        // refresh
+        revalidatePath(`/view-post/${postId}`);
+        return {success: true};
+    } catch (error) {
+        console.error("Comment Delete Error:", error);
+        throw error;
+    }
+}
+
+export async function editComment(commentId, updatedContent, postId) {
+    try {
+        await connectDB();
+
+        const editedComment = await Comment.findByIdAndUpdate(
+            commentId,
+            {
+                content: updatedContent
+            },
+            {new: true}
+        )
+
+        revalidatePath(`/view-post/${postId}`);
+        return {
+            success: true,
+            comment: JSON.parse(JSON.stringify(editedComment))
+        };
+    } catch (error) {
+        console.error("Comment Edit Error:", error);
+        throw error;
+    }
+}

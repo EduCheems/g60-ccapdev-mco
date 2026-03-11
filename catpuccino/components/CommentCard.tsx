@@ -6,7 +6,7 @@ import ReplyButton from "./ReplyButton";
 import ReportButton from "./ReportButton";
 import CommentBox from "./CommentBox";
 import { IoEllipsisHorizontal } from "react-icons/io5"; 
-import { createComment } from "@/controllers/commentAction";
+import { createComment, deleteComment, editComment } from "@/controllers/commentAction";
 
 interface CommentCardProps {
   comment: any;
@@ -60,14 +60,18 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
     }
 
     setIsLoading(true); 
-    
-    // TO DO: add updateComment controller
-    setTimeout(() => {
-      
-      // TO DO: update the DB here
+
+    const result = await editComment(comment._id, editValue, comment.postID);
+
+    if (result.success) {
+      comment.content = editValue; // Update 
       setIsEditing(false); 
-      setIsLoading(false); 
-    }, 600);
+      setShowMenu(false);
+    } else {
+      console.log("Failed to edit comment");
+    }
+  
+    setIsLoading(false);
   };
 
   const handleDelete = async () => {
@@ -76,11 +80,16 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
 
     setIsLoading(true);
 
-    // TO DO: Add delete logic 
-    setTimeout(() => {
+    // delete backend 
+    const result = await deleteComment(comment._id, comment.postID);
+
+    if (result.success) {
       setIsDeleted(true); 
-      setIsLoading(false); 
-    }, 600);
+    } else {
+      console.log("Failed to delete comment");
+    }
+    
+    setIsLoading(false); 
   };
 
   return (
