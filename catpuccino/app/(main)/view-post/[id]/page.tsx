@@ -52,15 +52,6 @@ export default async function ViewPostPage({
     return <div className="min-h-screen flex items-center justify-center font-bold text-2xl">Post not found in database!</div>;
   }
 
-  // fetch comments of post
-  const commentDocs = await Comment.find({ 
-    postID: id, 
-    parentCommentID: null,
-    isDeleted: false 
-  })
-  .sort({ createdAt: -1 })
-  .lean();
-
   const totalComments = await Comment.countDocuments({ postID: id, isDeleted: false });
   const initialVotes = (postDoc.upvoteCount || 0) - (postDoc.downvoteCount || 0);
 
