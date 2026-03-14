@@ -1,4 +1,6 @@
 "use client";
+import { useState, useEffect } from "react";
+import { timeAgo } from "@/lib/utils/timeAgo";
 
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
@@ -23,6 +25,7 @@ interface PostPreviewProps {
   price: string;
   city: string;
   time: string;
+  createdAt: string | Date;
   content: string;
   image?: string;
   initialVotes: number; 
@@ -39,6 +42,7 @@ export default function PostPreview({
   price, 
   city, 
   time, 
+  createdAt,
   content, 
   image, 
   initialVotes,
@@ -47,6 +51,20 @@ export default function PostPreview({
 }: PostPreviewProps) {
 
   const router = useRouter();
+
+  const [timeDisplay, setTimeDisplay] = useState(
+    createdAt ? timeAgo(createdAt) : "just now"
+  );
+
+  useEffect(() => {
+    if (!createdAt) return;
+
+    const interval = setInterval(() => {
+      setTimeDisplay(timeAgo(createdAt));
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [createdAt]);
   
   return (
     <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
@@ -54,7 +72,7 @@ export default function PostPreview({
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
-          {username} - Just now
+          {username} • {timeDisplay}
         </span>
         <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
           •••

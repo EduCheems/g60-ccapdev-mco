@@ -118,7 +118,6 @@ export default async function ViewCafePage({
               {displayData.content}
             </p>
 
-            <SpotlightSection name={displayData.name} tags={["Cats"]}/>
           </div> 
 
           <div id="discussion-section" className="mt-12 scroll-mt-8">

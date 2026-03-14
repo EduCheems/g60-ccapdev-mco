@@ -42,7 +42,7 @@ export default async function ViewPostPage({
   let currentUserId = null; 
   if (session?.user?.email) {
     const user = await User.findOne({ email: session.user.email }).lean();
-    if (user) currentUserId = user._id.toString(); // Converted to string for safety
+    if (user) currentUserId = user._id.toString(); 
   }
   
   // fetch post
@@ -160,7 +160,12 @@ export default async function ViewPostPage({
           </div>
 
           <div className="flex flex-wrap gap-6 -mt-2 mb-8 w-full">
-            <SpotlightSection />
+            <SpotlightSection 
+              catName={postDoc.catName}
+              catImage={postDoc.catImage || "/images/placeholder-cat.jpg"}
+              foodName={postDoc.foodName}
+              foodImage={postDoc.foodImage || "/images/placeholder-food.jpg"}
+            />
             <CafeMenu />
           </div>
 

@@ -24,6 +24,7 @@ export default function PostThread({ post }: PostThreadProps) {
         price={post.cafeID?.priceRange || "₱ 0"}
         city={post.cafeID?.location || "Metro Manila"}
         time={post.cafeID?.operatingHours || "N/A"}
+        createdAt={post.createdAt}
         content={post.body || ""}
         image={post.catImage}
         initialVotes={netScore}
