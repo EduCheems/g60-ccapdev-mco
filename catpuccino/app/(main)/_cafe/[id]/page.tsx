@@ -13,6 +13,7 @@ import {
   IoTime, 
   IoPersonCircle 
 } from "react-icons/io5";
+import { Cafe } from "@/app/data/cafes";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export default async function ViewCafePage({
     city: dbCafe.location || "Metro Manila",  
     time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
     ratings: dbCafe.averages,
-    imageUrl: (dbCafe as any).imageUrl || "/images/placeholder-cat.jpg", 
+    cafepic: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
     totalReviews: dbCafe.totalReviews || 0,
   };
 
@@ -67,7 +68,7 @@ export default async function ViewCafePage({
         <div className="flex-1">
           {/* Hero Image */}
           <div className="w-full aspect-[21/9] bg-[#D9D9D9] border-2 border-black mb-10 overflow-hidden rounded-[10px] shadow-[5px_5px_0_0_#85522533]">
-            <img src={displayData.imageUrl} alt="Cafe Hero" className="w-full h-full object-cover rounded-[10px]" />
+            <img src={displayData.cafepic} alt="Cafe Hero!!" className="w-full h-full object-cover rounded-[10px]" />
           </div>
 
           {/* Main Card */}
@@ -118,7 +119,7 @@ export default async function ViewCafePage({
               {displayData.content}
             </p>
 
-            <SpotlightSection />
+            <SpotlightSection name={displayData.name} tags={["Amazing"]} />
           </div> 
 
           <div id="discussion-section" className="mt-12 scroll-mt-8">
