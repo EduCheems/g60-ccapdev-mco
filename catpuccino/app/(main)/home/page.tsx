@@ -102,6 +102,7 @@ export default async function DiscoverPage() {
         _id: post._id.toString(),
         title: post.title,
         authorName: post.authorName,
+        createdAt: post.createdAt,
         upvoteCount: post.upvoteCount || 0,
         downvoteCount: post.downvoteCount || 0,
         userVote: voteMap[post._id.toString()] || null,

@@ -1,7 +1,7 @@
 "use client";
 import { timeAgo } from "@/lib/utils/timeAgo";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
 import ReportButton from "./ReportButton";
@@ -22,6 +22,21 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const [isLoading, setIsLoading] = useState(false); 
   const [isDeleted, setIsDeleted] = useState(false);
   const [localReplies, setLocalReplies] = useState(comment?.replies || []);
+
+  const [timeDisplay, setTimeDisplay] = useState(
+    comment?.createdAt ? timeAgo(comment.createdAt) : "just now"
+  );
+
+  useEffect(() => {
+    
+    if (!comment?.createdAt) return;
+
+    const interval = setInterval(() => {
+      setTimeDisplay(timeAgo(comment.createdAt));
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [comment?.createdAt]);
 
   const initialVotes = (comment?.upvoteCount || 0) - (comment?.downvoteCount || 0);
 

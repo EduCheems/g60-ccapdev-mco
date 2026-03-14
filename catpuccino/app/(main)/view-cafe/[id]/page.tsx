@@ -62,6 +62,9 @@ export default async function ViewCafePage({
     cats:dbCafe.cats,
   };
 
+  const spotlightCat = dbCafe.cats?.[0];
+  const spotlightFood = dbCafe.menu?.[0];
+
   const initialComments = await getCommentsForPost(id, currentUserId);
 
   return (
@@ -144,9 +147,10 @@ export default async function ViewCafePage({
 
             {/* Spotlight */}
             <SpotlightSection 
-            name={displayData.cats[0].name} 
-            tags={["Cats","cute"]}
-            
+              catName={spotlightCat?.name}
+              catImage={spotlightCat?.pictureUrl} 
+              foodName={spotlightFood?.itemName}  
+              foodImage={spotlightFood?.pictureUrl}
             />
 
     
