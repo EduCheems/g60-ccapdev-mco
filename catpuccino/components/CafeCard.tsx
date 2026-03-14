@@ -27,7 +27,7 @@ const getRankStyle = (index: number) => {
 };
 
 export default function CafeCard({ id, name, index, cardColor, badgeText, badgeColor, cafe, ratings }: CafeCardProps) {
- 
+
   return (
     <Link href={`/view-cafe/${id}`} className="flex-shrink-0 snap-center block">
       <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col border-2 border-[#662002]`}>
@@ -50,7 +50,7 @@ export default function CafeCard({ id, name, index, cardColor, badgeText, badgeC
         <div className="relative z-10 px-1 flex flex-col flex-1">
 
           <h3 className="font-poppins text-3xl font-black text-white mb-2 leading-tight">
-            {name}
+            {cafe.name}
           </h3>
 
           <div className="flex items-center gap-1 mb-3">

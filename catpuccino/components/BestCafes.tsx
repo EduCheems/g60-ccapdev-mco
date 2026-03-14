@@ -27,14 +27,14 @@ export default function BestCafes({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const filteredCafes = cafes
+  const filteredCafes = cafes.slice()
     .sort((a, b) => {
       if (!filterKey) return 0;
       
       const valA = a.averages?.[filterKey] || 0;
       const valB = b.averages?.[filterKey] || 0;
       return reverse ? valA - valB : valB - valA;
-    });
+    }).slice(0,5);
 
   return (
     <section className="w-full pt-2 pb-0 overflow-hidden">
