@@ -1,4 +1,5 @@
 "use client";
+import { timeAgo } from "@/lib/utils/timeAgo";
 
 import { useState } from "react";
 import VoteButtons from "./VoteButtons";
@@ -91,7 +92,9 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
               {isDeleted ? '[deleted]' : (comment?.authorName || "Anonymous")}
             </span>
-            <span className="text-black/50">• {comment?.timeAgo || "just now"}</span>
+            <span className="text-black/50">
+              • {comment?.createdAt ? timeAgo(comment.createdAt) : "just now"}
+            </span>
           
             {!isDeleted && !isEditing && (
               <div className="ml-auto relative">
