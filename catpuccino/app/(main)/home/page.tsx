@@ -53,7 +53,8 @@ export default async function DiscoverPage() {
     },
     totalReviews: cafe.totalReviews || 0,
     cats: cafe.cats || [],
-    menu: cafe.menu || []
+    menu: cafe.menu || [],
+    cafepic:cafe.cafepic ||"/defaut-cafe.png",
   }));
 
   // 4. Fetch user's votes for the posts

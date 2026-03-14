@@ -1,4 +1,10 @@
+'use client'
 import React from 'react';
+
+export type SpotlightSectionProps={
+  name:string;
+  tags:string[];
+};
 
 export const CatSpotlight = ({ name, tags }: { name: string, tags: string[] }) => (
   <div className="group relative border-2 border-[#855225] rounded-[10px] bg-[#FEF6EA] p-6 w-full flex flex-col items-center min-h-[320px] overflow-hidden">
@@ -49,11 +55,11 @@ export const CafeMenu = () => (
   </div>
 );
 
-export const SpotlightSection = () => {
+export const SpotlightSection = ({ name, tags }: SpotlightSectionProps) => {
   return (
     <div className="flex flex-col md:flex-row gap-6 w-full mt-12 items-stretch shadow-[inset_6px_6px_4px_rgba(133,82,37,0.2)]">
       <div className="flex-1 flex">
-        <CatSpotlight name="Pochacco" tags={["Friendly", "Calm"]} />
+        <CatSpotlight name={name} tags={tags} />
       </div>
       <div className="flex-1 flex">
         <BestBuyer name="Mango Frappe" tags={["Top Pick", "Cold"]} />

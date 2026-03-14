@@ -27,13 +27,17 @@ const getRankStyle = (index: number) => {
 };
 
 export default function CafeCard({ id, name, index, cardColor, badgeText, badgeColor, cafe, ratings }: CafeCardProps) {
-  
+ 
   return (
     <Link href={`/view-cafe/${id}`} className="flex-shrink-0 snap-center block">
       <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col border-2 border-[#662002]`}>
       
         <div className="relative z-10 w-full h-[220px] bg-white rounded-[16px] overflow-hidden mb-4 shadow-inner">
-  
+          <img 
+          src={cafe.cafepic}
+          alt={`${name} cafe`}
+          className="w-full h-full object-cover"
+          />
            <div className={`absolute top-3 right-3 ${badgeColor} px-4 py-1.5 rounded-2xl text-[11px] text-white font-bold shadow-sm`}>
              {badgeText}
            </div>
