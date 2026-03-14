@@ -3,8 +3,9 @@ import { useSession } from "next-auth/react";
 import React, { useState } from 'react';
 import RadarChart from '@/components/RadarChart';
 import StarSlider from '@/components/StarScale';
-import CafeSearch from '@/components/CafeSearcher';
+import CafeSearch, {CatSearch, MenuSearch} from '@/components/CafeSearcher';
 import { useRouter } from "next/navigation";
+
 
 const UploadBox = ({ 
   label, 
@@ -61,7 +62,9 @@ export default function CreatePostPage() {
   const { data: session } = useSession();
   const router = useRouter();
   const [selectedCafe, setSelectedCafe] = useState("");
+  const [selectedFood, setSelectedFood] = useState("");
   const [title, setTitle] = useState("");
+  const [selectedCat,setSelectedCat]=useState("")
   const [ratings, setRatings] = useState({
     Sociability: 3,
     Ambience: 3,
@@ -96,11 +99,11 @@ export default function CreatePostPage() {
           isAnonymous,
           title,
           ratings,
-          catName,
+          selectedCat,
           catImage, 
-          foodName,
+          selectedFood,
           foodImage, 
-          body: bodyText
+          body: bodyText,
         };
 
         const res = await fetch('/api/auth/post', {
@@ -142,6 +145,8 @@ export default function CreatePostPage() {
         selectedCafe={selectedCafe} 
         onSelect={(cafeID) => setSelectedCafe(cafeID)} 
         />
+      
+        
       </div>
 
       <div className="flex gap-20 items-start max-w-[1400px] mx-auto">
@@ -190,17 +195,11 @@ export default function CreatePostPage() {
                 <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
 
               </div>
-
-              <input 
-                type="text" 
-                placeholder="Cat Name*"
-                value={catName}
-                onChange={(e) => setCatName(e.target.value)}
-                className="w-full bg-[#FEF6EA] border-2 border-[#855225] rounded-xl px-6 py-4 
-                            font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] 
-                            outline-none transition-all 
-                            shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
-              />
+               <CatSearch 
+                selectedCafe={selectedCafe} 
+                selectedCat={selectedCat}
+                onSelect={(catName) => setSelectedCat(catName)} 
+                />
               
               <UploadBox 
                 label="Drag or Drop or upload Media" 
@@ -217,16 +216,10 @@ export default function CreatePostPage() {
                 <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
                 
               </div>
-
-              <input 
-                type="text" 
-                placeholder="Food Name*"
-                value={foodName}
-                onChange={(e) => setFoodName(e.target.value)}
-                className="w-full bg-[#FEF6EA] border-2 border-[#855225] rounded-xl px-6 py-4 
-                           font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] 
-                           outline-none transition-all
-                           shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
+              <MenuSearch 
+                selectedCafe={selectedCafe} 
+                selectedMenu={selectedFood}
+                onSelect={(MenuItem) => setSelectedFood(MenuItem)} 
               />
               
               <UploadBox 

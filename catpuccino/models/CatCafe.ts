@@ -28,36 +28,41 @@ const CatCafeSchema = new Schema({
         type: String,
         default: "$$",
     },
+    cafepic:{
+        type:String,
+        default:"/default-cafepic.png"
+    },
     averages:{
         sociability: {
             type: Number,
             min: 1,
             max: 5,
-            default: 5,
+            default: 0,
         },
         ambience: {
             type: Number,
             min: 1,
             max: 5,
-            default: 5,
+            default: 0,
         },
         food: {
             type: Number,
             min: 1,
             max: 5,
-            default: 5,
+            default: 0,
         },
         work_friendly: {
             type: Number,
             min: 1,
             max: 5,
-            default: 5,
+            default: 0,
         },
         service: {
             type: Number,
             min: 1,
             max: 5,
-            default: 5,
+            default: 0,
+            
         },
         
     },
@@ -81,6 +86,9 @@ const CatCafeSchema = new Schema({
         pictureUrl: {
             type: String,
             default: "/default-menu-item.png",
+        },
+        upVotes:{
+            type:Number,
         }
     }],
     cats: [{
@@ -100,6 +108,9 @@ const CatCafeSchema = new Schema({
             type: String,  
             required: [true, 'Cat picture URL is required'],
             default: "/default-cat.png",
+        },
+        upVotes:{
+            type:Number,
         }
     }],
 

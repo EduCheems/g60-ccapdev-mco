@@ -57,8 +57,9 @@ export default async function ViewCafePage({
     city: dbCafe.location || "Metro Manila",  
     time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
     ratings: dbCafe.averages || { sociability: 0, ambience: 0, food: 0, work_friendly: 0, service: 0 },
-    imageUrl: dbCafe.imageUrl || "/images/placeholder-cat.jpg", 
+    imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
     totalReviews: dbCafe.totalReviews || 0,
+    cats:dbCafe.cats,
   };
 
   const initialComments = await getCommentsForPost(id, currentUserId);
@@ -142,7 +143,11 @@ export default async function ViewCafePage({
             </p>
 
             {/* Spotlight */}
-            <SpotlightSection />
+            <SpotlightSection 
+            name={displayData.cats[0].name} 
+            tags={["Cats","cute"]}
+            
+            />
 
     
             {/* PROFILE ACTIONS 

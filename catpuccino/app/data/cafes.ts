@@ -34,6 +34,7 @@ export interface Cafe {
   totalReviews: number;
   cats: CatItem[];
   menu: MenuItem[];
+  cafepic:string;
 }
 
 export const cafes: Cafe[] = [];

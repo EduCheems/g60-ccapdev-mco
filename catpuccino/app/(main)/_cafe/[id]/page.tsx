@@ -55,7 +55,7 @@ export default async function ViewCafePage({
     city: dbCafe.location || "Metro Manila",  
     time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
     ratings: dbCafe.averages,
-    imageUrl: (dbCafe as any).imageUrl || "/images/placeholder-cat.jpg", 
+    imageUrl: (dbCafe as any).cafePic || "/images/placeholder-cat.jpg", 
     totalReviews: dbCafe.totalReviews || 0,
   };
 
@@ -118,7 +118,7 @@ export default async function ViewCafePage({
               {displayData.content}
             </p>
 
-            <SpotlightSection />
+            <SpotlightSection name={displayData.name} tags={["Cats"]}/>
           </div> 
 
           <div id="discussion-section" className="mt-12 scroll-mt-8">
