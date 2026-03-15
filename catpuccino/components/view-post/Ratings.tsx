@@ -2,10 +2,11 @@ import React from "react";
 
 interface RatingsProps {
   ratings: Record<string, number>;
+  totalReviews?: number;
 }
 
 
-export default function Ratings({ ratings }: RatingsProps) {
+export default function Ratings({ ratings, totalReviews }: RatingsProps) {
   const values = Object.values(ratings);
   const average = values.length > 0 
     ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(1) 
@@ -27,7 +28,8 @@ export default function Ratings({ ratings }: RatingsProps) {
       
       <span className="text-2xl font-black text-[#855225] ml-2">
         {average}
-        <span className="text-lg font-bold ml-1">(67)</span>
+        
+        <span className="text-lg font-bold ml-1">({totalReviews})</span>
       </span>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
+import { timeAgo } from "@/lib/utils/timeAgo";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
 import ReportButton from "./ReportButton";

@@ -1,17 +1,16 @@
 import Link from 'next/link';
 import { IoLocationSharp, IoPricetag } from "react-icons/io5";
-import type{BestCafeProps} from "./BestCafes"
+import { Cafe } from "@/app/data/cafes"; 
 
 interface CafeCardProps {
   id: string; 
   name: string;
-  slug: string;
   index: number; 
   cardColor: string; 
   badgeText: string; 
   badgeColor: string; 
-  cafe:BestCafeProps;
-  ratings:number;
+  cafe: Cafe; 
+  ratings: number;
 } 
 
 const getRankStyle = (index: number) => {
@@ -27,14 +26,18 @@ const getRankStyle = (index: number) => {
   }
 };
 
-export default function CafeCard({ id, name, slug, index, cardColor, badgeText, badgeColor,cafe,ratings }: CafeCardProps) {
-  
+export default function CafeCard({ id, name, index, cardColor, badgeText, badgeColor, cafe, ratings }: CafeCardProps) {
+
   return (
-    <Link href={`/cafe/${id}`} className="flex-shrink-0 snap-center block">
+    <Link href={`/view-cafe/${id}`} className="flex-shrink-0 snap-center block">
       <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col border-2 border-[#662002]`}>
       
         <div className="relative z-10 w-full h-[220px] bg-white rounded-[16px] overflow-hidden mb-4 shadow-inner">
-  
+          <img 
+          src={cafe.cafepic}
+          alt={`${name} cafe`}
+          className="w-full h-full object-cover"
+          />
            <div className={`absolute top-3 right-3 ${badgeColor} px-4 py-1.5 rounded-2xl text-[11px] text-white font-bold shadow-sm`}>
              {badgeText}
            </div>
@@ -44,11 +47,10 @@ export default function CafeCard({ id, name, slug, index, cardColor, badgeText, 
            </div>
         </div>
 
-        {/* 2. TEXT CONTENT */}
         <div className="relative z-10 px-1 flex flex-col flex-1">
 
           <h3 className="font-poppins text-3xl font-black text-white mb-2 leading-tight">
-            {name}
+            {cafe.name}
           </h3>
 
           <div className="flex items-center gap-1 mb-3">
@@ -85,8 +87,8 @@ export default function CafeCard({ id, name, slug, index, cardColor, badgeText, 
 
           <div className="mt-auto flex justify-between items-end">
             <div className="text-[13px] text-white/90 font-medium">
-                <p><span className="font-bold">Hours:</span>{cafe.operatingHours}</p>
-                <p><span className="font-bold">Open:</span> Everyday</p>
+                <p><span className="font-bold">Hours: </span>{cafe.operatingHours}</p>
+                <p><span className="font-bold">Open: </span> Everyday</p>
             </div>
             
             <div className="w-12 h-12 bg-[#E11F25] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform cursor-pointer">

@@ -43,7 +43,7 @@ export default function RatingSidebar({ ratings }: RatingSidebarProps) {
                     {cleanKey}
                   </span>
                   <span className="text-[11px] font-black text-[#855225]">
-                    {value}/5
+                    {Number(value).toFixed(1)}/5
                   </span>
                 </div>
 

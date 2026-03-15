@@ -27,7 +27,7 @@ export async function POST(req: Request){
             catName, 
             catImage, 
             foodName, 
-            foodImage 
+            foodImage, 
         } = await req.json(); 
 
         await connectDB(); 
@@ -78,7 +78,7 @@ export async function POST(req: Request){
         });
         console.log("New post created:", newPost);
         console.log("Successful!");
-
+        
         //updates the total reviews and averages based on the new post's ratings
         console.log(cafe.name);
 
@@ -96,6 +96,20 @@ export async function POST(req: Request){
         await cafe.save();
 
         await User.findByIdAndUpdate(user._id, { $inc: { postsCount: 1 } });
+
+         if (catName) {
+            await CatCafe.updateOne(
+                { name: selectedCafe, "cats.name": catName},
+                { $inc: { "cats.$.upVotes": 1 } }
+            );
+             if (foodName) {
+            await CatCafe.updateOne(
+                { name: selectedCafe, "menu.itemName": foodName },
+                { $inc: { "menu.$.upVotes": 1 } }
+            );
+        }
+
+        }
 
         return NextResponse.json({ message: "Post created successfully", post: newPost }, { status: 201 });
 

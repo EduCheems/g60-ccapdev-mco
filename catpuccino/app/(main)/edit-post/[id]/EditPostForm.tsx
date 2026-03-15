@@ -1,11 +1,11 @@
 "use client";
+
 import { useSession } from "next-auth/react"; 
 import React, { useState } from 'react';
 import RadarChart from '@/components/RadarChart';
 import StarSlider from '@/components/StarScale';
-import CafeSearch, {CatSearch, MenuSearch} from '@/components/CafeSearcher';
+import CafeSearch, { CatSearch, MenuSearch } from '@/components/CafeSearcher';
 import { useRouter } from "next/navigation";
-
 
 const UploadBox = ({ 
   label, 
@@ -29,7 +29,6 @@ const UploadBox = ({
 
   return (
     <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
-      
       {previewUrl ? (
         <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
       ) : (
@@ -37,7 +36,6 @@ const UploadBox = ({
           {label}
         </p>
       )}
-
       <input 
         type="file" 
         accept="image/*" 
@@ -56,105 +54,105 @@ const categoryColors: Record<string, string> = {
   Service: "#F052A5",     
 };
 
-
-export default function CreatePostPage() {
-
+export default function EditPostForm({ postData }: { postData: any }) {
   const { data: session } = useSession();
   const router = useRouter();
-  const [selectedCafe, setSelectedCafe] = useState("");
-  const [selectedFood, setSelectedFood] = useState("");
-  const [title, setTitle] = useState("");
-  const [selectedCat,setSelectedCat]=useState("")
+  
+  const [selectedCafe, setSelectedCafe] = useState(postData.cafeName || postData.cafe || "");
+  const [selectedFood, setSelectedFood] = useState(postData.foodName || "");
+  const [title, setTitle] = useState(postData.title || "");
+  const [selectedCat, setSelectedCat] = useState(postData.catName || "");
   const [ratings, setRatings] = useState({
-    Sociability: 3,
-    Ambience: 3,
-    Food: 3,
-    Catmosphere: 3,
-    Service: 3,
+    Sociability: postData.ratings?.sociability || 3,
+    Ambience: postData.ratings?.ambience || 3,
+    Food: postData.ratings?.food || 3,
+    Catmosphere: postData.ratings?.catmosphere || 3,
+    Service: postData.ratings?.service || 3,
   });
 
-  const [catName, setCatName] = useState("");
-  const [catImage, setCatImage] = useState("");
-  const [foodName, setFoodName] = useState("");
-  const [foodImage, setFoodImage] = useState("");
-  const [bodyText, setBodyText] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+  const [catImage, setCatImage] = useState(postData.catImage || "");
+  const [foodImage, setFoodImage] = useState(postData.foodImage || "");
+  const [bodyText, setBodyText] = useState(postData.body || "");
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(postData.isAnonymous || false);
 
   const handleRatingChange = (category: string, val: number) => {
     setRatings(prev => ({ ...prev, [category]: val }));
   };
 
- const handleSubmit = async () => { 
-      try {
-        if (!session) { 
-          alert("You must be logged in to submit a post."); 
-          return; 
-        }
-
-        const userID = session?.user?.id || session?.user?.email;
-
-        const postData = {
-          userID, 
-          selectedCafe,
-          isAnonymous,
-          title,
-          ratings,
-          catName:selectedCat,
-          catImage, 
-          foodName:selectedFood,
-          foodImage, 
-          body: bodyText,
-        };
-
-        const res = await fetch('/api/auth/post', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(postData)
-        });
-
-        const confirmation = await res.json(); 
-        console.log("Post submission response:", res);
-
-        if (res.ok) {
-          alert("Post created successfully");
-          router.push('/home');
-        } else {
-          alert("Failed to create post: " + confirmation.message);
-        }
-
-      } catch (error) {
-        console.error("Error submitting post:", error);
-        alert("An error occurred while submitting your post. Please try again.");
+  const handleUpdate = async () => { 
+    try {
+      if (!session) { 
+        alert("You must be logged in to edit a post."); 
+        return; 
       }
-    };
+
+      const dbReadyRatings = {
+        sociability: ratings.Sociability,
+        ambience: ratings.Ambience,
+        food: ratings.Food,
+        catmosphere: ratings.Catmosphere,
+        service: ratings.Service
+      };
+
+      const updatedData = {
+        selectedCafe,
+        isAnonymous,
+        title,
+        ratings: dbReadyRatings,
+        catName: selectedCat,
+        catImage, 
+        foodName: selectedFood,
+        foodImage, 
+        body: bodyText,
+      };
+
+      const res = await fetch(`/api/auth/post/${postData._id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(updatedData)
+      });
+
+      if (res.ok) {
+        alert("Post updated successfully!");
+        router.push(`/view-post/${postData._id}`); 
+      } else {
+        const confirmation = await res.json(); 
+        alert("Failed to update post: " + confirmation.message);
+      }
+
+    } catch (error) {
+      console.error("Error updating post:", error);
+      alert("An error occurred while updating your post. Please try again.");
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmed = confirm("Are you sure you want to delete this post? This action cannot be undone.");
+    if (!confirmed) return;
+
+    try {
+      
+      const res = await fetch(`/api/auth/post/${postData._id}`, {
+        method: 'DELETE',
+      });
+
+      if (res.ok) {
+        alert("Post deleted successfully.");
+        router.push('/'); 
+      } else {
+        alert("Failed to delete post.");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("An error occurred.");
+    }
+  };
   
   return (
-
-    <div className="min-h-screen bg-[#FBF3DE] px-[140px] py-12">
-      
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-5">
-        <h1 className="text-[#855225] font-poppins font-black text-[42px] text-5xl uppercase">
-          Create a post
-        </h1>
-        <div className="h-[3px] flex-1 rounded-full bg-[#855225] mt-1"></div>
-      </div>
-
-      <div className="flex gap-83 mt-10">
-        <CafeSearch 
-        selectedCafe={selectedCafe} 
-        onSelect={(cafeID) => setSelectedCafe(cafeID)} 
-        />
-      
-        
-      </div>
-
+    <div className="w-full">
       <div className="flex gap-20 items-start max-w-[1400px] mx-auto">
-        
         {/* Left side */}
         <div className="flex-1 max-w-[675px] pb-20">
-
-          {/* 2. Title */}
           <input 
             type="text" 
             placeholder="Title*"
@@ -166,12 +164,8 @@ export default function CreatePostPage() {
                       shadow-[5px_5px_0_0_#85522533] shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]" 
           />
 
-          {/* 3. Star Scaler */}
           <div 
-            style={{ 
-              height: '250px',
-              border: '2px solid #855225'
-            }} 
+            style={{ height: '250px', border: '2px solid #855225' }} 
             className="mb-5 bg-[#FEF6EA] rounded-lg px-8 py-6 flex flex-col justify-between shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]"
           >
             {Object.entries(ratings).map(([key, val]) => (
@@ -186,21 +180,18 @@ export default function CreatePostPage() {
 
           <div className="w-full bg-[#FEF6EA] border-[2px] border-[#855225] rounded-xl px-4 py-4 mb-5 font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] outline-none transition-all shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
             
-            {/* 4. Cat Spotlight */}
             <div className="space-y-4 mb-5">
               <div className="flex items-center gap-4">
                 <h3 className="font-poppins font-black uppercase text-xl whitespace-nowrap text-[#855225]">
                   Cat Spotlight
                 </h3>
                 <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
-
               </div>
                <CatSearch 
                 selectedCafe={selectedCafe} 
                 selectedCat={selectedCat}
                 onSelect={(catName) => setSelectedCat(catName)} 
                 />
-              
               <UploadBox 
                 label="Drag or Drop or upload Media" 
                 onImageSelect={(base64) => setCatImage(base64)}
@@ -214,14 +205,12 @@ export default function CreatePostPage() {
                   Favorite Food
                 </h3>
                 <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
-                
               </div>
               <MenuSearch 
                 selectedCafe={selectedCafe} 
                 selectedMenu={selectedFood}
                 onSelect={(MenuItem) => setSelectedFood(MenuItem)} 
               />
-              
               <UploadBox 
                 label="Drag or Drop or upload Media" 
                 onImageSelect={(base64) => setFoodImage(base64)}
@@ -237,7 +226,6 @@ export default function CreatePostPage() {
               <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
             </div>
 
-            {/* 6. Review description */}
             <textarea 
               placeholder="Body text (Optional)"
               value={bodyText}
@@ -246,7 +234,6 @@ export default function CreatePostPage() {
                         font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] outline-none transition-all 
                         shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
             />
-
           </div>
         </div>
 
@@ -260,7 +247,7 @@ export default function CreatePostPage() {
                 </h2>
               <div className="h-[3px] flex-1 rounded-full bg-[#855225]"></div>
             </div>
-            <div className="bg-[#FEF6EA] aspect-square rounded-3xl mb-8 flex items-center justify-center border-2 border-black overflow-hidden shadow-inner mb-5">
+            <div className="bg-[#FEF6EA] aspect-square rounded-3xl flex items-center justify-center border-2 border-black overflow-hidden shadow-inner mb-5">
                 <RadarChart ratings={ratings} />
             </div>
             <div className="space-y-4">
@@ -300,24 +287,23 @@ export default function CreatePostPage() {
             </button>
           </div>
 
-          {/* 7. Action Buttons */}
+          {/* Action Buttons */}
           <div className="flex justify-end gap-4 mt-6">
-            <button className="px-8 py-3 bg-[#FEF6EA] text-black font-poppins uppercase rounded-full hover:bg-[#b8b8b8] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
-              Save Draft
+            <button 
+              className="px-8 py-3 bg-[#FEF6EA] text-black font-poppins uppercase rounded-full hover:bg-[#b8b8b8] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]"
+              onClick={() => router.back()}
+            >
+              Cancel
             </button>
-            <button className="px-10 py-3 bg-[#E5781E] text-black font-poppins uppercase rounded-full hover:bg-[#c26214] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]" onClick={handleSubmit}>
-              Post
+            <button 
+              className="px-10 py-3 bg-[#E5781E] text-black font-poppins uppercase rounded-full hover:bg-[#c26214] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]" 
+              onClick={handleUpdate}
+            >
+              Save Changes
             </button>
-            
           </div>
         </div>
-
       </div>
     </div>
-
   );
-  
 }
-
-
-     
