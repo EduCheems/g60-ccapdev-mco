@@ -49,7 +49,7 @@ export default function PostThread({ post }: PostThreadProps) {
               <MiniComment 
                 id={safeCommentId} 
                 username={comment.authorName || "Anonymous"} 
-                timeAgo={comment.timeAgo || "Just now"} 
+                createdAt={comment.createdAt || new Date()}
                 content={comment.body || ""} 
                 initialVotes={commentScore}
                 initialUserVote={comment.userVote}

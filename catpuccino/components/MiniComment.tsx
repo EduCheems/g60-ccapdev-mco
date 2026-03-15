@@ -4,12 +4,13 @@ import ReportButton from "./ReportButton";
 import { IoPersonCircle } from "react-icons/io5";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
+import TimeAgo from "./TimeAgo";
 
 interface MiniCommentProps {
   id: string; 
   username: string;
+  createdAt: string | Date;
   content: string;
-  timeAgo: string;
   initialVotes: number; 
   parentPostId: string; 
   initialUserVote?: "up" | "down" | null; 
@@ -20,7 +21,7 @@ export default function MiniComment({
   id, 
   username, 
   content, 
-  timeAgo,
+  createdAt,
   initialVotes, 
   parentPostId, 
   initialUserVote = null,
@@ -38,7 +39,7 @@ export default function MiniComment({
       <div className="flex items-center gap-2 mb-3">
         <IoPersonCircle className="w-7 h-7 text-[#A86734]" />
         <span className="text-xs font-bold text-black">
-          {username} - {timeAgo}
+          {username} - <TimeAgo date={createdAt} />
         </span>
       </div>
 

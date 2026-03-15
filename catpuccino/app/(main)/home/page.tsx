@@ -14,6 +14,21 @@ import { Cafe } from "@/app/data/cafes";
 
 export const dynamic = "force-dynamic";
 
+function timeSince(date: Date) {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + "y ago";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + "mo ago";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + "d ago";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + "h ago";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + "m ago";
+  return Math.floor(seconds) + "s ago";
+}
+
 export default async function DiscoverPage() {
   
   // 1. Connect to DB
@@ -102,6 +117,7 @@ export default async function DiscoverPage() {
   const realPosts = await Promise.all(
     postDocs.map(async (post) => {
       const commentsDocs = await Comment.find({ postID: post._id, parentCommentID: null, isDeleted: false })
+        .populate("userID", "username name")
         .sort({ createdAt: -1 })
         .limit(2)
         .lean();
@@ -141,8 +157,8 @@ export default async function DiscoverPage() {
           const replyCount = await Comment.countDocuments({ parentCommentID: c._id, isDeleted: false });
           return {
             _id: c._id.toString(),
-            authorName: c.userID?.username || "Anonymous", 
-            timeAgo: new Date(c.createdAt).toLocaleDateString(), 
+            authorName: c.userID?.username || c.userID?.name || "Anonymous", 
+            createdAt: c.createdAt.toISOString(), 
             content: c.content, 
             body: c.content, 
             upvoteCount: c.upvoteCount || 0,
