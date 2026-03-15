@@ -23,7 +23,6 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const [isDeleted, setIsDeleted] = useState(false);
   const [localReplies, setLocalReplies] = useState(comment?.replies || []);
 
-<<<<<<< HEAD
   // -- Extract Data --
   const user = comment.userID; 
   const username = user?.name || "Anonymous User"; 
@@ -33,23 +32,6 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
     ? new Date(comment.createdAt).toLocaleDateString() 
     : "just now";
     
-=======
-  const [timeDisplay, setTimeDisplay] = useState(
-    comment?.createdAt ? timeAgo(comment.createdAt) : "just now"
-  );
-
-  useEffect(() => {
-    
-    if (!comment?.createdAt) return;
-
-    const interval = setInterval(() => {
-      setTimeDisplay(timeAgo(comment.createdAt));
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [comment?.createdAt]);
-
->>>>>>> main
   const initialVotes = (comment?.upvoteCount || 0) - (comment?.downvoteCount || 0);
 
   const handleReplySubmit = async (content: string) => {
@@ -133,15 +115,9 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
         <div className="flex flex-col flex-1 pb-4">
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
-              [{isDeleted ? 'deleted' : username}]
+              {isDeleted ? 'deleted' : username}
             </span>
-<<<<<<< HEAD
             <span className="text-black/50">• {timeAgo}</span>
-=======
-            <span className="text-black/50">
-              • {comment?.createdAt ? timeAgo(comment.createdAt) : "just now"}
-            </span>
->>>>>>> main
           
             {!isDeleted && !isEditing && (
               <div className="ml-auto relative">
