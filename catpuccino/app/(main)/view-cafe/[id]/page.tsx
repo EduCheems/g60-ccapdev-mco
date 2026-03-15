@@ -7,6 +7,7 @@ import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import DiscussionSection from "@/components/DiscussionSection";
 import { auth } from "@/auth";
+import { CatItem,MenuItem } from "@/app/data/cafes";
 import { getCommentsForPost } from "@/controllers/commentAction";
 import Link from "next/link";
 import { 
@@ -16,6 +17,7 @@ import {
   IoPersonCircle,
   IoChatbubbleOutline 
 } from "react-icons/io5";
+
 
 export const dynamic = "force-dynamic";
 
@@ -48,6 +50,17 @@ export default async function ViewCafePage({
       </div>
     );
   }
+ const cats: CatItem[] = dbCafe.cats ?? [];
+  const topCat: CatItem | null = cats.length > 0
+    ? cats.reduce((highest, cat) => (cat.upVotes ?? 0) > (highest.upVotes ?? 0) ? cat : highest, cats[0])
+    : null;
+
+const foods: MenuItem[] = dbCafe.menu ?? [];
+  const topFood: MenuItem | null = foods.length > 0
+    ? foods.reduce((highest, food) => (food.upVotes ?? 0) > (highest.upVotes ?? 0) ? food : highest, foods[0])
+    : null;
+
+
 
   // 4. data map
   const displayData = {
@@ -60,10 +73,11 @@ export default async function ViewCafePage({
     imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
     totalReviews: dbCafe.totalReviews || 0,
     cats:dbCafe.cats,
+    menu:dbCafe.menu,
+    topCat:topCat,
+    topFood:topFood,
   };
-
-  const initialComments = await getCommentsForPost(id, currentUserId);
-
+    const initialComments = await getCommentsForPost(id, currentUserId);
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
       <div className="flex gap-16">
@@ -144,9 +158,10 @@ export default async function ViewCafePage({
 
             {/* Spotlight */}
             <SpotlightSection 
-            name={displayData.cats[0].name} 
-            tags={["Cats","cute"]}
-            
+            catName={displayData?.topCat?.name||"Alberto"} 
+            foodName={displayData?.topFood?.itemName||"Orange"}
+            catImage={displayData?.topCat?.image||"/default-CatImage.png"}
+            foodImage={displayData?.topFood?.image||"/default-FoodImage.png"}
             />
 
     

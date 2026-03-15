@@ -99,9 +99,9 @@ export default function CreatePostPage() {
           isAnonymous,
           title,
           ratings,
-          selectedCat,
+          catName:selectedCat,
           catImage, 
-          selectedFood,
+          foodName:selectedFood,
           foodImage, 
           body: bodyText,
         };
@@ -256,7 +256,7 @@ export default function CreatePostPage() {
             <div className="flex items-center mb-4">
               <div className="h-[3px] flex-1 rounded-full bg-[#855225]"></div>
                 <h2 className="text-3xl font-poppins font-black uppercase text-white mx-4 [text-stroke:1.5px_black] [-webkit-text-stroke:1.5px_black] truncate">
-                  {selectedCafe || "Cafe Name..."} 
+                  {selectedCafe || "Cafe Name"} 
                 </h2>
               <div className="h-[3px] flex-1 rounded-full bg-[#855225]"></div>
             </div>

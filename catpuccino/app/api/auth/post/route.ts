@@ -24,9 +24,9 @@ export async function POST(req: Request){
             title, 
             body, 
             ratings,
-            selectedCat, 
+            catName, 
             catImage, 
-            selectedFood, 
+            foodName, 
             foodImage, 
         } = await req.json(); 
 
@@ -71,9 +71,9 @@ export async function POST(req: Request){
             ratings: dbRatings,
             overallRating,
             //Experimental wait
-            selectedCat, 
+            catName, 
             catImage,
-            selectedFood, 
+            foodName, 
             foodImage, 
         });
         console.log("New post created:", newPost);
@@ -97,15 +97,15 @@ export async function POST(req: Request){
 
         await User.findByIdAndUpdate(user._id, { $inc: { postsCount: 1 } });
 
-         if (selectedCat) {
+         if (catName) {
             await CatCafe.updateOne(
-                { name: selectedCafe, "cats.name": selectedCat},
+                { name: selectedCafe, "cats.name": catName},
                 { $inc: { "cats.$.upVotes": 1 } }
             );
-             if (selectedFood) {
+             if (foodName) {
             await CatCafe.updateOne(
-                { name: selectedCafe, "cats.name": selectedFood },
-                { $inc: { "cats.$.upVotes": 1 } }
+                { name: selectedCafe, "menu.itemName": foodName },
+                { $inc: { "menu.$.upVotes": 1 } }
             );
         }
 

@@ -160,7 +160,12 @@ export default async function ViewPostPage({
           </div>
 
           <div className="flex flex-wrap gap-6 -mt-2 mb-8 w-full">
-            <SpotlightSection />
+            <SpotlightSection 
+            catName={postDoc.catName||"Alberto"} 
+            foodName={postDoc.foodName||"Orange"}
+            catImage={postDoc.catImage||"/default-CatImage.png"} 
+            foodImage={postDoc.foodImage||"/default-FoodImage.png"}/>
+
             <CafeMenu />
           </div>
 
