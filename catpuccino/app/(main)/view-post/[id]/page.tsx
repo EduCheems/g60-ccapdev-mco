@@ -42,7 +42,7 @@ export default async function ViewPostPage({
   let currentUserId = null; 
   if (session?.user?.email) {
     const user = await User.findOne({ email: session.user.email }).lean();
-    if (user) currentUserId = user._id.toString(); // Converted to string for safety
+    if (user) currentUserId = user._id.toString(); 
   }
   
   // fetch post

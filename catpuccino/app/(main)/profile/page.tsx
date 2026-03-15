@@ -404,6 +404,7 @@ const ProfilePage = () => {
                     price={post.cafeID?.priceRange ?? "₱"}
                     city={post.cafeID?.location ?? "—"}
                     time={post.cafeID?.operatingHours ?? "—"}
+                    createdAt={post.createdAt}
                     content={post.body ?? ""}
                     image={post.catImage}
                     initialVotes={netScore}

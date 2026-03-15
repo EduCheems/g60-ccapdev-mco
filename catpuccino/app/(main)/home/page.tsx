@@ -35,27 +35,51 @@ export default async function DiscoverPage() {
     CatCafe.find().lean() 
   ]);
 
-  // updated mapping from mongodb 
-  const cafeDocs: Cafe[] = cafeDocsRaw.map((cafe: any) => ({
-    _id: cafe._id.toString(),
-    ownerID: cafe.ownerID?.toString() || "",
-    name: cafe.name || "Uknown Cafe",
-    description: cafe.description || "A cozy spot for coffee and cats.",
-    location: cafe.location || "Unknown City",
-    operatingHours: cafe.operatingHours || "N/A",
-    priceRange: cafe.priceRange || "₱0",
-    averages: cafe.averages || {
+  const cafeDocs: Cafe[] = cafeDocsRaw
+    .filter((cafe: any) => (cafe.totalReviews || 0) > 0) // <-- THE FIX: Bye bye 0 review cafes! 🚫👻
+    .map((cafe: any) => {
+    const avgs = cafe.averages || {
       sociability: 0,
       ambience: 0,
       food: 0,
       work_friendly: 0,
       service: 0
-    },
-    totalReviews: cafe.totalReviews || 0,
-    cats: cafe.cats || [],
-    menu: cafe.menu || [],
-    cafepic:cafe.cafepic ||"/defaut-cafe.png",
-  }));
+    };
+
+    // Safely parse numbers to avoid string concatenation bugs
+    const soc = Number(avgs.sociability) || 0;
+    const amb = Number(avgs.ambience) || 0;
+    const foo = Number(avgs.food) || 0;
+    const work = Number(avgs.work_friendly) || 0;
+    const serv = Number(avgs.service) || 0;
+
+    // Calculate overall rating, cap it at a maximum of 5.0, and format to 1 decimal
+    let overallRating = (soc + amb + foo + work + serv) / 5;
+    overallRating = Math.min(overallRating, 5); 
+
+    // For burger's gatekept gems
+    const reviews = cafe.totalReviews || 0;
+    const isGatekept = reviews >= 3 && reviews <= 5;
+    const gatekeptScore = isGatekept ? parseFloat(overallRating.toFixed(1)) : -1; 
+
+    return {
+      _id: cafe._id.toString(),
+      ownerID: cafe.ownerID?.toString() || "",
+      name: cafe.name || "Unknown Cafe",
+      description: cafe.description || "A cozy spot for coffee and cats.",
+      location: cafe.location || "Unknown City",
+      operatingHours: cafe.operatingHours || "N/A",
+      priceRange: cafe.priceRange || "₱0",
+      averages: {
+        ...avgs,
+        gatekept_score: gatekeptScore 
+      },
+      totalReviews: reviews,
+      cats: cafe.cats || [],
+      menu: cafe.menu || [],
+      cafepic: cafe.cafepic || "/default-cafe.png",
+    };
+  });
 
   // 4. Fetch user's votes for the posts
   let userInteractions: any[] = [];
@@ -102,6 +126,7 @@ export default async function DiscoverPage() {
         _id: post._id.toString(),
         title: post.title,
         authorName: post.authorName,
+        createdAt: post.createdAt,
         upvoteCount: post.upvoteCount || 0,
         downvoteCount: post.downvoteCount || 0,
         userVote: voteMap[post._id.toString()] || null,
@@ -160,6 +185,8 @@ export default async function DiscoverPage() {
              </div>
           ))}
         </div>
+
+        
       </section>
 
       {/* Main Content with Cafes and Posts */}
@@ -175,6 +202,24 @@ export default async function DiscoverPage() {
         <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
         <BestCafes cafes={cafeDocs} filterKey="food" cardColor="bg-[#FF7300]" badgeText="Best Foods" badgeColor="bg-[#FF7300]" />
         <PostCarousel posts={realPosts}/>
+
+        <MarqueeBand text="LIL’ JIMBOB’S FOCUS ZONES" bgColor="bg-[#60958E]" />
+        <BestCafes cafes={cafeDocs} filterKey="work_friendly" cardColor="bg-[#75A39D]" badgeText="Work Friendly" badgeColor="bg-[#75A39D]" />
+        <PostCarousel posts={realPosts} variant="thread" />
+
+        <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FC588D]" />
+        <BestCafes cafes={cafeDocs} filterKey="service" cardColor="bg-[#FD6B9A]" badgeText="Great Service" badgeColor="bg-[#FD6B9A]" />
+        <PostCarousel posts={realPosts} variant="collage" />
+
+        <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#613D8E]" />
+        <BestCafes 
+          cafes={cafeDocs} 
+          filterKey={"gatekept_score" as any} 
+          cardColor="bg-[#71539A]" 
+          badgeText="Hidden Gem" 
+          badgeColor="bg-[#71539A]" 
+        />
+        <PostCarousel posts={realPosts} />
       </section>
 
       <div className="h-[400px] w-full bg-[#FCD24C]" />

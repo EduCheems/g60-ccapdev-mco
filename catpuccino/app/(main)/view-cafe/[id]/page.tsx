@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import CatCafe from "@/models/CatCafe";
 import User from "@/models/User";
+import Post from "@/models/Post";
 import Interaction from "@/models/Interaction";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
@@ -50,6 +51,11 @@ export default async function ViewCafePage({
       </div>
     );
   }
+
+  const actualReviewCount = await Post.countDocuments({ 
+    cafeID: id, 
+    isDeleted: false 
+  });
  const cats: CatItem[] = dbCafe.cats ?? [];
   const topCat: CatItem | null = cats.length > 0
     ? cats.reduce((highest, cat) => (cat.upVotes ?? 0) > (highest.upVotes ?? 0) ? cat : highest, cats[0])
@@ -71,13 +77,18 @@ const foods: MenuItem[] = dbCafe.menu ?? [];
     time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
     ratings: dbCafe.averages || { sociability: 0, ambience: 0, food: 0, work_friendly: 0, service: 0 },
     imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
-    totalReviews: dbCafe.totalReviews || 0,
+    totalReviews: actualReviewCount,
     cats:dbCafe.cats,
     menu:dbCafe.menu,
     topCat:topCat,
     topFood:topFood,
   };
-    const initialComments = await getCommentsForPost(id, currentUserId);
+
+  const spotlightCat = dbCafe.cats?.[0];
+  const spotlightFood = dbCafe.menu?.[0];
+
+  const initialComments = await getCommentsForPost(id, currentUserId);
+
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
       <div className="flex gap-16">
@@ -145,7 +156,7 @@ const foods: MenuItem[] = dbCafe.menu ?? [];
 
               {/* Ratings */}
               <div className="ml-auto flex items-center h-10">
-                <Ratings ratings={displayData.ratings} />
+                <Ratings ratings={displayData.ratings} totalReviews={displayData.totalReviews} />
               </div>
             </div>
 

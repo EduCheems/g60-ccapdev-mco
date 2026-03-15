@@ -108,7 +108,7 @@ export default async function ViewCafePage({
               </div>
 
               <div className="ml-auto flex items-center h-10">
-                <Ratings ratings={displayData.ratings} />
+                <Ratings ratings={displayData.ratings} totalReviews={displayData.totalReviews} />
               </div>
             </div>
 
@@ -118,7 +118,6 @@ export default async function ViewCafePage({
               {displayData.content}
             </p>
 
-            <SpotlightSection name={displayData.name} tags={["Cats"]}/>
           </div> 
 
           <div id="discussion-section" className="mt-12 scroll-mt-8">
