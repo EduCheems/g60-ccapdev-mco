@@ -27,6 +27,7 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const user = comment.userID; 
   const username = user?.name || "Anonymous User"; 
   const profilePic = user?.profilePicURL || "/default-avatar.png"; 
+  const isOwner = currentUserId === (comment.userID?._id || comment.userID);
 
   const timeAgo = comment.createdAt 
     ? new Date(comment.createdAt).toLocaleDateString() 
@@ -62,7 +63,7 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
 
     setIsLoading(true); 
 
-    const result = await editComment(comment._id, editValue, comment.postID);
+    const result = await editComment(comment._id, editValue, comment.postID, currentUserId);
 
     if (result.success) {
       comment.content = editValue; // Update 
@@ -115,11 +116,11 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
         <div className="flex flex-col flex-1 pb-4">
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
-              {isDeleted ? 'deleted' : username}
+              [{isDeleted ? 'deleted' : username}]
             </span>
             <span className="text-black/50">• {timeAgo}</span>
           
-            {!isDeleted && !isEditing && (
+            {!isDeleted && !isEditing && isOwner && (
               <div className="ml-auto relative">
                 <button 
                   onClick={() => setShowMenu(!showMenu)}

@@ -115,7 +115,7 @@ export async function deleteComment(commentId, postId) {
     }
 }
 
-export async function editComment(commentId, updatedContent, postId) {
+export async function editComment(commentId, updatedContent, postId, requestorId) {
     try {
         await connectDB();
 
@@ -126,6 +126,13 @@ export async function editComment(commentId, updatedContent, postId) {
             },
             {new: true}
         )
+
+        if (comment.userID.toString() !== requesterId) {
+            return { success: false, error: "Cannot edit comment." };
+        }
+
+        comment.content = updatedContent;
+        await comment.save();
 
         revalidatePath(`/view-post/${postId}`);
         return {
