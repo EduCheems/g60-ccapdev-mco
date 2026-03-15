@@ -1,6 +1,45 @@
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 
 const ContactPage = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    setStatusMessage('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus('error');
+        setStatusMessage(data.message || 'Something went wrong.');
+        return;
+      }
+
+      setStatus('success');
+      setStatusMessage(data.message || 'Message sent!');
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch {
+      setStatus('error');
+      setStatusMessage('Failed to send. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -26,31 +65,47 @@ const ContactPage = () => {
             Send us a message
           </h2>
 
-          <form className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
 
             <input
               type="text"
               placeholder="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
               className="border-2 border-[#7C4F2B] rounded-2xl px-4 py-3 bg-[#F8F2E2] text-[#262626] placeholder:text-[#A09489] shadow-[inset_0_2px_0_0_rgba(0,0,0,0.1)] focus:outline-none focus:ring-2 focus:ring-[#7C4F2B]/50"
             />
 
             <input
               type="email"
               placeholder="Your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="border-2 border-[#7C4F2B] rounded-2xl px-4 py-3 bg-[#F8F2E2] text-[#262626] placeholder:text-[#A09489] shadow-[inset_0_2px_0_0_rgba(0,0,0,0.1)] focus:outline-none focus:ring-2 focus:ring-[#7C4F2B]/50"
             />
 
             <textarea
               rows={5}
               placeholder="Your Message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
               className="border-2 border-dashed border-[#D5A073] rounded-2xl px-4 py-3 bg-[#F8F2E2] resize-none text-[#262626] placeholder:text-[#A09489] shadow-[inset_0_2px_0_0_rgba(0,0,0,0.1)] focus:outline-none focus:ring-2 focus:ring-[#D5A073]/50"
-            ></textarea>
+            />
+
+            {statusMessage && (
+              <p className={`text-sm font-medium ${status === 'success' ? 'text-green-700' : status === 'error' ? 'text-red-700' : ''}`}>
+                {statusMessage}
+              </p>
+            )}
 
             <button
               type="submit"
-              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-[10px] font-semibold hover:opacity-90 transition"
+              disabled={status === 'sending'}
+              className="border border-[#4e2300] bg-[#855225] text-white py-3 rounded-[10px] font-semibold hover:opacity-90 transition disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Send Message
+              {status === 'sending' ? 'Sending...' : 'Send Message'}
             </button>
 
           </form>
@@ -65,7 +120,7 @@ const ContactPage = () => {
               Email
             </h3>
             <p className="text-[#262626]">
-              support@catpuccino.com
+              catpuccinosupport@gmail.com
             </p>
           </div>
 
