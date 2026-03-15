@@ -65,6 +65,7 @@ const ProfilePage = () => {
           if (data.username != null || data.name != null) setDisplayName(data.username ?? data.name);
           if (data.bio != null) setBio(data.bio);
           if (data.profilePic != null || data.profilePicURL != null) setProfileImageUrl(data.profilePic ?? data.profilePicURL ?? null);
+          if (data.favCafe !=null){ setTopCafe1(data.favCafe[0]||topCafe1); setTopCafe2(data.favCafe[1]);setTopCafe3(data.favCafe[2])};
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -186,7 +187,7 @@ const ProfilePage = () => {
     ].filter(Boolean);
     console.log(cafeHolder);
     try{
-      const res= await fetch("api/auth/profile",{
+      const res= await fetch("/api/auth/profile",{
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -203,16 +204,6 @@ const ProfilePage = () => {
       console.error("Failed to toggle follow:", err);
     }
   };
-
-
-  useEffect(() => {
-    setDisplayName(session?.user?.name || displayName);
-    setBio(session?.user?.bio || bio);
-    setProfileImageUrl(session?.user.profilePicURL || profileImageUrl);
-    setTopCafe1(session?.user?.favCafe?.[0] || topCafe1);
-    setTopCafe2(session?.user?.favCafe?.[1] || topCafe2);
-    setTopCafe3(session?.user?.favCafe?.[2] || topCafe3);
-  }, [session, displayName, bio, profileImageUrl, topCafe1, topCafe2, topCafe3]);
 
   const nonAnonymousCommentsCount = comments.filter(
     (comment) => comment.authorName !== "Anonymous"
