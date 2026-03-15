@@ -65,6 +65,7 @@ const ProfilePage = () => {
           if (data.username != null || data.name != null) setDisplayName(data.username ?? data.name);
           if (data.bio != null) setBio(data.bio);
           if (data.profilePic != null || data.profilePicURL != null) setProfileImageUrl(data.profilePic ?? data.profilePicURL ?? null);
+          if (data.favCafe !=null){ setTopCafe1(data.favCafe[0]||topCafe1); setTopCafe2(data.favCafe[1]);setTopCafe3(data.favCafe[2])};
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
