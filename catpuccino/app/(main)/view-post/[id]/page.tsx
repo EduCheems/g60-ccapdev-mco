@@ -10,6 +10,7 @@ import CommentThread from "@/components/CommentThread";
 import DiscussionSection from "@/components/DiscussionSection";
 import { auth } from "@/auth";
 import { getCommentsForPost } from "@/controllers/commentAction";
+import PostControls from "@/components/view-post/PostControls";
 
 import { 
   IoLocationSharp, 
@@ -40,6 +41,7 @@ export default async function ViewPostPage({
   // fetch user session
   const session = await auth();
   let currentUserId = null; 
+  
   if (session?.user?.email) {
     const user = await User.findOne({ email: session.user.email }).lean();
     if (user) currentUserId = user._id.toString(); 
@@ -75,6 +77,8 @@ export default async function ViewPostPage({
   const initialComments = await getCommentsForPost(id, currentUserId);
 
   let currentUserVote: "up" | "down" | null = null; 
+  const isAuthor = currentUserId === postDoc.userID?.toString();
+
   if (currentUserId){
     const postInteraction = await Interaction.findOne({
       userID: currentUserId, 
@@ -93,7 +97,7 @@ export default async function ViewPostPage({
 
         <div className="relative flex-1 bg-[#FEF6EA] border-2 border-[#855225] rounded-[10px] px-6 py-6 flex-col shadow-[5px_5px_0_0_#85522533]">
           
-          <div className="flex gap-8 mb-6">
+          <div className="flex gap-8 mb-6 w-full">
             <Link href={`/profile/${postDoc.authorName}`} className="flex gap-3 items-center group">
               <div className="w-10 h-10 bg-[#855225] rounded-[4px] group-hover:scale-105 transition-transform"></div>
               <div className="flex flex-col text-[12px] font-bold leading-tight text-black">
@@ -108,6 +112,8 @@ export default async function ViewPostPage({
                 <span>[{new Date(postDoc.createdAt).toLocaleDateString()}]</span>
               </div>
             </div>
+
+            {isAuthor && <PostControls postId={id} />}
           </div>
 
           {/* Title */}
