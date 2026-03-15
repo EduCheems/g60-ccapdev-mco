@@ -108,7 +108,7 @@ export default async function ViewCafePage({
               </div>
 
               <div className="ml-auto flex items-center h-10">
-                <Ratings ratings={displayData.ratings} />
+                <Ratings ratings={displayData.ratings} totalReviews={displayData.totalReviews} />
               </div>
             </div>
 
