@@ -83,12 +83,13 @@ const CatCafeSchema = new Schema({
             type: String,
             required: [true, 'Menu item description is required'], 
         },
-        pictureUrl: {
+        image: {
             type: String,
             default: "/default-menu-item.png",
         },
         upVotes:{
             type:Number,
+            default:0,
         }
     }],
     cats: [{
@@ -104,13 +105,14 @@ const CatCafeSchema = new Schema({
             type: String,
             required: [true, 'Cat description is required'],
         },
-        pictureUrl: {
+        image: {
             type: String,  
             required: [true, 'Cat picture URL is required'],
             default: "/default-cat.png",
         },
         upVotes:{
             type:Number,
+            default:0,
         }
     }],
 

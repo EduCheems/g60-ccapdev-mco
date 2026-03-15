@@ -8,6 +8,7 @@ import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import DiscussionSection from "@/components/DiscussionSection";
 import { auth } from "@/auth";
+import { CatItem,MenuItem } from "@/app/data/cafes";
 import { getCommentsForPost } from "@/controllers/commentAction";
 import Link from "next/link";
 import { 
@@ -17,6 +18,7 @@ import {
   IoPersonCircle,
   IoChatbubbleOutline 
 } from "react-icons/io5";
+
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +56,17 @@ export default async function ViewCafePage({
     cafeID: id, 
     isDeleted: false 
   });
+ const cats: CatItem[] = dbCafe.cats ?? [];
+  const topCat: CatItem | null = cats.length > 0
+    ? cats.reduce((highest, cat) => (cat.upVotes ?? 0) > (highest.upVotes ?? 0) ? cat : highest, cats[0])
+    : null;
+
+const foods: MenuItem[] = dbCafe.menu ?? [];
+  const topFood: MenuItem | null = foods.length > 0
+    ? foods.reduce((highest, food) => (food.upVotes ?? 0) > (highest.upVotes ?? 0) ? food : highest, foods[0])
+    : null;
+
+
 
   // 4. data map
   const displayData = {
@@ -66,6 +79,9 @@ export default async function ViewCafePage({
     imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
     totalReviews: actualReviewCount,
     cats:dbCafe.cats,
+    menu:dbCafe.menu,
+    topCat:topCat,
+    topFood:topFood,
   };
 
   const spotlightCat = dbCafe.cats?.[0];
@@ -153,10 +169,10 @@ export default async function ViewCafePage({
 
             {/* Spotlight */}
             <SpotlightSection 
-              catName={spotlightCat?.name}
-              catImage={spotlightCat?.pictureUrl} 
-              foodName={spotlightFood?.itemName}  
-              foodImage={spotlightFood?.pictureUrl}
+            catName={displayData?.topCat?.name||"Alberto"} 
+            foodName={displayData?.topFood?.itemName||"Orange"}
+            catImage={displayData?.topCat?.image||"/default-CatImage.png"}
+            foodImage={displayData?.topFood?.image||"/default-FoodImage.png"}
             />
 
     
