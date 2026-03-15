@@ -1,7 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 import {getCountAllPost} from "@/controllers/postAction";
 import {getCountAllUser} from "@/controllers/userAction";
 import {getCountAllCafe} from "@/controllers/cafeAction";
+
+const IMG_CLASS = "w-full h-full object-cover rounded-xl";
 
 export default async function AboutPage() {
   const totalPost= await getCountAllPost();
@@ -33,7 +36,9 @@ export default async function AboutPage() {
             </p>
           </div>
 
-          <div className="w-[350px] h-[300px] bg-gray-300 rounded-xl"></div>
+          <div className="w-[350px] h-[300px] relative rounded-xl overflow-hidden shrink-0">
+              <Image src="/AboutUs/about.svg" alt="Catpuccino - coffee and cats" fill className={IMG_CLASS} sizes="350px" />
+            </div>
 
         </div>
       </section>
@@ -48,15 +53,19 @@ export default async function AboutPage() {
         <div className="grid grid-cols-2 gap-16">
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-full h-[220px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Meow</h3>
-            <p className="text-[#262626]">🐾 Help you find cat cafés near you ⭐ Share honest, community-driven reviews 📸 Show real photos of café vibes and resident cats 💬 Let cat lovers connect over shared experiences</p>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/story.svg" alt="Story" fill className={IMG_CLASS} sizes="320px" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Story</h3>
+            <p className="text-[#262626]">It all began with a simple problem: we wanted to find the best cat cafés — but reviews were scattered, outdated, or focused more on coffee than cats.</p>
           </div>
 
           <div className="flex flex-col items-center text-center">
-            <div className="w-full h-[220px] bg-gray-300 rounded-xl mb-6"></div>
-            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Maw</h3>
-            <p className="text-[#262626]">It all began with a simple problem: we wanted to find the best cat cafés — but reviews were scattered, outdated, or focused more on coffee than cats.</p>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/purpose.svg" alt="Purpose" fill className={IMG_CLASS} sizes="320px" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2 text-[#743d0d]">Purpose</h3>
+            <p className="text-[#262626]">🐾 Help you find cat cafés near you ⭐ Share honest, community-driven reviews 📸 Show real photos of café vibes and resident cats 💬 Let cat lovers connect over shared experiences</p>
           </div>
 
         </div>
@@ -72,25 +81,33 @@ export default async function AboutPage() {
         <div className="grid grid-cols-2 gap-16">
 
           <div className="flex flex-col items-center">
-            <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/user.svg" alt="Users" fill className={IMG_CLASS} sizes="320px" />
+            </div>
             <h3 className="text-2xl font-bold text-[#743d0d]">{totalUser} users</h3>
             <p className="text-[#262626]">A growing community of cat lovers sharing their experiences.</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/reviewing.svg" alt="Reviews" fill className={IMG_CLASS} sizes="320px" />
+            </div>
             <h3 className="text-2xl font-bold text-[#743d0d]">{totalPost} reviews</h3>
             <p className="text-[#262626]">Honest feedback on cafés, cats, coffee, and comfort.</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/cafe.svg" alt="Cafes listed" fill className={IMG_CLASS} sizes="320px" />
+            </div>
             <h3 className="text-2xl font-bold text-[#743d0d]">{totalCafe} Cafe's Listed</h3>
             <p className="text-[#262626]">From small local spots to international favorites.</p>
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="w-full h-[120px] bg-gray-300 rounded-xl mb-6"></div>
+            <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
+              <Image src="/AboutUs/rating.svg" alt="Average rating" fill className={IMG_CLASS} sizes="320px" />
+            </div>
             <h3 className="text-2xl font-bold text-[#743d0d]">5⭐ Average Rating</h3>
             <p className="text-[#262626]">Because great coffee and purring companions never disappoint.</p>
           </div>
@@ -101,7 +118,9 @@ export default async function AboutPage() {
       {/*  EXPANSION  */}
       <section className="bg-[#FEF6EA] px-[140px] py-20 text-center">
 
-        <div className="w-[300px] h-[120px] bg-gray-300 rounded-xl mx-auto mb-10"></div>
+        <div className="w-[300px] h-[220px] relative rounded-xl mx-auto mb-10 overflow-hidden">
+        <Image src="/AboutUs/about.svg" alt="Expanding" fill className={IMG_CLASS} sizes="300px" />
+      </div>
 
         <h2 className="text-4xl font-poppins font-black text-[#703603]">
           And we’re still expanding!
