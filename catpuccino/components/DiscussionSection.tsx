@@ -18,12 +18,13 @@ export default function DiscussionSection({initialComments, postId, currentUserI
   const [comments, setComments] = useState(initialComments);
 
   // This handles the top-level comment box submission
-  const handleNewTopLevelComment = async (content: string) => {
+  const handleNewTopLevelComment = async (content: string, imageUrl: string | null) => {
 
     const newComment = {
         postID: postId,
         userID: currentUserId,
         content: content,
+        imageUrl: imageUrl,
     };
 
     /*
