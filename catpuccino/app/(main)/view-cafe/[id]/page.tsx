@@ -1,6 +1,7 @@
 import { connectDB } from "@/lib/mongodb";
 import CatCafe from "@/models/CatCafe";
 import User from "@/models/User";
+import Post from "@/models/Post";
 import Interaction from "@/models/Interaction";
 import RatingSidebar from "@/components/view-post/RatingChart";
 import SpotlightSection, { CafeMenu }  from "@/components/view-post/Spotlights";
@@ -49,6 +50,11 @@ export default async function ViewCafePage({
     );
   }
 
+  const actualReviewCount = await Post.countDocuments({ 
+    cafeID: id, 
+    isDeleted: false 
+  });
+
   // 4. data map
   const displayData = {
     name: dbCafe.name || "Unknown Cafe",
@@ -58,7 +64,7 @@ export default async function ViewCafePage({
     time: dbCafe.operatingHours || "9:00 AM - 9:00 PM",
     ratings: dbCafe.averages || { sociability: 0, ambience: 0, food: 0, work_friendly: 0, service: 0 },
     imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
-    totalReviews: dbCafe.totalReviews || 0,
+    totalReviews: actualReviewCount,
     cats:dbCafe.cats,
   };
 
@@ -134,7 +140,7 @@ export default async function ViewCafePage({
 
               {/* Ratings */}
               <div className="ml-auto flex items-center h-10">
-                <Ratings ratings={displayData.ratings} />
+                <Ratings ratings={displayData.ratings} totalReviews={displayData.totalReviews} />
               </div>
             </div>
 

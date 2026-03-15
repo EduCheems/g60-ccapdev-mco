@@ -10,7 +10,7 @@ interface BestCafesProps {
   badgeText: string; 
   badgeColor: string; 
   cafes: Cafe[]; 
-  filterKey?: "sociability" | "ambience" | "food" | "work_friendly" | "service"; 
+  filterKey?: "sociability" | "ambience" | "food" | "work_friendly" | "service" | "gatekept_score"; 
   reverse?: boolean;
 }
 
@@ -31,8 +31,11 @@ export default function BestCafes({
     .sort((a, b) => {
       if (!filterKey) return 0;
       
-      const valA = a.averages?.[filterKey] || 0;
-      const valB = b.averages?.[filterKey] || 0;
+      const avgsA = a.averages as Record<string, number> | undefined;
+      const avgsB = b.averages as Record<string, number> | undefined;
+
+      const valA = avgsA?.[filterKey] || 0;
+      const valB = avgsB?.[filterKey] || 0;
       return reverse ? valA - valB : valB - valA;
     }).slice(0,5);
 
@@ -47,8 +50,14 @@ export default function BestCafes({
             const currentId = cafe._id;
             const isHovered = hoveredId === currentId;
 
-            const displayRating = cafe.averages ? 
-              (Object.values(cafe.averages) as number[]).reduce((a,b) => a+b, 0) / 5 : 0;
+            const avgs = cafe.averages as any || {};
+            const soc = Number(avgs.sociability) || 0;
+            const amb = Number(avgs.ambience) || 0;
+            const foo = Number(avgs.food) || 0;
+            const work = Number(avgs.work_friendly) || 0;
+            const serv = Number(avgs.service) || 0;
+
+            const displayRating = (soc + amb + foo + work + serv) / 5;
 
             return (
               <div
