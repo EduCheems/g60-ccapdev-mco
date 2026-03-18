@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
-import AuthModal from "@/components/AuthModal"; 
+import dynamic from "next/dynamic";
+
+const AuthModal = dynamic(() => import("@/components/AuthModal"), {
+  ssr: false, 
+  loading: () => <p>Loading...</p> // I'll change this later wait
+}); 
 
 export default function AuthPage() {
 
