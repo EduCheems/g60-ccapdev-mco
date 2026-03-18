@@ -38,14 +38,26 @@ export async function createComment(commentData) {
 }
 
 
-// New argument: UserId
 export async function getCommentsForPost(postID, userId = null) {
     try {
         await connectDB();
         const comments = await Comment.find({ postID, isDeleted: false})
-            .populate("userID", "name profilePicURL") 
+            .select("-imageUrl") 
+            .populate({
+                path: "userID",
+                select: "name"
+            })
             .sort({ createdAt: 1 })
             .lean();
+
+        comments.forEach(c => {
+            c.imageUrl = null;
+            if (c.userID) {
+                
+                c.userID.profilePicURL = "/default-avatar.png"; 
+                c.userID.image = null;
+            }
+        });
 
         const safeComments = JSON.parse(JSON.stringify(comments));
 
@@ -64,7 +76,6 @@ export async function getCommentsForPost(postID, userId = null) {
                     int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
             });
         }
-        // -- 
 
         const commentMap = {};
         const roots = [];
@@ -119,25 +130,27 @@ export async function editComment(commentId, updatedContent, postId, requestorId
     try {
         await connectDB();
 
-        const editedComment = await Comment.findByIdAndUpdate(
-            commentId,
-            {
-                content: updatedContent
-            },
-            {new: true}
-        )
+        // 1. Find the comment FIRST to check if the user actually owns it
+        const comment = await Comment.findById(commentId);
 
-        if (comment.userID.toString() !== requesterId) {
-            return { success: false, error: "Cannot edit comment." };
+        if (!comment) {
+            return { success: false, error: "Comment not found." };
         }
 
+        // 2. Check permissions
+        if (comment.userID.toString() !== requestorId) {
+            return { success: false, error: "Cannot edit someone else's comment." };
+        }
+
+        // 3. Apply the edit and save
         comment.content = updatedContent;
         await comment.save();
 
         revalidatePath(`/view-post/${postId}`);
+        
         return {
             success: true,
-            comment: JSON.parse(JSON.stringify(editedComment))
+            comment: JSON.parse(JSON.stringify(comment))
         };
     } catch (error) {
         console.error("Comment Edit Error:", error);

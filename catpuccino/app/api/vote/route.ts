@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function POST(req: Request) {
+    
     try {
         const session = await auth();
         if (!session || !session.user) {
@@ -97,7 +98,7 @@ export async function POST(req: Request) {
         revalidatePath('/discover', 'page'); 
         revalidatePath('/home', 'page');     
 
-        revalidateTag('global-posts-cache');
+        revalidateTag('global-posts-cache', 'max');
 
         return NextResponse.json({ success: true }, { status: 200 });
 
