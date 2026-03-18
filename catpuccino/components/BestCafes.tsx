@@ -27,25 +27,13 @@ export default function BestCafes({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const filteredCafes = cafes.slice()
-    .sort((a, b) => {
-      if (!filterKey) return 0;
-      
-      const avgsA = a.averages as Record<string, number> | undefined;
-      const avgsB = b.averages as Record<string, number> | undefined;
-
-      const valA = avgsA?.[filterKey] || 0;
-      const valB = avgsB?.[filterKey] || 0;
-      return reverse ? valA - valB : valB - valA;
-    }).slice(0,5);
-
   return (
     <section className="w-full pt-2 pb-0 overflow-hidden">
       {title && <h2 className="px-10 mb-6 font-poppins text-2xl text-white">{title}</h2>}
 
       <div className="relative flex items-center group px-10">
         <div ref={scrollRef} className="flex overflow-x-auto gap-6 px-2 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
-          {filteredCafes.map((cafe, i) => {
+   {cafes.map((cafe, i) => {
             
             const currentId = cafe._id;
             const isHovered = hoveredId === currentId;
