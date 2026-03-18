@@ -14,8 +14,6 @@ import Interaction from "@/models/Interaction";
 import { auth } from "@/auth";
 import { Cafe } from "@/app/data/cafes";
 
-export const revalidate = 60;
-
 // ------------------------------------------------------------------
 // Helper Functions
 // ------------------------------------------------------------------
@@ -92,7 +90,10 @@ const getCachedGlobalData = unstable_cache(
     }));
   },
   ['discover-global-data-v3'], 
-  { revalidate: 60 } 
+  { 
+    revalidate: 60,
+    tags: ['global-posts-cache']
+  } 
 );
 
 // ------------------------------------------------------------------
@@ -117,27 +118,34 @@ async function DiscoverContent() {
   } = globalData;
 
   // 2. Fetch User and Interactions 
-  let currentUserId = session?.user?.id;
+  let currentUserId = session?.user?.id; // Grab ID straight from the fast session
+  
+  if (!currentUserId && session?.user?.email) {
+    const userDb = await User.findOne({ email: session.user.email }).select('_id').lean();
+    currentUserId = userDb?._id;
+  }
+
   let postInteractions: any[] = [];
   let commentInteractions: any[] = [];
-  const commentIds = allComments.map((c: any) => c._id);
-
-  if (session?.user?.email) {
-    const user = await User.findOne({ email: session.user.email }).select('_id').lean();
-    if (user) {
-      currentUserId = user._id.toString();
+  
+  if (currentUserId) { // ONLY run if we have an ID
+    const commentIds = allComments.map((c: any) => c._id);
+    
+    [postInteractions, commentInteractions] = await Promise.all([
+      Interaction.find({
+        userID: currentUserId, 
+        targetID: { $in: postIds },
+        targetType: "Post"
+      }).select('targetID voteValue').lean(),
       
-      [postInteractions, commentInteractions] = await Promise.all([
-        Interaction.find({
-          userID: currentUserId,
-          targetID: { $in: postIds },
-          targetType: "Post"
-        }).select('targetID voteValue').lean(),
-        commentIds.length > 0 
-          ? Interaction.find({ userID: currentUserId, targetID: { $in: commentIds }, targetType: "Comment" }).select('targetID voteValue').lean()
-          : Promise.resolve([])
-      ]);
-    }
+      commentIds.length > 0 
+        ? Interaction.find({ 
+            userID: currentUserId, 
+            targetID: { $in: commentIds }, 
+            targetType: "Comment" 
+          }).select('targetID voteValue').lean()
+        : Promise.resolve([])
+    ]);
   }
 
   // D. Map Data

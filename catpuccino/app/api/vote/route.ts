@@ -6,7 +6,7 @@ import Comment from "@/models/Comment";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth"; 
 //New progress: I need to ask next cache ata yeah yeah 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function POST(req: Request) {
     try {
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
             const updatedPost = await Post.findByIdAndUpdate(
                 targetID, 
                 { $inc: { upvoteCount: upvoteChange, downvoteCount: downvoteChange } },
-                { returnDocument: 'after' }
+                { new: true }
             );
             
             if (updatedPost) {
@@ -85,17 +85,19 @@ export async function POST(req: Request) {
 
         // -- Update next cache
         if (targetType === "Post") {
-            revalidatePath(`/view-post/${targetID}`);
+            revalidatePath(`/view-post/${targetID}`, 'page'); 
         } else if (targetType === "Comment") {
             // If it's a comment, we need to find the post ID to clear the right page
             const parentComment = await Comment.findById(targetID);
             if (parentComment) {
-                revalidatePath(`/view-post/${parentComment.postID}`);
+                revalidatePath(`/view-post/${parentComment.postID}`, 'page'); 
             }
         }
 
-        revalidatePath('/discover');
-        revalidatePath('/home');
+        revalidatePath('/discover', 'page'); 
+        revalidatePath('/home', 'page');     
+
+        revalidateTag('global-posts-cache');
 
         return NextResponse.json({ success: true }, { status: 200 });
 
