@@ -9,7 +9,7 @@ import MiniComment from "@/components/MiniComment";
 import EditProfile from "@/components/EditProfile";
 
 const ProfilePage = () => {
-  const { data: session } = useSession();
+  const { data: session, update: updateSession } = useSession();
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState("reviews");
@@ -196,11 +196,22 @@ const ProfilePage = () => {
         favCafe:cafeHolder,
       }),
       });
-      if(!res){
-        console.error("Failed to update");
+      if (!res.ok) {
+        console.error("Failed to update profile");
+        return;
       }
+      const nextPic = (editProfileImageUrl.trim() || profileImageUrl || "").trim();
+      const nextName = (editName.trim() || displayName).trim();
+      await updateSession({
+        user: {
+          ...session?.user,
+          name: nextName,
+          image: nextPic || session?.user?.image || null,
+          profilePicURL: nextPic || session?.user?.profilePicURL || null,
+        },
+      });
     } catch (err) {
-      console.error("Failed to toggle follow:", err);
+      console.error("Failed to save profile:", err);
     }
   };
 

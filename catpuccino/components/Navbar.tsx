@@ -12,6 +12,11 @@ interface NavbarProps {
 }
 
 export default function Navbar({user}: NavbarProps) {
+  const avatarSrc =
+    (user?.profilePicURL && String(user.profilePicURL).trim()) ||
+    user?.image ||
+    "/default-profile.svg";
+
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }} className="bg-[#5C3727] border-b border-white/10 py-3" >
       
@@ -52,7 +57,8 @@ export default function Navbar({user}: NavbarProps) {
             
             <Link href="/profile" className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0 block hover:ring-2 hover:ring-white/50 transition-all overflow-hidden">
                <img
-                 src={user?.image || "/default-profile.svg"}
+                 key={avatarSrc}
+                 src={avatarSrc}
                  alt="Profile"
                  className="w-full h-full object-cover"
                  referrerPolicy="no-referrer"
