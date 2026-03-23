@@ -38,49 +38,48 @@ export default async function ViewPostPage({
   
   await connectDB();
 
-  // fetch user session
-  const session = await auth();
-  let currentUserId = null; 
-  
-  if (session?.user?.email) {
-    const user = await User.findOne({ email: session.user.email }).lean();
-    if (user) currentUserId = user._id.toString(); 
-  }
-  
-  // fetch post
-  const postDoc = await Post.findById(id).populate('cafeID').lean();
+  // 1. Fetch the Session and the Post
+  const [session, postDoc] = await Promise.all([
+    auth(),
+    Post.findById(id).populate('cafeID').lean()
+  ]);
 
   if (!postDoc) {
     return <div className="min-h-screen flex items-center justify-center font-bold text-2xl">Post not found in database!</div>;
   }
 
-  const totalComments = await Comment.countDocuments({ postID: id, isDeleted: false });
+  // 2. Resolve the User ID
+  let currentUserId = null; 
+  if (session?.user?.email) {
+    
+    const user = await User.findOne({ email: session.user.email }).select('_id').lean();
+    if (user) currentUserId = user._id.toString(); 
+  }
+
+  // 3. Fetch Comments, Comment Count, and User Vote 
+  const [initialComments, totalComments, postInteraction] = await Promise.all([
+    getCommentsForPost(id, currentUserId),
+    Comment.countDocuments({ postID: id, isDeleted: false }),
+    currentUserId 
+      ? Interaction.findOne({ userID: currentUserId, targetID: id, targetType: "Post" }).lean() 
+      : Promise.resolve(null)
+  ]);
+
+  // 4. Map the data for your frontend components
+  let currentUserVote: "up" | "down" | null = null; 
+  if (postInteraction) {
+    currentUserVote = postInteraction.voteValue === 1 ? "up" : postInteraction.voteValue === -1 ? "down" : null; 
+  }
+
   const initialVotes = (postDoc.upvoteCount || 0) - (postDoc.downvoteCount || 0);
+  const isAuthor = currentUserId === postDoc.userID?.toString();
+  const post = JSON.parse(JSON.stringify(postDoc));
 
   const cafeData = postDoc.cafeID || {};
   const cafeName = cafeData.name || "Unknown Cafe";
   const cafePrice = cafeData.priceRange || "N/A"; 
   const cafeCity = cafeData.location || "N/A";    
   const cafeTime = cafeData.operatingHours || "N/A";
-
-  const post = JSON.parse(JSON.stringify(postDoc));
-  
-  const initialComments = await getCommentsForPost(id, currentUserId);
-
-  let currentUserVote: "up" | "down" | null = null; 
-  const isAuthor = currentUserId === postDoc.userID?.toString();
-
-  if (currentUserId){
-    const postInteraction = await Interaction.findOne({
-      userID: currentUserId, 
-      targetID: id, 
-      targetType: "Post"
-    }).lean(); 
-
-    if (postInteraction) {
-      currentUserVote = postInteraction.voteValue === 1 ? "up" : postInteraction.voteValue === -1 ? "down" : null; 
-    }
-  }
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">

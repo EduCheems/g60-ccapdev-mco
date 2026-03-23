@@ -19,7 +19,6 @@ import {
   IoChatbubbleOutline 
 } from "react-icons/io5";
 
-
 export const dynamic = "force-dynamic";
 
 export default async function ViewCafePage({
@@ -32,18 +31,24 @@ export default async function ViewCafePage({
   // 1. Connect to MongoDB
   await connectDB(); 
 
-  // 2. Fetch User Session
+  console.time("1. Fetching Session & User");
   const session = await auth();
-  let currentUserId = null; 
-  if (session?.user?.email) {
-    const user = await User.findOne({ email: session.user.email }).lean();
+  let currentUserId = session?.user?.id; 
+  if (!currentUserId && session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).select('_id').lean();
     if (user) currentUserId = user._id.toString();
   }
+  console.timeEnd("1. Fetching Session & User");
 
-  // 3. Fetch the cafe
-  const dbCafe = await CatCafe.findById(id).lean(); 
+  console.time("2. Fetching Cafe Data");
+  const dbCafe = await CatCafe.findById(id).lean();
+  console.timeEnd("2. Fetching Cafe Data");
 
-  // Handler for 404 error 
+  console.time("3. Fetching Review Count");
+  const actualReviewCount = await Post.countDocuments({ cafeID: id, isDeleted: false });
+  console.timeEnd("3. Fetching Review Count");
+
+  // Handler for 404 error
   if (!dbCafe) {
     return (
       <div className="min-h-screen bg-[#FBF3DE] flex items-center justify-center font-montserrat">
@@ -52,23 +57,53 @@ export default async function ViewCafePage({
     );
   }
 
-  const actualReviewCount = await Post.countDocuments({ 
-    cafeID: id, 
-    isDeleted: false 
-  });
- const cats: CatItem[] = dbCafe.cats ?? [];
+  console.time("4. Fetching Comments");
+  const initialComments = await getCommentsForPost(id, currentUserId);
+  console.timeEnd("4. Fetching Comments");
+
+  /*
+  // 1. Connect to MongoDB
+  await connectDB(); 
+
+  // 2. Fire off all independent queries 
+  const [session, dbCafe, actualReviewCount] = await Promise.all([
+    auth(),
+    CatCafe.findById(id)
+      .lean(),
+    Post.countDocuments({ cafeID: id, isDeleted: false })
+  ]);
+
+  // Handler for 404 error (Check this immediately so we don't do extra work if it's dead)
+  if (!dbCafe) {
+    return (
+      <div className="min-h-screen bg-[#FBF3DE] flex items-center justify-center font-montserrat">
+        <h1 className="text-3xl font-black text-[#855225]">Cafe not found! 😿</h1>
+      </div>
+    );
+  }
+
+  // 3. Resolve User ID (Super fast since we only grab the _id)
+  let currentUserId = session?.user?.id; 
+  if (!currentUserId && session?.user?.email) {
+    const user = await User.findOne({ email: session.user.email }).select('_id').lean();
+    if (user) currentUserId = user._id.toString();
+  }
+
+  // 4. Fetch comments (Requires the currentUserId to know if they upvoted things)
+  const initialComments = await getCommentsForPost(id, currentUserId); */
+
+
+  const cats: CatItem[] = dbCafe.cats ?? [];
   const topCat: CatItem | null = cats.length > 0
     ? cats.reduce((highest, cat) => (cat.upVotes ?? 0) > (highest.upVotes ?? 0) ? cat : highest, cats[0])
     : null;
 
-const foods: MenuItem[] = dbCafe.menu ?? [];
+  const foods: MenuItem[] = dbCafe.menu ?? [];
   const topFood: MenuItem | null = foods.length > 0
     ? foods.reduce((highest, food) => (food.upVotes ?? 0) > (highest.upVotes ?? 0) ? food : highest, foods[0])
     : null;
 
-
-
-  // 4. data map
+  // 5. Data map
   const displayData = {
     name: dbCafe.name || "Unknown Cafe",
     content: dbCafe.description || "No description available for this cafe.",
@@ -78,16 +113,14 @@ const foods: MenuItem[] = dbCafe.menu ?? [];
     ratings: dbCafe.averages || { sociability: 0, ambience: 0, food: 0, work_friendly: 0, service: 0 },
     imageUrl: dbCafe.cafepic || "/images/placeholder-cat.jpg", 
     totalReviews: actualReviewCount,
-    cats:dbCafe.cats,
-    menu:dbCafe.menu,
-    topCat:topCat,
-    topFood:topFood,
+    cats: dbCafe.cats,
+    menu: dbCafe.menu,
+    topCat: topCat,
+    topFood: topFood,
   };
 
   const spotlightCat = dbCafe.cats?.[0];
   const spotlightFood = dbCafe.menu?.[0];
-
-  const initialComments = await getCommentsForPost(id, currentUserId);
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
