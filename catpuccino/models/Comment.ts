@@ -22,12 +22,8 @@
     }, 
     content: {
         type: String,
-        required: [true, "Comment content cannot be empty"],
+        // required: [true, "Comment content cannot be empty"],
         trim: true,
-    },
-    isAnon: {
-        type: Boolean,
-        default: false,
     },
     isOwnerResponse: {
         type: Boolean,

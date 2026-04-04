@@ -430,7 +430,7 @@ const ProfilePage = () => {
                       id={comment._id}
                       username={comment.authorName ?? "Anonymous"}
                       content={comment.content ?? comment.body ?? ""}
-                      timeAgo={comment.timeAgo ?? "Just now"}
+                      createdAt={comment.createdAt ?? new Date()}
                       initialVotes={initialVotes}
                       parentPostId={parentPostId}
                       initialUserVote={comment.userVote ?? null}

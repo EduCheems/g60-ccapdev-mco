@@ -10,7 +10,7 @@ interface PostCarouselProps {
 export default function PostCarousel({ posts, variant = "preview" }: PostCarouselProps) {
   return (
     <div className="w-full bg-[#FEF6EA] pt-0 pb-12 overflow-hidden">
-      <div className="flex overflow-x-auto gap-12 px-12 pb-10 -mb-10 snap-x snap-mandatory no-scrollbar">
+      <div className="flex overflow-x-auto gap-12 px-12 pb-10 -mb-8 snap-x snap-mandatory no-scrollbar">
         
         {posts.map((post) => {
           // Safely calculate the net score for the votes

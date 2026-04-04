@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image'; 
 import { IoLocationSharp, IoPricetag } from "react-icons/io5";
 import { Cafe } from "@/app/data/cafes"; 
 

@@ -134,7 +134,8 @@ export async function GET(req: NextRequest) {
       if (user) currentUserId = user._id;
     }
 
-    const filter: Record<string, unknown> = {};
+    const filter: Record<string, unknown> = { isDeleted: false }; 
+
     if (userId) {
       filter.userID = userId;
     }

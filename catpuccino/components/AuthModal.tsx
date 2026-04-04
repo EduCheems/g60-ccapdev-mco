@@ -1,4 +1,5 @@
 "use client";
+import dynamic from "next/dynamic";
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { signIn, signOut } from "next-auth/react"; //New ver: For actual backend frontend auth process 
