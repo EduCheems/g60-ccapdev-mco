@@ -224,6 +224,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
 
 export async function logoutUser() {
   try {
+    await fetch("/api/auth/rememberMe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rememberMe: false }),
+    });
     await signOut({ callbackUrl: "/" });
   } catch (err) {
     console.error("Logout error", err);
