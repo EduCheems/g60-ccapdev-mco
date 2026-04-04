@@ -55,7 +55,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 isDeactivated: userObj.isDeactivated ?? false, 
                 image: userObj.image ?? null,
                 favCafe: userObj.favCafe ?? [],
-                rememberMe: userObj.rememberMe ?? false,
+                rememberMe: credentials?.rememberMe === "true",
             };
         },
     }),
@@ -63,13 +63,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
-    maxAge: 21 * 24 * 60 * 60,
+    maxAge: 24 * 60 * 60,
   },
   secret: process.env.AUTH_SECRET, 
 
   callbacks: {
 
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session,account }) {
       if (user) {
         if(!user.rememberMe) {
           await connectDB();
@@ -81,7 +81,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.favCafe = userObj.favCafe?? [];
             token.username = userObj.username;
             token.rememberMe = userObj.rememberMe??false;
-            token.exp = Math.floor(Date.now() / 1000) + (token.rememberMe ? 21 * 24 * 60 * 60 : 24 * 60 * 60);
           }
         }else{
           token.id = user.id;
@@ -89,6 +88,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.favCafe = user.favCafe;
           token.username = user.name;
           token.rememberMe = user.rememberMe;
+         
+        }
+        if (account?.provider === "google") {
+          token.rememberMe = true;
+        }
+        if (token.rememberMe) {
+          token.exp = Math.floor(Date.now() / 1000) + 21 * 24 * 60 * 60;
         }
       }
       return token;
