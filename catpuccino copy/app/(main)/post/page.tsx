@@ -1,0 +1,323 @@
+"use client";
+import { useSession } from "next-auth/react"; 
+import React, { useState } from 'react';
+import RadarChart from '@/components/RadarChart';
+import StarSlider from '@/components/StarScale';
+import CafeSearch, {CatSearch, MenuSearch} from '@/components/CafeSearcher';
+import { useRouter } from "next/navigation";
+
+
+const UploadBox = ({ 
+  label, 
+  onImageSelect, 
+  previewUrl 
+}: { 
+  label: string; 
+  onImageSelect: (base64: string) => void;
+  previewUrl: string;
+}) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onImageSelect(reader.result as string); 
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="group relative w-full h-32 border-2 border-dashed border-[#E6AA76] rounded-2xl hover:bg-white hover:border-[#855225] hover:border-solid transition-all flex flex-col items-center justify-center cursor-pointer overflow-hidden shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]">
+      
+      {previewUrl ? (
+        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+      ) : (
+        <p className="text-black/30 font-bold group-hover:text-[#000000] transition-colors uppercase italic text-sm">
+          {label}
+        </p>
+      )}
+
+      <input 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileChange}
+        className="absolute inset-0 opacity-0 cursor-pointer" 
+      />
+    </div>
+  );
+};
+
+const categoryColors: Record<string, string> = {
+  Sociability: "#ED7364", 
+  Ambience: "#7DA06C",    
+  Food: "#E08027",        
+  Catmosphere: "#508796", 
+  Service: "#F052A5",     
+};
+
+
+export default function CreatePostPage() {
+
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [selectedCafe, setSelectedCafe] = useState("");
+  const [selectedFood, setSelectedFood] = useState("");
+  const [title, setTitle] = useState("");
+  const [selectedCat,setSelectedCat]=useState("")
+  const [ratings, setRatings] = useState({
+    Sociability: 3,
+    Ambience: 3,
+    Food: 3,
+    Catmosphere: 3,
+    Service: 3,
+  });
+
+  const [catName, setCatName] = useState("");
+  const [catImage, setCatImage] = useState("");
+  const [foodName, setFoodName] = useState("");
+  const [foodImage, setFoodImage] = useState("");
+  const [bodyText, setBodyText] = useState("");
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+
+  const handleRatingChange = (category: string, val: number) => {
+    setRatings(prev => ({ ...prev, [category]: val }));
+  };
+
+ const handleSubmit = async () => { 
+      try {
+        if (!session) { 
+          alert("You must be logged in to submit a post."); 
+          return; 
+        }
+
+        const userID = session?.user?.id || session?.user?.email;
+
+        const postData = {
+          userID, 
+          selectedCafe,
+          isAnonymous,
+          title,
+          ratings,
+          catName:selectedCat,
+          catImage, 
+          foodName:selectedFood,
+          foodImage, 
+          body: bodyText,
+        };
+
+        const res = await fetch('/api/auth/post', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(postData)
+        });
+
+        const confirmation = await res.json(); 
+        console.log("Post submission response:", res);
+
+        if (res.ok) {
+          alert("Post created successfully");
+          router.push('/home');
+        } else {
+          alert("Failed to create post: " + confirmation.message);
+        }
+
+      } catch (error) {
+        console.error("Error submitting post:", error);
+        alert("An error occurred while submitting your post. Please try again.");
+      }
+    };
+  
+  return (
+
+    <div className="min-h-screen bg-[#FBF3DE] px-[140px] py-12">
+      
+      {/* Header */}
+      <div className="flex items-center gap-4 mb-5">
+        <h1 className="text-[#855225] font-poppins font-black text-[42px] text-5xl uppercase">
+          Create a post
+        </h1>
+        <div className="h-[3px] flex-1 rounded-full bg-[#855225] mt-1"></div>
+      </div>
+
+      <div className="flex gap-83 mt-10">
+        <CafeSearch 
+        selectedCafe={selectedCafe} 
+        onSelect={(cafeID) => setSelectedCafe(cafeID)} 
+        />
+      
+        
+      </div>
+
+      <div className="flex gap-20 items-start max-w-[1400px] mx-auto">
+        
+        {/* Left side */}
+        <div className="flex-1 max-w-[675px] pb-20">
+
+          {/* 2. Title */}
+          <input 
+            type="text" 
+            placeholder="Title*"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mb-4 mt-4 w-full bg-[#FEF6EA] border-[2px] border-[#855225] rounded-lg px-6 py-3 
+                      text-[#855225] text-lg font-medium placeholder-[#855225]/50 
+                      focus:outline-none focus:border-[#855225] transition-all
+                      shadow-[5px_5px_0_0_#85522533] shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]" 
+          />
+
+          {/* 3. Star Scaler */}
+          <div 
+            style={{ 
+              height: '250px',
+              border: '2px solid #855225'
+            }} 
+            className="mb-5 bg-[#FEF6EA] rounded-lg px-8 py-6 flex flex-col justify-between shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]"
+          >
+            {Object.entries(ratings).map(([key, val]) => (
+              <StarSlider 
+                key={key}
+                label={key}
+                value={val}
+                onChange={(newVal) => handleRatingChange(key, newVal)}
+              />
+            ))}
+          </div>
+
+          <div className="w-full bg-[#FEF6EA] border-[2px] border-[#855225] rounded-xl px-4 py-4 mb-5 font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] outline-none transition-all shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+            
+            {/* 4. Cat Spotlight */}
+            <div className="space-y-4 mb-5">
+              <div className="flex items-center gap-4">
+                <h3 className="font-poppins font-black uppercase text-xl whitespace-nowrap text-[#855225]">
+                  Cat Spotlight
+                </h3>
+                <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
+
+              </div>
+               <CatSearch 
+                selectedCafe={selectedCafe} 
+                selectedCat={selectedCat}
+                onSelect={(catName) => setSelectedCat(catName)} 
+                />
+              
+              <UploadBox 
+                label="Drag or Drop or upload Media" 
+                onImageSelect={(base64) => setCatImage(base64)}
+                previewUrl={catImage}
+              />
+            </div>
+
+            <div className="space-y-4 mb-5">
+              <div className="flex items-center gap-4">
+                <h3 className="font-poppins font-black uppercase text-xl whitespace-nowrap text-[#855225]">
+                  Favorite Food
+                </h3>
+                <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
+                
+              </div>
+              <MenuSearch 
+                selectedCafe={selectedCafe} 
+                selectedMenu={selectedFood}
+                onSelect={(MenuItem) => setSelectedFood(MenuItem)} 
+              />
+              
+              <UploadBox 
+                label="Drag or Drop or upload Media" 
+                onImageSelect={(base64) => setFoodImage(base64)}
+                previewUrl={foodImage}
+              />
+            </div>
+
+            <div className="flex items-center gap-4 mt-5 mb-2">
+              <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
+                <h3 className="font-poppins font-black uppercase text-xl whitespace-nowrap text-[#855225]">
+                  Description
+                </h3>
+              <div className="flex-1 h-[2px] bg-[#855225] rounded-full"></div>
+            </div>
+
+            {/* 6. Review description */}
+            <textarea 
+              placeholder="Body text"
+              value={bodyText}
+              onChange={(e) => setBodyText(e.target.value)}
+              className="w-full h-32 bg-[#FEF6EA] border-2 border-[#855225] rounded-xl px-6 py-4 
+                        font-bold text-[#855225] placeholder-[#855225]/40 focus:border-[#855225] outline-none transition-all 
+                        shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)]"
+            />
+
+          </div>
+        </div>
+
+        {/* Right side */}
+        <div className="w-[420px] -mt-10">
+          <div className="bg-[#FCD24C] rounded-[20px] px-8 py-6 border-2 border-black mb-5 shadow-[5px_5px_0_0_#85522533]">
+            <div className="flex items-center mb-4">
+              <div className="h-[3px] flex-1 rounded-full bg-[#855225]"></div>
+                <h2 className="text-3xl font-poppins font-black uppercase text-white mx-4 [text-stroke:1.5px_black] [-webkit-text-stroke:1.5px_black] truncate">
+                  {selectedCafe || "Cafe Name"} 
+                </h2>
+              <div className="h-[3px] flex-1 rounded-full bg-[#855225]"></div>
+            </div>
+            <div className="bg-[#FEF6EA] aspect-square rounded-3xl mb-8 flex items-center justify-center border-2 border-black overflow-hidden shadow-inner mb-5">
+                <RadarChart ratings={ratings} />
+            </div>
+            <div className="space-y-4">
+               {Object.entries(ratings).map(([label, value]) => (
+                 <div key={label} className="flex flex-col gap-0.5 mb-5">
+                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-black/60">
+                       <span>{label}</span>
+                       <span>{value}/5</span>
+                    </div>
+                    <div className="h-3 bg-white/40 rounded-full w-full overflow-hidden border border-black border-[1px]">
+                       <div  
+                         className="h-full transition-all duration-500 ease-out rounded-lg shadow-[inset_2px_4px_0px_rgba(133,82,37,0.4)]" 
+                         style={{ width: `${(value / 5) * 100}%`, backgroundColor: categoryColors[label] || "#ED7364"  }}
+                       />
+                    </div>
+                 </div>
+               ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 mt-4 pr-2">
+            <span className="text-[#855225] font-poppins font-bold uppercase text-sm">
+              Post Anonymously
+            </span>
+            <button
+              type="button"
+              onClick={() => setIsAnonymous(!isAnonymous)}
+              className={`w-12 h-6 rounded-full border-2 border-[#855225] p-0.5 transition-colors duration-300 ease-in-out flex ${
+                isAnonymous ? "bg-[#E5781E]" : "bg-[#FEF6EA]"
+              } shadow-[2px_2px_0_0_rgb(133_82_37_/_0.2)]`}
+            >
+              <div
+                className={`w-4 h-4 rounded-full bg-[#855225] transition-transform duration-300 ease-in-out ${
+                  isAnonymous ? "translate-x-6" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 7. Action Buttons */}
+          <div className="flex justify-end gap-4 mt-6">
+            <button className="px-8 py-3 bg-[#FEF6EA] text-black font-poppins uppercase rounded-full hover:bg-[#b8b8b8] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
+              Save Draft
+            </button>
+            <button className="px-10 py-3 bg-[#E5781E] text-black font-poppins uppercase rounded-full hover:bg-[#c26214] transition-all border border-black border-[2px] shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]" onClick={handleSubmit}>
+              Post
+            </button>
+            
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  );
+  
+}
+
+
+     
