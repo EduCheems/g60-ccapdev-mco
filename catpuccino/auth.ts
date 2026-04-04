@@ -33,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
         name: "credentials", 
         credentials: {
-            email: {}, password: {} 
+            email: {}, password: {} , rememberMe:{}
         },
         async authorize(credentials) {
             
@@ -60,6 +60,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     isDeactivated: user.isDeactivated ?? false, 
                     image:user.image??null,
                     favCafe:user.favCafe??[],
+                    rememberMe: user.rememberMe ?? false,
                   };
         },
     }),
@@ -67,6 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
   session: {
     strategy: "jwt",
+    maxAge: 21 * 24 * 60 * 60,
   },
   secret: process.env.AUTH_SECRET, 
 
@@ -86,8 +88,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session.user.postCount=UserHolder.postCount;
     session.user.image=UserHolder.image;
     session.user.favCafe=UserHolder.favCafe;
+    session.user.rememberMe = UserHolder.rememberMe ?? false;
     return session;
   },
+  async jwt({ token, user }) {
+      if (user) {
+      token.rememberMe = user.rememberMe;
+      }
+      if(user.rememberMe) {
+        token.exp = Math.floor(Date.now() / 1000) + 3 * 7 * 24 * 60 * 60;
+      } else {
+        token.exp = Math.floor(Date.now() / 1000) + 24 * 60 * 60; 
+      }
+    
+    return token;
+  }
 },
 
 events: {
