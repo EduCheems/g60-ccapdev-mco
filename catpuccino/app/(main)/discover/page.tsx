@@ -2,7 +2,8 @@
 import DiscoverFeed from "./DiscoverFeed"; 
 import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
-import "@/models/CatCafe";
+import "@/models/CatCafe"; 
+import "@/models/User";
 
 export const revalidate = 60; 
 
