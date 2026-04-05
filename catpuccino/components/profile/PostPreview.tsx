@@ -165,8 +165,7 @@ export default function PostPreview({
             postId={id} 
             initialVotes={initialVotes} 
             initialUserVote={initialUserVote}
-            targetType="Post" 
-            onVoteChange={onVoteChange} 
+            targetType="Post"
           />
         </div>
 
