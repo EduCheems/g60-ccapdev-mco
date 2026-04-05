@@ -1,124 +1,41 @@
-"use client"; 
-import React, { useState, useEffect } from 'react';
-import PostPreview from '@/components/profile/PostPreview';
-import RecentlyVisited from '@/components/RecentlyVisited';
-import Link from 'next/link'; 
 
-type PostData = {
-  _id: string; 
-  title: string; 
-  cafeID?: { name: string; price: string; location: string; operatingHours: string };
-  overallRating: number; 
-  authorName: string; 
-  body: string; 
-  createdAt: string; 
-  catImage?: string; 
-  upvoteCount: number; 
-  downvoteCount: number; 
-  userVote?: "up" | "down" | null; 
-}
+import DiscoverFeed from "./DiscoverFeed"; 
+import { connectDB } from "@/lib/mongodb";
+import Post from "@/models/Post";
 
-export default function DiscoverPage() {
-  const [sortBy, setSortBy] = useState("new");
-  const [posts, setPosts] = useState<PostData[]>([]); 
-  const [isLoading, setIsLoading] = useState(true); 
+export const revalidate = 60; 
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await fetch('/api/auth/post', { cache: 'no-store'});
-        if (response.ok) {
-          const data = await response.json();
-          setPosts(data);
-          console.log("FETCHED POSTS", data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch posts:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+export default async function DiscoverPage() {
+  await connectDB();
+  
+  const rawPosts = await Post.find()
+    .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage catImage')
+    .populate("cafeID", "_id name priceRange location operatingHours")
+    .populate("userID", "image")
+    .sort({ createdAt: -1 })
+    .limit(20) 
+    .lean();
 
-    fetchPosts();
-  }, []);
+  const initialPosts = rawPosts.map((post: any) => ({
+    _id: post._id.toString(),
+    title: post.title,
+    authorName: post.authorName,
+    authorId: post.userID?._id?.toString() || post.userID?.toString(),
+    authorImage: post.isAnonymous ? undefined : (post.authorImage || post.userID?.image),
+    body: post.body,
+    createdAt: post.createdAt.toISOString(),
+    catImage: post.catImage,
+    upvoteCount: post.upvoteCount || 0,
+    downvoteCount: post.downvoteCount || 0,
+    overallRating: post.overallRating || 0, 
+    cafeID: post.cafeID ? {
+      name: post.cafeID.name,
+      priceRange: post.cafeID.priceRange,
+      location: post.cafeID.location,
+      operatingHours: post.cafeID.operatingHours
+    } : undefined,
+    userVote: null,
+  }));
 
-  const sortedPosts = [...posts].sort((a, b) => {
-    if (sortBy === "new") {
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    } 
-    if (sortBy === "best") {
-      return (b.overallRating || 0) - (a.overallRating || 0);
-    } 
-    if (sortBy === "controversial") {
-      
-      const engagementA = (a.upvoteCount || 0) + (a.downvoteCount || 0);
-      const engagementB = (b.upvoteCount || 0) + (b.downvoteCount || 0);
-      return engagementB - engagementA;
-    }
-    return 0;
-  });
-
-  return (
-    <div className="min-h-screen w-full bg-[#FBF3DE]"> 
-      
-      <div className="max-w-[1200px] mx-auto px-6 pt-24 pb-12 font-montserrat flex flex-col lg:flex-row gap-8 items-start">
-        
-        <div className="flex-1 flex flex-col gap-6 w-full">
-          
-          <div className="flex justify-between items-center mb-2 px-2">
-            <h1 className="text-2xl font-black text-black">Discover</h1>
-            
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-black">Sort by:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-[#FEF6EA] text-black border-[1.5px] border-black rounded-lg px-3 py-1.5 text-sm font-bold cursor-pointer shadow-[2px_2px_0_0_rgba(0,0,0,0.15)] outline-none hover:translate-y-[1px] hover:shadow-[1px_1px_0_0_rgba(0,0,0,0.15)] transition-all"
-              >
-                <option value="new">Most Recent</option>
-                <option value="best">Best Rated</option>
-                <option value="controversial">Spiciest Takes</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            {isLoading ? (
-              <p className="text-black/50 font-bold italic py-10 text-center">Loading posts...</p>
-            ) : sortedPosts.length > 0 ? (
-              sortedPosts.map((post) => {
-                
-                const netScore = (post.upvoteCount || 0) - (post.downvoteCount || 0);
-
-                return (
-                  <PostPreview 
-                    key={post._id}
-                    id={post._id}
-                    title={post.title}
-                    cafeName={post.cafeID?.name || "Unknown Cafe"}
-                    rating={post.overallRating || 0}
-                    username={post.authorName}
-                    price={post.cafeID?.price || "₱ 0"} 
-                    city={post.cafeID?.location || "Metro Manila"}
-                    time={post.cafeID?.operatingHours || "N/A"}
-                    createdAt={post.createdAt}
-                    content={post.body}
-                    image={post.catImage} 
-                    initialVotes={netScore} 
-                    initialUserVote={post.userVote}
-                  />
-                )
-              })
-            ) : (
-              <p className="text-black/50 font-bold py-10 text-center">No posts found. Be the first to review!</p>
-            )}
-          </div>
-
-        </div>
-
-        <RecentlyVisited />
-
-      </div>
-    </div>
-  );
+  return <DiscoverFeed initialPosts={initialPosts} />;
 }

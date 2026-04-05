@@ -11,6 +11,7 @@ import DiscussionSection from "@/components/DiscussionSection";
 import { auth } from "@/auth";
 import { getCommentsForPost } from "@/controllers/commentAction";
 import PostControls from "@/components/view-post/PostControls";
+import PostTracker from "@/components/PostTracker";
 
 import { 
   IoLocationSharp, 
@@ -41,7 +42,7 @@ export default async function ViewPostPage({
   // 1. Fetch the Session and the Post
   const [session, postDoc] = await Promise.all([
     auth(),
-    Post.findById(id).populate('cafeID').lean()
+    Post.findById(id).populate('cafeID').populate('userID', 'image').lean() // <-- ADD THE SECOND POPULATE
   ]);
 
   if (!postDoc) {
@@ -83,13 +84,39 @@ export default async function ViewPostPage({
 
   return (
     <div className="min-h-screen bg-[#FBF3DE] px-24 py-16 font-montserrat">
+      
+      <PostTracker 
+        id={id}
+        title={postDoc.title}
+        authorName={postDoc.authorName}
+        authorId={postDoc.userID?._id?.toString() || postDoc.userID?.toString()}
+        authorImage={postDoc.isAnonymous ? undefined : (postDoc.authorImage || (postDoc.userID as any)?.image)}
+        upvotes={initialVotes}
+        comments={totalComments}
+      />
+      
       <div className="flex gap-16">
 
         <div className="relative flex-1 bg-[#FEF6EA] border-2 border-[#855225] rounded-[10px] px-6 py-6 flex-col shadow-[5px_5px_0_0_#85522533]">
           
           <div className="flex gap-8 mb-6 w-full">
-            <Link href={`/profile/${postDoc.authorName}`} className="flex gap-3 items-center group">
-              <div className="w-10 h-10 bg-[#855225] rounded-[4px] group-hover:scale-105 transition-transform"></div>
+            <Link href={`/profile?userId=${postDoc.userID?._id || postDoc.userID}`} className="flex gap-3 items-center group">
+              {/* Check if post is NOT anonymous AND an image exists */}
+              {!postDoc.isAnonymous && (postDoc.authorImage || (postDoc.userID as any)?.image) ? (
+                <img 
+                  src={postDoc.authorImage || (postDoc.userID as any)?.image} 
+                  alt={postDoc.authorName} 
+                  className="w-10 h-10 rounded-[4px] object-cover border-[1.5px] border-[#855225] group-hover:scale-105 transition-transform shrink-0" 
+                />
+              ) : (
+                /* Fallback Icon */
+                <div className="w-10 h-10 bg-[#855225] rounded-[4px] group-hover:scale-105 transition-transform flex items-center justify-center overflow-hidden shrink-0">
+                  <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
+                </div>
+              )}
+              
               <div className="flex flex-col text-[12px] font-bold leading-tight text-black">
                 <span>Posted by</span>
                 <span>[{postDoc.authorName}]</span>

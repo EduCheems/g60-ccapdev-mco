@@ -18,3 +18,4 @@ export default function ReplyButton({ replyCount, onClick }: ReplyButtonProps) {
     </button>
   );
 }
+
