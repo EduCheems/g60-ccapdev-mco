@@ -23,19 +23,26 @@ export default function DiscoverFeed({ initialPosts }: { initialPosts: PostData[
   const [sortBy, setSortBy] = useState("new");
   
   const [posts, setPosts] = useState<PostData[]>(initialPosts); 
-  
+
   const handleVoteUpdate = (postId: string, newNetScore: number, newVote: "up" | "down" | null) => {
     setPosts(currentPosts => 
       currentPosts.map(post => {
         if (post._id === postId) {
-          let newUpvotes = post.upvoteCount;
-          let newDownvotes = post.downvoteCount;
+          let newUpvotes = post.upvoteCount || 0;
+          let newDownvotes = post.downvoteCount || 0;
           
-          if (post.userVote === "up") newUpvotes -= 1;
-          if (post.userVote === "down") newDownvotes -= 1;
+          if (post.userVote === "up") newUpvotes = Math.max(0, newUpvotes - 1);
+          if (post.userVote === "down") newDownvotes = Math.max(0, newDownvotes - 1);
           
           if (newVote === "up") newUpvotes += 1;
           if (newVote === "down") newDownvotes += 1;
+
+          const calculatedNet = newUpvotes - newDownvotes;
+          if (calculatedNet !== newNetScore) {
+             const diff = newNetScore - calculatedNet;
+             if (diff > 0) newUpvotes += diff;
+             else if (diff < 0) newDownvotes += Math.abs(diff);
+          }
 
           return { ...post, upvoteCount: newUpvotes, downvoteCount: newDownvotes, userVote: newVote };
         }
