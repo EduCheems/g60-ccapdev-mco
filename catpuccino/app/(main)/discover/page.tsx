@@ -2,6 +2,7 @@
 import DiscoverFeed from "./DiscoverFeed"; 
 import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
+import "@/models/CatCafe";
 
 export const revalidate = 60; 
 
@@ -9,7 +10,7 @@ export default async function DiscoverPage() {
   await connectDB();
   
   const rawPosts = await Post.find()
-    .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage catImage')
+    .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage catImage overallRating')
     .populate("cafeID", "_id name priceRange location operatingHours")
     .populate("userID", "image")
     .sort({ createdAt: -1 })
