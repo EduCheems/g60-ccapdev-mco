@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { timeAgo } from "@/lib/utils/timeAgo";
 import { useSession } from "next-auth/react";
+import { timeAgo as formatPostedAgo } from "@/lib/utils/timeAgo";
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
 import ReportButton from "../ReportButton";
@@ -33,8 +34,8 @@ interface PostPreviewProps {
   image?: string;
   initialVotes: number; 
   initialUserVote?: "up" | "down" | null; 
-  commentCount?: number; 
-  onVoteChange?: (newScore: number, newVote: "up" | "down" | null) => void; 
+  commentCount?: number;
+  postedAt?: string | Date;
 }
 
 export default function PostPreview({ 
@@ -54,10 +55,15 @@ export default function PostPreview({
   initialVotes,
   initialUserVote, 
   commentCount = 0,
-  onVoteChange, 
+  postedAt,
 }: PostPreviewProps) {
 
   const router = useRouter();
+  const whenPosted =
+    postedAt != null && !Number.isNaN(new Date(postedAt).getTime())
+      ? formatPostedAgo(postedAt)
+      : "Just now";
+
   const { data: session } = useSession();
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false); 
@@ -141,7 +147,7 @@ export default function PostPreview({
 
         {/* Time and Options Menu */}
         <span className="text-sm font-medium text-black">
-          • {timeDisplay}
+          {username} - {whenPosted}
         </span>
         {isOwner && (
           <button 
@@ -218,8 +224,7 @@ export default function PostPreview({
             postId={id} 
             initialVotes={initialVotes} 
             initialUserVote={initialUserVote}
-            targetType="Post" 
-            onVoteChange={onVoteChange} 
+            targetType="Post"
           />
         </div>
 
