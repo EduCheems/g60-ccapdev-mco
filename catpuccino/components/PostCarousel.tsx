@@ -42,7 +42,6 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
                   initialVotes={netScore}
                   initialUserVote={post.userVote}
                   commentCount={post.commentCount || 0}
-                  onVoteChange={post.onVoteChange}
                 />
               )}
             </div>

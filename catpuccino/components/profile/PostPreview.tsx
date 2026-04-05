@@ -88,7 +88,6 @@ export default function PostPreview({
     if (!isConfirmed) return;
 
     try {
-      // Assuming you will create this API route next!
       const res = await fetch(`/api/auth/post/${id}`, {
         method: "DELETE",
       });
