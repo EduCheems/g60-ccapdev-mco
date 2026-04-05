@@ -239,7 +239,7 @@ export default function CreatePostPage() {
 
             {/* 6. Review description */}
             <textarea 
-              placeholder="Body text (Optional)"
+              placeholder="Body text"
               value={bodyText}
               onChange={(e) => setBodyText(e.target.value)}
               className="w-full h-32 bg-[#FEF6EA] border-2 border-[#855225] rounded-xl px-6 py-4 

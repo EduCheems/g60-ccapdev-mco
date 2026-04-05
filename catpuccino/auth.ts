@@ -27,7 +27,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
         name: "credentials", 
         credentials: {
-            email: {}, password: {} 
+            email: {}, password: {} , rememberMe:{}
         },
         async authorize(credentials) {
             await connectDB();
@@ -39,37 +39,63 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
             const isValid = await bcrypt.compare(credentials!.password as string, user.password);
             if (!isValid) throw new Error("InvalidPassword"); 
+            const userObj = user.toObject();
 
             return { 
-                id: user._id.toString(),
-                name: user.username,
-                email: user.email,
-                role: user.role ?? "user",
-                bio: user.bio ?? "",
-                profilePicURL: user.profilePicURL ?? null,
-                favoriteCatCafeID: user.favoriteCatCafeID ?? null,
-                followersCount: user.followersCount ?? 0,
-                followingCount: user.followingCount ?? 0,
-                postCount: user.postCount ?? 0,
-                isDeactivated: user.isDeactivated ?? false, 
-                image: user.image ?? null,
-                favCafe: user.favCafe ?? [],
+                id: userObj._id.toString(),
+                name: userObj.username,
+                email: userObj.email,
+                role: userObj.role ?? "user",
+                bio: userObj.bio ?? "",
+                profilePicURL: userObj.profilePicURL ?? null,
+                favoriteCatCafeID: userObj.favoriteCatCafeID ?? null,
+                followersCount: userObj.followersCount ?? 0,
+                followingCount: userObj.followingCount ?? 0,
+                postCount: userObj.postCount ?? 0,
+                isDeactivated: userObj.isDeactivated ?? false, 
+                image: userObj.image ?? null,
+                favCafe: userObj.favCafe ?? [],
+                rememberMe: credentials?.rememberMe === "true",
             };
         },
     }),
   ],
 
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 24 * 60 * 60,
+  },
   secret: process.env.AUTH_SECRET, 
 
   callbacks: {
 
-    async jwt({ token, user, trigger, session }) {
+    async jwt({ token, user, trigger, session,account }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
-        token.favCafe = (user as any).favCafe;
-        token.username = (user as any).name;
+        if(!user.rememberMe) {
+          await connectDB();
+          const currentUser=await User.findOne({email:user.email});
+          if(currentUser){
+            const userObj=currentUser.toObject();
+            token.id = userObj._id.toString();
+            token.role = userObj.role?? "user";
+            token.favCafe = userObj.favCafe?? [];
+            token.username = userObj.username;
+            token.rememberMe = userObj.rememberMe??false;
+          }
+        }else{
+          token.id = user.id;
+          token.role = user.role;
+          token.favCafe = user.favCafe;
+          token.username = user.name;
+          token.rememberMe = user.rememberMe;
+         
+        }
+        if (account?.provider === "google") {
+          token.rememberMe = true;
+        }
+        if (token.rememberMe) {
+          token.exp = Math.floor(Date.now() / 1000) + 21 * 24 * 60 * 60;
+        }
       }
       return token;
     },
@@ -104,6 +130,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           isDeactivated: false,
           image: user.image,
           favCafe: [],
+          rememberMe: false,
         });
       }
     },

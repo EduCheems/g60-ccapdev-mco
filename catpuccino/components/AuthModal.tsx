@@ -25,6 +25,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
   const [showEmailForm, setShowEmailForm] = useState(false); 
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState(""); 
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault(); 
@@ -32,7 +33,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
     if (isLoginMode) {
       try {
       
-      const res = await loginAction(email, password);
+      const res = await loginAction(email, password, rememberMe);
 
       console.log("Raw NextAuth Error:", res?.error);
 
@@ -165,7 +166,19 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            
+            <div className="flex justify-end ">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+              className="mr-2"
+            />
+            <label htmlFor="rememberMe" className="text-[#855225] text-[12px] font-medium">
+              Remember me
+            </label>
+            </div>
+
             <button type="submit" className="bg-[#855225] text-white rounded-full py-2 font-bold hover:opacity-90">
               {isLoginMode ? "Login" : "Create Account"}
             </button>
@@ -211,6 +224,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
 
 export async function logoutUser() {
   try {
+    await fetch("/api/auth/rememberMe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rememberMe: false }),
+    });
     await signOut({ callbackUrl: "/" });
   } catch (err) {
     console.error("Logout error", err);

@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import { MongoClient } from 'mongodb';
+import { setServers } from 'node:dns/promises';
+
+
+setServers(['8.8.8.8', '1.1.1.1']);
 
 const MONGODB_URI = process.env.MONGODB_URL as string;
 
