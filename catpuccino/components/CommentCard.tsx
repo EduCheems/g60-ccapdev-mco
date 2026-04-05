@@ -169,7 +169,7 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
                 <textarea
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="w-full bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] outline-none min-h-[80px]"
+                  className="w-full text-black bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] outline-none min-h-[80px]"
                 />
                 <div className="flex gap-2 justify-end">
                   <button onClick={() => setIsEditing(false)} className="text-[12px] font-bold text-[#855225] px-3">Cancel</button>

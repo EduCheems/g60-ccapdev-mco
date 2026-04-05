@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { timeAgo as formatTimeAgoLabel } from "@/lib/utils/timeAgo";
 import PostPreview from "@/components/profile/PostPreview";
 import MiniComment from "@/components/MiniComment";
 import EditProfile from "@/components/EditProfile";
@@ -209,6 +210,19 @@ const ProfilePage = () => {
     (comment) => comment.authorName !== "Anonymous"
   ).length;
 
+  const commentTimeLabel = (c: {
+    createdAt?: string | Date;
+    timeAgo?: string;
+  }) => {
+    const raw = c.createdAt;
+    if (raw != null) {
+      const d = new Date(raw);
+      if (!Number.isNaN(d.getTime())) return formatTimeAgoLabel(d);
+    }
+    if (typeof c.timeAgo === "string" && c.timeAgo.length > 0) return c.timeAgo;
+    return "Just now";
+  };
+
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
 
@@ -401,6 +415,7 @@ const ProfilePage = () => {
                     initialVotes={netScore}
                     initialUserVote={post.userVote ?? null}
                     commentCount={post.commentCount ?? 0}
+                    postedAt={post.createdAt}
                   />
                 );
               })
@@ -430,7 +445,7 @@ const ProfilePage = () => {
                       id={comment._id}
                       username={comment.authorName ?? "Anonymous"}
                       content={comment.content ?? comment.body ?? ""}
-                      createdAt={comment.createdAt ?? new Date()}
+                      timeAgo={commentTimeLabel(comment)}
                       initialVotes={initialVotes}
                       parentPostId={parentPostId}
                       initialUserVote={comment.userVote ?? null}
