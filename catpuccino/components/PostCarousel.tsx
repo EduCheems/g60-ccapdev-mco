@@ -1,3 +1,4 @@
+
 import PostPreview from "./profile/PostPreview";
 import PostThread from "./PostThread";
 import PhotoCollage from "./PhotoCollage";
@@ -8,6 +9,7 @@ interface PostCarouselProps {
 }
 
 export default function PostCarousel({ posts, variant = "preview" }: PostCarouselProps) {
+ 
   return (
     <div className="w-full bg-[#FEF6EA] pt-0 pb-12 overflow-hidden">
       <div className="flex overflow-x-auto gap-12 px-12 pb-10 -mb-8 snap-x snap-mandatory no-scrollbar">
@@ -40,6 +42,7 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
                   initialVotes={netScore}
                   initialUserVote={post.userVote}
                   commentCount={post.commentCount || 0}
+                  onVoteChange={post.onVoteChange}
                 />
               )}
             </div>

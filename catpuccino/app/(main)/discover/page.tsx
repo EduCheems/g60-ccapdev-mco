@@ -16,8 +16,8 @@ export default async function DiscoverPage() {
   
   const currentUserId = session?.user?.id; 
   
-  const rawPosts = await Post.find()
-    .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage catImage overallRating')
+  const rawPosts = await Post.find({isDeleted:{$ne:true}})
+    .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage catImage overallRating isDeleted')
     .populate("cafeID", "_id name priceRange location operatingHours")
     .populate("userID", "image")
     .sort({ createdAt: -1 })
