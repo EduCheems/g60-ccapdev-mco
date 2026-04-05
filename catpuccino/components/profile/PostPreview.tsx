@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { timeAgo } from "@/lib/utils/timeAgo";
 
+import { timeAgo as formatPostedAgo } from "@/lib/utils/timeAgo";
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
 import ReportButton from "../ReportButton";
@@ -32,8 +33,8 @@ interface PostPreviewProps {
   image?: string;
   initialVotes: number; 
   initialUserVote?: "up" | "down" | null; 
-  commentCount?: number; 
-  onVoteChange?: (newScore: number, newVote: "up" | "down" | null) => void; 
+  commentCount?: number;
+  postedAt?: string | Date;
 }
 
 export default function PostPreview({ 
@@ -53,25 +54,15 @@ export default function PostPreview({
   initialVotes,
   initialUserVote, 
   commentCount = 0,
-  onVoteChange 
+  postedAt,
 }: PostPreviewProps) {
 
   const router = useRouter();
+  const whenPosted =
+    postedAt != null && !Number.isNaN(new Date(postedAt).getTime())
+      ? formatPostedAgo(postedAt)
+      : "Just now";
 
-  const [timeDisplay, setTimeDisplay] = useState(
-    createdAt ? timeAgo(createdAt) : "just now"
-  );
-
-  useEffect(() => {
-    if (!createdAt) return;
-
-    const interval = setInterval(() => {
-      setTimeDisplay(timeAgo(createdAt));
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [createdAt]);
-  
   return (
     <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
@@ -115,7 +106,7 @@ export default function PostPreview({
 
         {/* Time and Options Menu */}
         <span className="text-sm font-medium text-black">
-          • {timeDisplay}
+          {username} - {whenPosted}
         </span>
         <button 
           onClick={(e) => e.stopPropagation()} 
