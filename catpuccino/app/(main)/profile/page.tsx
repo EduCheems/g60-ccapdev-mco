@@ -91,8 +91,8 @@ const ProfilePage = () => {
     }
 
     setPostsLoading(true);
-    const url = viewedUserId 
-      ? `/api/auth/post?userId=${viewedUserId}` 
+    const url = viewedUserId
+      ? `/api/auth/post?userId=${viewedUserId.toString()}` 
       : `/api/auth/post?isOwnProfile=true`;
 
     fetch(url)

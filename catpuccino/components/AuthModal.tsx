@@ -223,11 +223,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialView = 's
 };
 
 export async function logoutUser() {
+  
   try {
+    const session = await fetch("/api/auth/session").then(res => res.json());
     await fetch("/api/auth/rememberMe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ rememberMe: false }),
+      body: JSON.stringify({ email: session?.user?.email, rememberMe: false }),
     });
     await signOut({ callbackUrl: "/" });
   } catch (err) {
