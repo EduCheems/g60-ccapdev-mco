@@ -47,16 +47,26 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const postID = searchParams.get("postID");
     const userId = searchParams.get("userId");
+    const isOwnProfile = searchParams.get("isOwnProfile") === "true";
 
     await connectDB();
+    const session = await auth();
 
-    // Get comments by user (for profile Comments tab)
-    if (userId) {
-      const session = await auth();
-      let currentUserId: string | null = null;
-      if (session?.user?.id) currentUserId = session.user.id as string;
+    // 1. Resolve which ID to use (either the param or the logged-in user)
+    let targetUserId = userId;
+    if (isOwnProfile && session?.user?.id) {
+      targetUserId = session.user.id as string;
+    }
 
-      const comments = await Comment.find({ userID: userId, isDeleted: false, parentCommentID: null })
+    // --- CASE A: Fetching for Profile (by targetUserId) ---
+    if (targetUserId) {
+      const currentUserId = session?.user?.id;
+
+      const comments = await Comment.find({ 
+        userID: targetUserId, 
+        isDeleted: false, 
+        parentCommentID: null 
+      })
         .populate("userID", "name")
         .populate("postID", "title")
         .sort({ createdAt: -1 })
@@ -82,6 +92,7 @@ export async function GET(req: NextRequest) {
               }).lean()
             : [],
         ]);
+
         replyCounts.forEach((r: { _id: string; count: number }) => {
           replyCountMap[r._id.toString()] = r.count;
         });
@@ -109,23 +120,24 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(result, { status: 200 });
     }
 
-    // Get comments for a specific post
+    // --- CASE B: Fetching for Specific Post ---
     if (!postID) {
       return NextResponse.json({ message: "postID or userId required" }, { status: 400 });
     }
 
-    const comments = await Comment.find({ postID, isDeleted: false })
+    const postComments = await Comment.find({ postID, isDeleted: false })
       .populate("userID", "name profilePicURL")
       .sort({ createdAt: -1 })
       .lean();
 
-    const safeComments = JSON.parse(JSON.stringify(comments));
-    return NextResponse.json(safeComments, { status: 200 });
+    return NextResponse.json(JSON.parse(JSON.stringify(postComments)), { status: 200 });
+
   } catch (error) {
     console.error("Error fetching comments: ", error);
     return NextResponse.json({ message: "Failed to fetch comments" }, { status: 500 });
   }
 }
+
 
 function formatTimeAgo(date: string | Date): string {
   const d = new Date(date);
