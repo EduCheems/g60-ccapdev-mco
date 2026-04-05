@@ -95,6 +95,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
         if (token.rememberMe) {
           token.exp = Math.floor(Date.now() / 1000) + 21 * 24 * 60 * 60;
+           await User.updateOne(
+            { email: user?.email },
+            { $set: { rememberMe: true } }
+          );
         }
       }
       return token;

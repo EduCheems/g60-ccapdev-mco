@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
 import { auth } from "@/auth";
 import User from "@/models/User";
+import CatCafe from "@/models/CatCafe";
 import { NextResponse } from "next/server";
 
 // 1. GET: Fetch post data to pre-fill the edit form
@@ -86,6 +87,12 @@ export async function DELETE(
 
     post.isDeleted = true;
     await post.save();
+
+    await User.findByIdAndUpdate(user._id, { $inc: { postsCount: -1 } });
+    
+    if (post.cafeID) {
+      await CatCafe.findByIdAndUpdate(post.cafeID, { $inc: { totalReviews: -1 } });
+    }
 
     return NextResponse.json({ message: "Post deleted successfully" }, { status: 200 });
   } catch (error) {

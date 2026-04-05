@@ -94,7 +94,7 @@ export default function PostPreview({
 
       if (res.ok) {
         alert("Post deleted successfully.");
-        router.push("/");
+        router.refresh();
       } else {
         alert("Failed to delete post.");
       }
