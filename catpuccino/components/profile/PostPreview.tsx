@@ -36,6 +36,7 @@ interface PostPreviewProps {
   initialUserVote?: "up" | "down" | null; 
   commentCount?: number;
   postedAt?: string | Date;
+  onVoteChange?: (newScore: number, newVote: "up" | "down" | null) => void;
 }
 
 export default function PostPreview({ 
@@ -146,7 +147,7 @@ export default function PostPreview({
 
         {/* Time and Options Menu */}
         <span className="text-sm font-medium text-black">
-          {username} - {whenPosted}
+          • {timeDisplay}
         </span>
         {isOwner && (
           <button 

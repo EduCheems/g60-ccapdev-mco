@@ -228,7 +228,7 @@ const ProfilePage = () => {
     }
   };
 
-  const nonAnonymousCommentsCount = comments.filter((c) => c.authorName !== "Anonymous").length;
+  //const nonAnonymousCommentsCount = comments.filter((c) => c.authorName !== "Anonymous").length;
 
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
@@ -255,7 +255,7 @@ const ProfilePage = () => {
               <div className="flex gap-4 text-[#262626] font-medium">
                 <span><strong>{followersCount}</strong> Followers</span>
                 <span><strong>{followingCount}</strong> Following</span>
-                <span><strong>{postsCount + nonAnonymousCommentsCount}</strong> Posts</span>
+                <span><strong>{postsCount}</strong> Posts</span>
               </div>
               <p className="text-[#262626]">{bio}</p>
               <div className="mt-4 flex flex-nowrap gap-3 w-full min-w-0">
@@ -340,6 +340,7 @@ const ProfilePage = () => {
                   <PostPreview
                     key={safeId}
                     id={safeId}
+                    authorId={post.userID?._id ?? post.userID}
                     title={post.title ?? "Untitled"}
                     cafeName={post.cafeID?.name ?? "Unknown Cafe"}
                     rating={post.overallRating ?? 0}

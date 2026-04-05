@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import User from "@/models/User";
 import CatCafe from "@/models/CatCafe";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 // 1. GET: Fetch post data to pre-fill the edit form
 export async function GET(
@@ -93,6 +94,10 @@ export async function DELETE(
     if (post.cafeID) {
       await CatCafe.findByIdAndUpdate(post.cafeID, { $inc: { totalReviews: -1 } });
     }
+
+    revalidatePath('/profile', 'page'); 
+    revalidatePath('/home', 'page');   
+    revalidatePath('/discover', 'page'); 
 
     return NextResponse.json({ message: "Post deleted successfully" }, { status: 200 });
   } catch (error) {

@@ -136,7 +136,8 @@ export async function GET(req: NextRequest) {
       if (user) currentUserId = user._id;
     }
 
-    const filter: any = { isDeleted: false }; 
+    //const filter: any = { isDeleted: false }; 
+    const filter: any = { isDeleted: { $ne: true } };
 
     // Determine target ID
     const targetIdString = isOwnProfile ? currentUserId?.toString() : userId;
@@ -157,6 +158,11 @@ export async function GET(req: NextRequest) {
       .populate("userID", "image")
       .sort({ createdAt: -1 })
       .lean();
+
+    if (isOwnProfile && currentUserId) {
+      const actualPostCount = await Post.countDocuments({ userID: currentUserId, isDeleted: { $ne: true } });
+      await User.findByIdAndUpdate(currentUserId, { postsCount: actualPostCount });
+    }
 
     const safePosts = JSON.parse(JSON.stringify(posts));
     const postIds = safePosts.map((p: any) => new mongoose.Types.ObjectId(p._id));

@@ -118,7 +118,7 @@ export default function DiscoverFeed({ initialPosts }: { initialPosts: PostData[
                     image={post.catImage} 
                     initialVotes={netScore} 
                     initialUserVote={post.userVote}
-                    onVoteChange={(newScore, newVote) => handleVoteUpdate(post._id, newScore, newVote)} 
+                    onVoteChange={(newScore: number, newVote: "up" | "down" | null) => handleVoteUpdate(post._id, newScore, newVote)}
                   />
                 )
               })
