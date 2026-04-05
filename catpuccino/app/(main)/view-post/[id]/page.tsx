@@ -73,7 +73,7 @@ export default async function ViewPostPage({
   }
 
   const initialVotes = (postDoc.upvoteCount || 0) - (postDoc.downvoteCount || 0);
-  const isAuthor = currentUserId === postDoc.userID?.toString();
+  const isAuthor = currentUserId === (postDoc.userID?._id?.toString() || postDoc.userID?.toString());
   const post = JSON.parse(JSON.stringify(postDoc));
 
   const cafeData = postDoc.cafeID || {};
