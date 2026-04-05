@@ -142,6 +142,7 @@ export async function GET(req: NextRequest) {
 
     const posts = await Post.find(filter)
       .populate("cafeID")
+      .populate("userID", "image")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -175,9 +176,10 @@ export async function GET(req: NextRequest) {
         int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
     });
 
-    safePosts.forEach((post: { _id: string; userVote?: "up" | "down" | null; commentCount?: number }) => {
+    safePosts.forEach((post: any) => {
       post.userVote = interactionMap[post._id] ?? null;
       post.commentCount = commentCountMap[post._id] ?? 0;
+      post.authorImage = post.isAnonymous ? null : (post.userID?.image || null); 
     });
 
     return NextResponse.json(safePosts, { status: 200 });

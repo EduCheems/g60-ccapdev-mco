@@ -14,9 +14,6 @@ import Interaction from "@/models/Interaction";
 import { auth } from "@/auth";
 import { Cafe } from "@/app/data/cafes";
 
-// ------------------------------------------------------------------
-// Helper Functions
-// ------------------------------------------------------------------
 function getTop5Cafes(cafes: any[], filterKey: string) {
   return [...cafes]
     .sort((a, b) => {
@@ -42,13 +39,10 @@ function getOnePostPerCafe(allPosts: any[], topCafes: any[]) {
     
     if (selectedPosts.length === 5) break;
   }
-  
+
   return selectedPosts;
 }
 
-// ------------------------------------------------------------------
-// Caching 
-// ------------------------------------------------------------------
 const getCachedGlobalData = unstable_cache(
   async () => {
     await connectDB();
@@ -56,8 +50,9 @@ const getCachedGlobalData = unstable_cache(
 
     const [postDocs, cafeDocsRaw] = await Promise.all([
       Post.find()
-        .select('_id title authorName createdAt upvoteCount downvoteCount body cafeID') 
+        .select('_id title authorName userID createdAt upvoteCount downvoteCount body cafeID isAnonymous authorImage')
         .populate("cafeID", "_id name priceRange location")
+        .populate("userID", "image")
         .sort({ createdAt: -1 })
         .limit(20) 
         .lean(),
@@ -96,9 +91,6 @@ const getCachedGlobalData = unstable_cache(
   } 
 );
 
-// ------------------------------------------------------------------
-// 1. Async data components 
-// ------------------------------------------------------------------
 async function DiscoverContent() {
   await connectDB();
 
@@ -118,7 +110,7 @@ async function DiscoverContent() {
   } = globalData;
 
   // 2. Fetch User and Interactions 
-  let currentUserId = session?.user?.id; // Grab ID straight from the fast session
+  let currentUserId = session?.user?.id; 
   
   if (!currentUserId && session?.user?.email) {
     const userDb = await User.findOne({ email: session.user.email }).select('_id').lean();
@@ -128,7 +120,7 @@ async function DiscoverContent() {
   let postInteractions: any[] = [];
   let commentInteractions: any[] = [];
   
-  if (currentUserId) { // ONLY run if we have an ID
+  if (currentUserId) { 
     const commentIds = allComments.map((c: any) => c._id);
     
     [postInteractions, commentInteractions] = await Promise.all([
@@ -193,6 +185,8 @@ async function DiscoverContent() {
       _id: postIdStr,
       title: post.title,
       authorName: post.authorName,
+      authorId: post.userID?._id?.toString() || post.userID?.toString(),
+      authorImage: post.isAnonymous ? undefined : (post.authorImage || post.userID?.image),
       createdAt: post.createdAt,
       upvoteCount: post.upvoteCount || 0,
       downvoteCount: post.downvoteCount || 0,
@@ -214,7 +208,6 @@ async function DiscoverContent() {
     };
   });
 
-  // Pre-calculate Top 5
   const topSocialCafes = getTop5Cafes(cafeDocs, "sociability");
   const topAestheticCafes = getTop5Cafes(cafeDocs, "ambience");
   const topFoodCafes = getTop5Cafes(cafeDocs, "food");
@@ -230,11 +223,11 @@ async function DiscoverContent() {
 
       <MarqueeBand text="OPPIE GOOPEY’S AESTHETIC PICKS" bgColor="bg-[#73A659]" />
       <BestCafes cafes={topAestheticCafes} cardColor="bg-[#87AE73]" badgeText="Aesthetic" badgeColor="bg-[#87AE73]" />
-      <PostCarousel posts={getOnePostPerCafe(realPosts, topAestheticCafes)} variant="collage"/>
+      <PostCarousel posts={getOnePostPerCafe(realPosts, topAestheticCafes)} variant="thread"/>
 
       <MarqueeBand text="CHONKY’S FLAVOR FAVORITES" bgColor="bg-[#EC6B00]" />
       <BestCafes cafes={topFoodCafes} cardColor="bg-[#FF7300]" badgeText="Best Foods" badgeColor="bg-[#FF7300]" />
-      <PostCarousel posts={getOnePostPerCafe(realPosts, topFoodCafes)}/>
+      <PostCarousel posts={getOnePostPerCafe(realPosts, topFoodCafes)} variant="thread"/>
 
       <MarqueeBand text="LIL’ JIMBOB’S FOCUS ZONES" bgColor="bg-[#60958E]" />
       <BestCafes cafes={topWorkCafes} cardColor="bg-[#75A39D]" badgeText="Work Friendly" badgeColor="bg-[#75A39D]" />
@@ -242,18 +235,15 @@ async function DiscoverContent() {
 
       <MarqueeBand text="LARRY’S GOATED CAFE SERVICES" bgColor="bg-[#FC588D]" />
       <BestCafes cafes={topServiceCafes} cardColor="bg-[#FD6B9A]" badgeText="Great Service" badgeColor="bg-[#FD6B9A]" />
-      <PostCarousel posts={getOnePostPerCafe(realPosts, topServiceCafes)} variant="collage" />
+      <PostCarousel posts={getOnePostPerCafe(realPosts, topServiceCafes)} variant="thread" />
 
       <MarqueeBand text="BURGER’S GATEKEPT GEMS" bgColor="bg-[#613D8E]" />
       <BestCafes cafes={topGatekeptCafes} cardColor="bg-[#71539A]" badgeText="Hidden Gem" badgeColor="bg-[#71539A]" />
-      <PostCarousel posts={getOnePostPerCafe(realPosts, topGatekeptCafes)} />
+      <PostCarousel posts={getOnePostPerCafe(realPosts, topGatekeptCafes)} variant="thread"/>
     </section>
   );
 }
 
-// ------------------------------------------------------------------
-// 2. Main page
-// ------------------------------------------------------------------
 export default function DiscoverPage() {
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">

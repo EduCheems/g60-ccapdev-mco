@@ -21,6 +21,10 @@ export default function PostThread({ post }: PostThreadProps) {
         cafeName={post.cafeID?.name || "Unknown Cafe"}
         rating={post.overallRating || 0}
         username={post.authorName || "Anonymous"}
+        
+        authorId={post.authorId}
+        authorImage={post.authorImage}
+        
         price={post.cafeID?.priceRange || "₱ 0"}
         city={post.cafeID?.location || "Metro Manila"}
         time={post.cafeID?.operatingHours || "N/A"}
