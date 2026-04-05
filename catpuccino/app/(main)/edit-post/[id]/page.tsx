@@ -2,7 +2,7 @@ import { connectDB } from "@/lib/mongodb";
 import Post from "@/models/Post";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import EditPostForm from "./EditPostForm"; // <-- Import your new component here!
+import EditPostForm from "./EditPostForm"; 
 
 export default async function EditPostPage({
   params,
