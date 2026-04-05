@@ -21,9 +21,14 @@ export default function PostThread({ post }: PostThreadProps) {
         cafeName={post.cafeID?.name || "Unknown Cafe"}
         rating={post.overallRating || 0}
         username={post.authorName || "Anonymous"}
+        
+        authorId={post.authorId}
+        authorImage={post.authorImage}
+        
         price={post.cafeID?.priceRange || "₱ 0"}
         city={post.cafeID?.location || "Metro Manila"}
         time={post.cafeID?.operatingHours || "N/A"}
+        createdAt={post.createdAt}
         content={post.body || ""}
         image={post.catImage}
         initialVotes={netScore}
@@ -48,7 +53,7 @@ export default function PostThread({ post }: PostThreadProps) {
               <MiniComment 
                 id={safeCommentId} 
                 username={comment.authorName || "Anonymous"} 
-                timeAgo={comment.timeAgo || "Just now"} 
+                createdAt={comment.createdAt || new Date()}
                 content={comment.body || ""} 
                 initialVotes={commentScore}
                 initialUserVote={comment.userVote}

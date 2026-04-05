@@ -27,7 +27,7 @@ export async function POST(req: Request){
             catName, 
             catImage, 
             foodName, 
-            foodImage 
+            foodImage, 
         } = await req.json(); 
 
         await connectDB(); 
@@ -78,7 +78,7 @@ export async function POST(req: Request){
         });
         console.log("New post created:", newPost);
         console.log("Successful!");
-
+        
         //updates the total reviews and averages based on the new post's ratings
         console.log(cafe.name);
 
@@ -96,6 +96,20 @@ export async function POST(req: Request){
         await cafe.save();
 
         await User.findByIdAndUpdate(user._id, { $inc: { postsCount: 1 } });
+
+         if (catName) {
+            await CatCafe.updateOne(
+                { name: selectedCafe, "cats.name": catName},
+                { $inc: { "cats.$.upVotes": 1 } }
+            );
+             if (foodName) {
+            await CatCafe.updateOne(
+                { name: selectedCafe, "menu.itemName": foodName },
+                { $inc: { "menu.$.upVotes": 1 } }
+            );
+        }
+
+        }
 
         return NextResponse.json({ message: "Post created successfully", post: newPost }, { status: 201 });
 
@@ -120,13 +134,15 @@ export async function GET(req: NextRequest) {
       if (user) currentUserId = user._id;
     }
 
-    const filter: Record<string, unknown> = {};
+    const filter: Record<string, unknown> = { isDeleted: false }; 
+
     if (userId) {
       filter.userID = userId;
     }
 
     const posts = await Post.find(filter)
       .populate("cafeID")
+      .populate("userID", "image")
       .sort({ createdAt: -1 })
       .lean();
 
@@ -160,9 +176,10 @@ export async function GET(req: NextRequest) {
         int.voteValue === 1 ? "up" : int.voteValue === -1 ? "down" : null;
     });
 
-    safePosts.forEach((post: { _id: string; userVote?: "up" | "down" | null; commentCount?: number }) => {
+    safePosts.forEach((post: any) => {
       post.userVote = interactionMap[post._id] ?? null;
       post.commentCount = commentCountMap[post._id] ?? 0;
+      post.authorImage = post.isAnonymous ? null : (post.userID?.image || null); 
     });
 
     return NextResponse.json(safePosts, { status: 200 });

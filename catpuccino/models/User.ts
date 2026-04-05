@@ -52,6 +52,10 @@ const UserSchema = new Schema({
         type:[String],
         default:[]
     },
+    rememberMe: {
+        type: Boolean,
+        default: false,
+    },
     }, {
     timestamps: true, //To automatically add timestamps for "createdAt" and "updatedAt"
 }); 

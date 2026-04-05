@@ -4,7 +4,8 @@ export interface MenuItem {
   itemName: string;
   price: number;
   description: string;
-  pictureUrl: string;
+  image: string;
+  upVotes:number;
 }
 
 //Cat Object interface 
@@ -12,7 +13,8 @@ export interface CatItem {
   name: string;
   breed: string;
   description: string;
-  pictureUrl: string;
+  image: string;
+  upVotes:number;
 }
 
 //Cafe interface 
@@ -34,6 +36,7 @@ export interface Cafe {
   totalReviews: number;
   cats: CatItem[];
   menu: MenuItem[];
+  cafepic:string;
 }
 
 export const cafes: Cafe[] = [];

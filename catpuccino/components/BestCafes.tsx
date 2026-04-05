@@ -10,7 +10,7 @@ interface BestCafesProps {
   badgeText: string; 
   badgeColor: string; 
   cafes: Cafe[]; 
-  filterKey?: "sociability" | "ambience" | "food" | "work_friendly" | "service"; 
+  filterKey?: "sociability" | "ambience" | "food" | "work_friendly" | "service" | "gatekept_score"; 
   reverse?: boolean;
 }
 
@@ -27,28 +27,25 @@ export default function BestCafes({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const filteredCafes = cafes
-    .sort((a, b) => {
-      if (!filterKey) return 0;
-      
-      const valA = a.averages?.[filterKey] || 0;
-      const valB = b.averages?.[filterKey] || 0;
-      return reverse ? valA - valB : valB - valA;
-    });
-
   return (
-    <section className="w-full pt-2 pb-0 overflow-hidden">
+    <section className="w-full pt-10 pb-0 overflow-hidden">
       {title && <h2 className="px-10 mb-6 font-poppins text-2xl text-white">{title}</h2>}
 
       <div className="relative flex items-center group px-10">
         <div ref={scrollRef} className="flex overflow-x-auto gap-6 px-2 pb-10 snap-x snap-mandatory no-scrollbar scroll-smooth">
-          {filteredCafes.map((cafe, i) => {
+            {cafes.map((cafe, i) => {
             
             const currentId = cafe._id;
             const isHovered = hoveredId === currentId;
 
-            const displayRating = cafe.averages ? 
-              (Object.values(cafe.averages) as number[]).reduce((a,b) => a+b, 0) / 5 : 0;
+            const avgs = cafe.averages as any || {};
+            const soc = Number(avgs.sociability) || 0;
+            const amb = Number(avgs.ambience) || 0;
+            const foo = Number(avgs.food) || 0;
+            const work = Number(avgs.work_friendly) || 0;
+            const serv = Number(avgs.service) || 0;
+
+            const displayRating = (soc + amb + foo + work + serv) / 5;
 
             return (
               <div

@@ -1,13 +1,13 @@
 "use client";
 import { timeAgo } from "@/lib/utils/timeAgo";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import VoteButtons from "./VoteButtons";
 import ReplyButton from "./ReplyButton";
 import ReportButton from "./ReportButton";
 import CommentBox from "./CommentBox";
 import { IoEllipsisHorizontal } from "react-icons/io5"; 
-import { createComment } from "@/controllers/commentAction";
+import { createComment, deleteComment, editComment } from "@/controllers/commentAction";
 
 interface CommentCardProps {
   comment: any;
@@ -23,6 +23,16 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
   const [isDeleted, setIsDeleted] = useState(false);
   const [localReplies, setLocalReplies] = useState(comment?.replies || []);
 
+  // -- Extract Data --
+  const user = comment.userID; 
+  const username = user?.name || "Anonymous User"; 
+  const profilePic = user?.profilePicURL || "/default-avatar.png"; 
+  const isOwner = currentUserId === (comment.userID?._id || comment.userID);
+
+  const timeAgo = comment.createdAt 
+    ? new Date(comment.createdAt).toLocaleDateString() 
+    : "just now";
+    
   const initialVotes = (comment?.upvoteCount || 0) - (comment?.downvoteCount || 0);
 
   const handleReplySubmit = async (content: string) => {
@@ -52,14 +62,18 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
     }
 
     setIsLoading(true); 
-    
-    // TO DO: add updateComment controller
-    setTimeout(() => {
-      
-      // TO DO: update the DB here
+
+    const result = await editComment(comment._id, editValue, comment.postID, currentUserId);
+
+    if (result.success) {
+      comment.content = editValue; // Update 
       setIsEditing(false); 
-      setIsLoading(false); 
-    }, 600);
+      setShowMenu(false);
+    } else {
+      console.log("Failed to edit comment");
+    }
+  
+    setIsLoading(false);
   };
 
   const handleDelete = async () => {
@@ -68,11 +82,16 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
 
     setIsLoading(true);
 
-    // TO DO: Add delete logic 
-    setTimeout(() => {
+    // delete backend 
+    const result = await deleteComment(comment._id, comment.postID);
+
+    if (result.success) {
       setIsDeleted(true); 
-      setIsLoading(false); 
-    }, 600);
+    } else {
+      console.log("Failed to delete comment");
+    }
+    
+    setIsLoading(false); 
   };
 
   return (
@@ -80,9 +99,16 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
       <div className="flex w-full">
         {/* Avatar & Thread Line */}
         <div className="flex flex-col items-center mr-3 relative shrink-0">
-          <div className={`w-8 h-8 rounded-full z-10 ${isDeleted ? 'bg-gray-300' : 'bg-[#855225]'}`} />
-          {localReplies.length > 0 && (
-            <div className="absolute top-8 bottom-0 w-[2px] bg-[#855225]/30" />
+          {/* If deleted, gray out avatar */}
+          <div className={`w-8 h-8 rounded-full z-10 overflow-hidden border-[1px] border-[#855225]/20 ${isDeleted ? 'bg-gray-300' : 'bg-[#855225]'}`}>
+            {!isDeleted && profilePic ? (
+              <img src={profilePic} alt={username} className="w-full h-full object-cover" />
+            ) : null}
+          </div>
+          
+          {/* Connector line */}
+          {localReplies && localReplies.length > 0 && (
+            <div className="absolute top-8 bottom-0 w-[2px] bg-[#855225]" />
           )}
         </div>
 
@@ -90,13 +116,11 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
         <div className="flex flex-col flex-1 pb-4">
           <div className="flex items-center gap-2 mb-1 mt-1 text-[12px] relative w-full">
             <span className={`font-bold ${isDeleted ? 'text-gray-400' : 'text-black'}`}>
-              {isDeleted ? '[deleted]' : (comment?.authorName || "Anonymous")}
+              [{isDeleted ? 'deleted' : username}]
             </span>
-            <span className="text-black/50">
-              • {comment?.createdAt ? timeAgo(comment.createdAt) : "just now"}
-            </span>
+            <span className="text-black/50">• {timeAgo}</span>
           
-            {!isDeleted && !isEditing && (
+            {!isDeleted && !isEditing && isOwner && (
               <div className="ml-auto relative">
                 <button 
                   onClick={() => setShowMenu(!showMenu)}
@@ -125,7 +149,18 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
             )}
           </div>
 
-          {/* Comment Content Area */}
+          {/* Image (Will be hidden if deleted comment) */}
+          {!isDeleted && comment.imageUrl && !isEditing && (
+            <div className="my-2 rounded-lg overflow-hidden max-w-sm border-[1.5px] border-[#855225]/20">
+              <img 
+                src={comment.imageUrl} 
+                alt="Attached content" 
+                className="w-full h-full object-cover max-h-[300px]" 
+              />
+            </div>
+          )}
+
+          {/* Content */}
           <div className="pr-4">
             {isDeleted ? (
               <p className="text-[14px] text-gray-400 italic mb-3">[This comment was deleted]</p>
@@ -134,7 +169,7 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
                 <textarea
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="w-full bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] outline-none min-h-[80px]"
+                  className="w-full text-black bg-white border-[1.5px] border-[#855225] rounded-[10px] p-3 text-[14px] outline-none min-h-[80px]"
                 />
                 <div className="flex gap-2 justify-end">
                   <button onClick={() => setIsEditing(false)} className="text-[12px] font-bold text-[#855225] px-3">Cancel</button>

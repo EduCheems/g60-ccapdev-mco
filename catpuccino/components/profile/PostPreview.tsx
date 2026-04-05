@@ -1,4 +1,6 @@
 "use client";
+import { useState, useEffect } from "react";
+import { timeAgo } from "@/lib/utils/timeAgo";
 
 import { timeAgo as formatPostedAgo } from "@/lib/utils/timeAgo";
 import VoteButtons from "../VoteButtons";
@@ -21,9 +23,12 @@ interface PostPreviewProps {
   cafeName: string;
   rating: number; 
   username: string;
+  authorId?: string;
   price: string;
+  authorImage?: string; 
   city: string;
   time: string;
+  createdAt: string | Date;
   content: string;
   image?: string;
   initialVotes: number; 
@@ -38,9 +43,12 @@ export default function PostPreview({
   cafeName, 
   rating, 
   username, 
+  authorId,
+  authorImage, 
   price, 
   city, 
   time, 
+  createdAt,
   content, 
   image, 
   initialVotes,
@@ -58,12 +66,52 @@ export default function PostPreview({
   return (
     <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
+      
       <div className="flex items-center gap-3 mb-4">
-        <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
+        
+        {/* Profile Link Wrapper */}
+        <div onClick={(e) => e.stopPropagation()}>
+          {authorId ? (
+            <Link href={`/profile?userId=${authorId}`} className="flex items-center gap-2 group">
+              {authorImage ? (
+                <img 
+                  src={authorImage} 
+                  alt={`${username}'s avatar`} 
+                  className="w-10 h-10 rounded-full object-cover border border-[#855225] shadow-sm shrink-0 group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <IoPersonCircle className="w-9 h-9 text-[#A86734] shrink-0 group-hover:scale-105 transition-transform" />
+              )}
+              <span className="text-sm font-medium text-black group-hover:underline">
+                {username}
+              </span>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-2">
+              {authorImage ? (
+                <img 
+                  src={authorImage} 
+                  alt={`${username}'s avatar`} 
+                  className="w-9 h-9 rounded-full object-cover border border-black/10 shrink-0" 
+                />
+              ) : (
+                <IoPersonCircle className="w-9 h-9 text-[#A86734] shrink-0" />
+              )}
+              <span className="text-sm font-medium text-black">
+                {username}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Time and Options Menu */}
         <span className="text-sm font-medium text-black">
           {username} - {whenPosted}
         </span>
-        <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
+        <button 
+          onClick={(e) => e.stopPropagation()} 
+          className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black"
+        >
           •••
         </button>
       </div>
@@ -118,6 +166,7 @@ export default function PostPreview({
             initialVotes={initialVotes} 
             initialUserVote={initialUserVote}
             targetType="Post" 
+            onVoteChange={onVoteChange} 
           />
         </div>
 

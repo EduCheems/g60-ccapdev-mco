@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image'; 
 import { IoLocationSharp, IoPricetag } from "react-icons/io5";
 import { Cafe } from "@/app/data/cafes"; 
 
@@ -27,13 +28,17 @@ const getRankStyle = (index: number) => {
 };
 
 export default function CafeCard({ id, name, index, cardColor, badgeText, badgeColor, cafe, ratings }: CafeCardProps) {
-  
+
   return (
     <Link href={`/view-cafe/${id}`} className="flex-shrink-0 snap-center block">
       <div className={`w-[331px] h-[450px] rounded-[28px] p-5 ${cardColor} relative overflow-hidden shadow-[8px_8px_0_0_rgba(0,0,0,0.2)] flex flex-col border-2 border-[#662002]`}>
       
         <div className="relative z-10 w-full h-[220px] bg-white rounded-[16px] overflow-hidden mb-4 shadow-inner">
-  
+          <img 
+          src={cafe.cafepic}
+          alt={`${name} cafe`}
+          className="w-full h-full object-cover"
+          />
            <div className={`absolute top-3 right-3 ${badgeColor} px-4 py-1.5 rounded-2xl text-[11px] text-white font-bold shadow-sm`}>
              {badgeText}
            </div>
@@ -46,7 +51,7 @@ export default function CafeCard({ id, name, index, cardColor, badgeText, badgeC
         <div className="relative z-10 px-1 flex flex-col flex-1">
 
           <h3 className="font-poppins text-3xl font-black text-white mb-2 leading-tight">
-            {name}
+            {cafe.name}
           </h3>
 
           <div className="flex items-center gap-1 mb-3">
