@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/mongodb"; 
+import mongoose from "mongoose";
 import Post from "@/models/Post";
 import User from "@/models/User";
 import Interaction from "@/models/Interaction";
@@ -123,21 +124,32 @@ export async function POST(req: Request){
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
-
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get("userId");
+    const isOwnProfile = searchParams.get("isOwnProfile") === "true";
 
     const session = await auth();
     let currentUserId = null;
+
     if (session?.user?.email) {
       const user = await User.findOne({ email: session.user.email }).lean();
       if (user) currentUserId = user._id;
     }
 
-    const filter: Record<string, unknown> = { isDeleted: false }; 
+    const filter: any = { isDeleted: false }; 
 
-    if (userId) {
-      filter.userID = userId;
+    // Determine target ID
+    const targetIdString = isOwnProfile ? currentUserId?.toString() : userId;
+
+    if (targetIdString) {
+      // Validate the ID before converting to prevent crashing on invalid strings
+      if (mongoose.Types.ObjectId.isValid(targetIdString)) {
+        filter.userID = new mongoose.Types.ObjectId(targetIdString);
+      } else {
+        return NextResponse.json([], { status: 200 }); // Return empty if ID is invalid
+      }
+    } else if (isOwnProfile) {
+       return NextResponse.json([], { status: 200 }); 
     }
 
     const posts = await Post.find(filter)
@@ -147,23 +159,21 @@ export async function GET(req: NextRequest) {
       .lean();
 
     const safePosts = JSON.parse(JSON.stringify(posts));
+    const postIds = safePosts.map((p: any) => new mongoose.Types.ObjectId(p._id));
 
-    // Attach comment count and user vote for each post
-    const postIds = safePosts.map((p: { _id: string }) => p._id);
+    if (postIds.length === 0) return NextResponse.json([], { status: 200 });
+
+    // Ensure the aggregation uses the correct types
     const [commentCounts, interactions] = await Promise.all([
-      postIds.length > 0
-        ? Comment.aggregate([
-            { $match: { postID: { $in: postIds }, isDeleted: false } },
-            { $group: { _id: "$postID", count: { $sum: 1 } } },
-          ])
-        : [],
-      currentUserId && postIds.length > 0
-        ? Interaction.find({
-            userID: currentUserId,
-            targetID: { $in: postIds },
-            targetType: "Post",
-          }).lean()
-        : [],
+      Comment.aggregate([
+        { $match: { postID: { $in: postIds }, isDeleted: false } },
+        { $group: { _id: "$postID", count: { $sum: 1 } } },
+      ]),
+      currentUserId ? Interaction.find({
+        userID: currentUserId,
+        targetID: { $in: postIds },
+        targetType: "Post",
+      }).lean() : [],
     ]);
 
     const commentCountMap: Record<string, number> = {};
