@@ -100,7 +100,7 @@ export default async function AboutPage() {
             <div className="w-full max-w-[320px] h-[220px] relative rounded-xl mb-6 overflow-hidden">
               <Image src="/AboutUs/cafe.svg" alt="Cafes listed" fill className={IMG_CLASS} sizes="320px" />
             </div>
-            <h3 className="text-2xl font-bold text-[#743d0d]">{totalCafe} Cafe's Listed</h3>
+            <h3 className="text-2xl font-bold text-[#743d0d]">{totalCafe} Cafes Listed</h3>
             <p className="text-[#262626]">From small local spots to international favorites.</p>
           </div>
 

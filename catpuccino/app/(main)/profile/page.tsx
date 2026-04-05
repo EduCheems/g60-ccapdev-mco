@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { timeAgo as formatTimeAgoLabel } from "@/lib/utils/timeAgo";
 import PostPreview from "@/components/profile/PostPreview";
 import MiniComment from "@/components/MiniComment";
 import EditProfile from "@/components/EditProfile";
 
 const ProfilePage = () => {
-  const { data: session, update: updateSession } = useSession();
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState("reviews");
@@ -196,22 +197,11 @@ const ProfilePage = () => {
         favCafe:cafeHolder,
       }),
       });
-      if (!res.ok) {
-        console.error("Failed to update profile");
-        return;
+      if(!res){
+        console.error("Failed to update");
       }
-      const nextPic = (editProfileImageUrl.trim() || profileImageUrl || "").trim();
-      const nextName = (editName.trim() || displayName).trim();
-      await updateSession({
-        user: {
-          ...session?.user,
-          name: nextName,
-          image: nextPic || session?.user?.image || null,
-          profilePicURL: nextPic || session?.user?.profilePicURL || null,
-        },
-      });
     } catch (err) {
-      console.error("Failed to save profile:", err);
+      console.error("Failed to toggle follow:", err);
     }
   };
 
@@ -228,6 +218,19 @@ const ProfilePage = () => {
   const nonAnonymousCommentsCount = comments.filter(
     (comment) => comment.authorName !== "Anonymous"
   ).length;
+
+  const commentTimeLabel = (c: {
+    createdAt?: string | Date;
+    timeAgo?: string;
+  }) => {
+    const raw = c.createdAt;
+    if (raw != null) {
+      const d = new Date(raw);
+      if (!Number.isNaN(d.getTime())) return formatTimeAgoLabel(d);
+    }
+    if (typeof c.timeAgo === "string" && c.timeAgo.length > 0) return c.timeAgo;
+    return "Just now";
+  };
 
   return (
     <div className="min-h-screen bg-[#D5AE85] flex flex-col">
@@ -420,6 +423,7 @@ const ProfilePage = () => {
                     initialVotes={netScore}
                     initialUserVote={post.userVote ?? null}
                     commentCount={post.commentCount ?? 0}
+                    postedAt={post.createdAt}
                   />
                 );
               })
@@ -449,7 +453,7 @@ const ProfilePage = () => {
                       id={comment._id}
                       username={comment.authorName ?? "Anonymous"}
                       content={comment.content ?? comment.body ?? ""}
-                      timeAgo={comment.timeAgo ?? "Just now"}
+                      timeAgo={commentTimeLabel(comment)}
                       initialVotes={initialVotes}
                       parentPostId={parentPostId}
                       initialUserVote={comment.userVote ?? null}

@@ -96,6 +96,7 @@ export async function GET(req: NextRequest) {
         content: c.content,
         body: c.content,
         authorName: c.userID?.name ?? "Anonymous",
+        createdAt: c.createdAt,
         timeAgo: formatTimeAgo(c.createdAt),
         postID: c.postID?._id ?? c.postID,
         postTitle: c.postID?.title ?? "Post",

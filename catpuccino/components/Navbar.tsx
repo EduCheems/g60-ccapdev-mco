@@ -5,17 +5,24 @@ import Searchbar from './Searchbar';
 
 import { IoAdd, IoHome, IoHelpCircle, IoMail, IoCompass} from 'react-icons/io5';
 import { User } from "next-auth"; 
+import { useSession } from "next-auth/react";
 import { logoutUser } from "./AuthModal";
 
 interface NavbarProps { 
   user?: User; 
 }
 
+function profileAvatarSrc(u: User | undefined): string {
+  const pic = u?.profilePicURL?.trim();
+  if (pic) return pic;
+  if (u?.image?.trim()) return u.image;
+  return "/default-profile.svg";
+}
+
 export default function Navbar({user}: NavbarProps) {
-  const avatarSrc =
-    (user?.profilePicURL && String(user.profilePicURL).trim()) ||
-    user?.image ||
-    "/default-profile.svg";
+  const { data: session } = useSession();
+  const sessionUser = session?.user ?? user;
+  const avatarSrc = profileAvatarSrc(sessionUser);
 
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 50 }} className="bg-[#5C3727] border-b border-white/10 py-3" >
@@ -57,7 +64,6 @@ export default function Navbar({user}: NavbarProps) {
             
             <Link href="/profile" className="w-10 h-10 bg-gray-400/50 rounded-full flex-shrink-0 block hover:ring-2 hover:ring-white/50 transition-all overflow-hidden">
                <img
-                 key={avatarSrc}
                  src={avatarSrc}
                  alt="Profile"
                  className="w-full h-full object-cover"

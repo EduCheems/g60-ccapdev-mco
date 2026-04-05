@@ -1,5 +1,6 @@
 "use client";
 
+import { timeAgo as formatPostedAgo } from "@/lib/utils/timeAgo";
 import VoteButtons from "../VoteButtons";
 import ReplyButton from "../ReplyButton";
 import ReportButton from "../ReportButton";
@@ -27,7 +28,8 @@ interface PostPreviewProps {
   image?: string;
   initialVotes: number; 
   initialUserVote?: "up" | "down" | null; 
-  commentCount?: number; 
+  commentCount?: number;
+  postedAt?: string | Date;
 }
 
 export default function PostPreview({ 
@@ -43,18 +45,23 @@ export default function PostPreview({
   image, 
   initialVotes,
   initialUserVote, 
-  commentCount = 0
+  commentCount = 0,
+  postedAt,
 }: PostPreviewProps) {
 
   const router = useRouter();
-  
+  const whenPosted =
+    postedAt != null && !Number.isNaN(new Date(postedAt).getTime())
+      ? formatPostedAgo(postedAt)
+      : "Just now";
+
   return (
     <div onClick={() => router.push(`/view-post/${id}`)} id={id} className="cursor-pointer transition-transform hover:-translate-y-1 w-full max-w-[800px] border-[1.5px] border-black bg-[#FEF6EA] rounded-2xl p-6 font-montserrat shadow-[5px_5px_0_0_rgb(133_82_37_/_0.2)]">
       
       <div className="flex items-center gap-3 mb-4">
         <IoPersonCircle className="w-9 h-9 text-[#A86734]" />
         <span className="text-sm font-medium text-black">
-          {username} - Just now
+          {username} - {whenPosted}
         </span>
         <button className="ml-auto text-gray-500 font-bold tracking-widest hover:text-black">
           •••
