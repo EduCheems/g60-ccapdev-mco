@@ -37,6 +37,7 @@ interface PostPreviewProps {
   commentCount?: number;
   postedAt?: string | Date;
   onVoteChange?: (newScore: number, newVote: "up" | "down" | null) => void;
+  isAnonymous?: boolean;
 }
 
 export default function PostPreview({ 
@@ -57,6 +58,7 @@ export default function PostPreview({
   initialUserVote, 
   commentCount = 0,
   postedAt,
+  isAnonymous,
 }: PostPreviewProps) {
 
   const router = useRouter();
@@ -112,9 +114,9 @@ export default function PostPreview({
         
         {/* Profile Link Wrapper */}
         <div onClick={(e) => e.stopPropagation()}>
-          {authorId ? (
+          {authorId && !isAnonymous ? (
             <Link href={`/profile?userId=${authorId}`} className="flex items-center gap-2 group">
-              {authorImage ? (
+              {authorImage && !isAnonymous ? (
                 <img 
                   src={authorImage} 
                   alt={`${username}'s avatar`} 
@@ -128,20 +130,10 @@ export default function PostPreview({
               </span>
             </Link>
           ) : (
-            <div className="flex items-center gap-2">
-              {authorImage ? (
-                <img 
-                  src={authorImage} 
-                  alt={`${username}'s avatar`} 
-                  className="w-9 h-9 rounded-full object-cover border border-black/10 shrink-0" 
-                />
-              ) : (
-                <IoPersonCircle className="w-9 h-9 text-[#A86734] shrink-0" />
-              )}
-              <span className="text-sm font-medium text-black">
-                {username}
-              </span>
-            </div>
+            <div className="flex items-center gap-2 opacity-80 italic">
+            <IoPersonCircle className="w-9 h-9 text-gray-400 shrink-0" />
+            <span className="text-sm font-medium text-gray-400">Anonymous</span>
+          </div>
           )}
         </div>
 

@@ -18,6 +18,7 @@ type PostData = {
   downvoteCount: number; 
   commentCount: number;
   userVote?: "up" | "down" | null; 
+  isAnonymous: boolean;
 }
 
 export default function DiscoverFeed({ initialPosts }: { initialPosts: PostData[] }) {
@@ -121,6 +122,7 @@ export default function DiscoverFeed({ initialPosts }: { initialPosts: PostData[
                     initialUserVote={post.userVote}
                     commentCount={post.commentCount}
                     onVoteChange={(newScore: number, newVote: "up" | "down" | null) => handleVoteUpdate(post._id, newScore, newVote)}
+                    isAnonymous={post.isAnonymous || false}
                   />
                 )
               })

@@ -34,6 +34,7 @@ export default function PostThread({ post }: PostThreadProps) {
         initialVotes={netScore}
         initialUserVote={post.userVote}
         commentCount={post.commentCount || 0}
+        isAnonymous={post.isAnonymous || false}
       />
 
       {comments.length > 0 && (

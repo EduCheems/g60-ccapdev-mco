@@ -333,7 +333,8 @@ const ProfilePage = () => {
             ) : posts.length === 0 ? (
               <p className="text-[#855225]/80">No reviews yet.</p>
             ) : (
-              posts.map((post) => {
+              posts.filter((post) => !post.isAnonymous || (post.isAnonymous && post.authorName === "Anonymous"))
+              .map((post) => {
                 const netScore = (post.upvoteCount ?? 0) - (post.downvoteCount ?? 0);
                 const safeId = post._id ?? post.id;
                 return (
@@ -355,6 +356,7 @@ const ProfilePage = () => {
                     commentCount={post.commentCount ?? 0}
                     createdAt={post.createdAt || new Date()} 
                     postedAt={post.createdAt}
+                    isAnonymous={post.isAnonymous || false}
                   />
                 );
               })

@@ -77,6 +77,7 @@ export default async function DiscoverPage() {
       } : undefined,
       commentCount: commentData?.count || 0,
       userVote: initialUserVoteValue, 
+      isAnonymous: post.isAnonymous || false
     };
   });
 

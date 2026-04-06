@@ -42,6 +42,7 @@ export default function PostCarousel({ posts, variant = "preview" }: PostCarouse
                   initialVotes={netScore}
                   initialUserVote={post.userVote}
                   commentCount={post.commentCount || 0}
+                  isAnonymous={post.isAnonymous || false}
                 />
               )}
             </div>

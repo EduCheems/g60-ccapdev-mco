@@ -192,6 +192,7 @@ async function DiscoverContent() {
       downvoteCount: post.downvoteCount || 0,
       userVote: postVoteMap[postIdStr] || null,
       body: post.body,
+      isAnonymous: post.isAnonymous || false,
       commentCount: commentCountMap[postIdStr] || 0,
       cafeID: post.cafeID ? { _id: post.cafeID._id?.toString(), name: post.cafeID.name, priceRange: post.cafeID.priceRange, location: post.cafeID.location } : null,
       comments: postComments.map((c: any) => ({
