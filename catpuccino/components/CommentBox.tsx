@@ -56,6 +56,8 @@ export default function CommentBox( { id, userId, isForceExpanded = false, onCan
 
   const handleSubmit = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    
+
     if (!isValid) return;
         
     if (onSubmit) {
@@ -81,9 +83,10 @@ export default function CommentBox( { id, userId, isForceExpanded = false, onCan
         className={`mt-2 ml-2 w-full bg-transparent outline-none resize-none font-poppins text-[#262626] placeholder:text-[#262626]/70 text-sm transition-all duration-300 ease-in-out
           ${isExpanded ? "h-[70px]" : "h-[20px] cursor-text"}
         `}
-        placeholder="Join the conversation"
+        placeholder={userId ? "Join the conversation" : "LogIn to comment"}
         value={text}
         onChange={(e) => setText(e.target.value)}
+        disabled={!userId}
       />
 
       <div className={`transition-all duration-300 ease-in-out overflow-hidden
