@@ -34,6 +34,7 @@ export default function PostActions({ postId, initialVotes, replyCount, initialU
           initialVotes={initialVotes} 
           initialUserVote={initialUserVote}
           targetType="Post"
+          userId={currentUserId || null}
         />
         <ReplyButton replyCount={replyCount} onClick={handleReplyClick} />
         <ReportButton />
