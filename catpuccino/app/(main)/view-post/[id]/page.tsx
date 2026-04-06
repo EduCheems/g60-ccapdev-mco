@@ -1,5 +1,5 @@
 import RatingSidebar from "@/components/view-post/RatingChart";
-import SpotlightSection, { CafeMenu } from "@/components/view-post/Spotlights";
+import SpotlightSection from "@/components/view-post/Spotlights";
 import Ratings from "@/components/view-post/Ratings";
 import Link from "next/link";
 import CatCafe from "@/models/CatCafe";
@@ -188,8 +188,6 @@ export default async function ViewPostPage({
             foodName={postDoc.foodName||"Orange"}
             catImage={postDoc.catImage||"/default-CatImage.png"} 
             foodImage={postDoc.foodImage||"/default-FoodImage.png"}/>
-
-            <CafeMenu />
           </div>
 
           <PostActions 
