@@ -4,6 +4,7 @@ import Post from "@/models/Post";
 import "@/models/CatCafe"; 
 import "@/models/User";
 import Interaction from "@/models/Interaction"; 
+import Comment from "@/models/Comment";
 
 import { auth } from "@/auth"; 
 
@@ -25,8 +26,9 @@ export default async function DiscoverPage() {
     .lean();
 
   let userVotes: any[] = [];
+  const postIds = rawPosts.map(post => post._id);
+
   if (currentUserId) {
-    const postIds = rawPosts.map(post => post._id);
     userVotes = await Interaction.find({
       userID: currentUserId,
       targetID: { $in: postIds },
@@ -34,8 +36,19 @@ export default async function DiscoverPage() {
     }).lean();
   }
 
+  const commentCount = await Promise.all(
+    postIds.map(async (id) => {
+      const count = await Comment.countDocuments({ 
+        postID: id, 
+        isDeleted: false
+      });
+      return { id: id.toString(), count };
+    })
+  )
+
   const initialPosts = rawPosts.map((post: any) => {
     const userVoteRecord = userVotes.find(v => v.targetID.toString() === post._id.toString());
+    const commentData = commentCount.find(c => c.id === post._id.toString());
     
     let initialUserVoteValue: "up" | "down" | null = null;
     
@@ -62,6 +75,7 @@ export default async function DiscoverPage() {
         location: post.cafeID.location,
         operatingHours: post.cafeID.operatingHours
       } : undefined,
+      commentCount: commentData?.count || 0,
       userVote: initialUserVoteValue, 
     };
   });

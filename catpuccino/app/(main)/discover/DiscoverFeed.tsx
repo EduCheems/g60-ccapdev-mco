@@ -16,6 +16,7 @@ type PostData = {
   catImage?: string; 
   upvoteCount: number; 
   downvoteCount: number; 
+  commentCount: number;
   userVote?: "up" | "down" | null; 
 }
 
@@ -118,6 +119,7 @@ export default function DiscoverFeed({ initialPosts }: { initialPosts: PostData[
                     image={post.catImage} 
                     initialVotes={netScore} 
                     initialUserVote={post.userVote}
+                    commentCount={post.commentCount}
                     onVoteChange={(newScore: number, newVote: "up" | "down" | null) => handleVoteUpdate(post._id, newScore, newVote)}
                   />
                 )
