@@ -119,7 +119,7 @@ export default async function ViewPostPage({
               
               <div className="flex flex-col text-[12px] font-bold leading-tight text-black">
                 <span>Posted by</span>
-                <span>[{postDoc.authorName}]</span>
+                <span>[{postDoc.isAnonymous ? "Anonymous" : postDoc.authorName}]</span>
               </div>
             </Link>
             <div className="flex gap-3 items-center">
