@@ -1,6 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const AuthModal = dynamic(() => import("@/components/AuthModal"), {
   ssr: false, 
@@ -8,9 +10,26 @@ const AuthModal = dynamic(() => import("@/components/AuthModal"), {
 }); 
 
 export default function AuthPage() {
-
+const { data: session, status } = useSession();
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push("/home"); 
+    }
+  }, [status, router]);
+
+  const LoadingScreen = ({ message }: { message: string })  => (
+    <div className="min-h-screen w-full bg-[#FBF3DE] flex justify-center items-center">
+      <p className="text-[#855225] font-poppins font-black text-3xl md:text-5xl uppercase">
+        {message}
+      </p>
+    </div>
+  );
+  if (status === "loading") return <LoadingScreen message="Loading..." />;
+  if (status === "authenticated") return <LoadingScreen message="Redirecting..." />;
+  
   return (
     <div className="min-h-screen w-full bg-[#FBF3DE] relative flex flex-col justify-center px-[140px]">
       
