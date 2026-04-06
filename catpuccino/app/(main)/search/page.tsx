@@ -77,6 +77,7 @@ export default function SearchPage() {
             totalReviews: cafe.totalReviews ?? 0,
             cats: cafe.cats ?? [],
             menu: cafe.menu ?? [],
+            cafepic: cafe.cafepic ?? "/default-cafepic.png",
           }));
 
           setCafes(mappedCafes);
