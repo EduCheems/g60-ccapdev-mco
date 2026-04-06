@@ -8,6 +8,7 @@ interface VoteButtonsProps {
   initialUserVote?: "up" | "down" | null;
   targetType?: "Post" | "Comment";
   onVoteChange?: (newScore: number, newVote: "up" | "down" | null) => void; 
+  userId?: string | null;
 }
 
 export default function VoteButtons({ 
@@ -15,7 +16,8 @@ export default function VoteButtons({
   initialVotes, 
   initialUserVote = null, 
   targetType = "Post",
-  onVoteChange 
+  onVoteChange,
+  userId,
 }: VoteButtonsProps) {
   
   const router = useRouter();
@@ -108,15 +110,15 @@ export default function VoteButtons({
 
   return (
     <div className={`flex items-center gap-2 border-[1.5px] border-black rounded-full px-4 py-1.5 shadow-[inset_4px_4px_1px_rgba(133_82_37_/_0.2)] transition-colors ${containerStyle}`}>
-      <button onClick={() => handleVote("up")} className="hover:scale-110 transition-transform active:scale-95">
+      <button onClick={() => handleVote("up")} disabled={!userId} title={!userId ? "Please log in to vote" : undefined} className={`hover:scale-110 transition-transform active:scale-95 ${!userId ?'cursor-not-allowed opacity-50 pointer-events-none' :'hover:scale-110 active:scale-95 text-black' }`}>
         <img src={upvoteSrc} alt="Upvote" className="w-[26px] h-[20px]" />
       </button>
 
-      <span className="font-bold text-sm min-w-[20px] text-center tabular-nums">
-        {count}
+      <span className={`font-bold text-sm min-w-[20px] text-center tabular-nums ${ !userId ? 'text-gray-400' : 'text-black'}`}
+          >{count}
       </span>
 
-      <button onClick={() => handleVote("down")} className="hover:scale-110 transition-transform active:scale-95">
+      <button onClick={() => handleVote("down")} disabled={!userId} title={!userId ? "Please log in to vote" : undefined} className={`hover:scale-110 transition-transform active:scale-95 ${!userId ?'cursor-not-allowed opacity-50 pointer-events-none' :'hover:scale-110 active:scale-95 text-black' }`}>
         <img src={downvoteSrc} alt="Downvote" className="w-[26px] h-[20px]" />
       </button>
     </div>

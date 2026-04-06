@@ -55,6 +55,8 @@ export default function MiniComment({
             targetType="Comment" 
             initialVotes={initialVotes} 
             initialUserVote={initialUserVote} 
+            userId={id|| null}
+            
           />
         </div>
         

@@ -189,6 +189,7 @@ export default function CommentCard({ comment, currentUserId }: CommentCardProps
                 initialVotes={initialVotes} 
                 initialUserVote={comment?.userVote || 0}
                 targetType="Comment" 
+                userId={currentUserId || null}
               />
               <ReplyButton 
                 replyCount={localReplies.length} 

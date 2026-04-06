@@ -225,6 +225,7 @@ export default function PostPreview({
             initialVotes={initialVotes} 
             initialUserVote={initialUserVote}
             targetType="Post"
+            userId={session?.user?.id || null}
           />
         </div>
 
